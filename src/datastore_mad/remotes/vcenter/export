@@ -57,6 +57,8 @@ if img_source.nil?
     exit -1
 end
 
+img_source = URI.unescape img_source
+
 # Create vcenter url with all needed information to extract the file from
 # the vCenter datastore
 

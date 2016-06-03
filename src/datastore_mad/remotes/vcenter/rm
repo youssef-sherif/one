@@ -32,6 +32,7 @@ $: << RUBY_LIB_LOCATION
 $: << File.dirname(__FILE__)
 
 require 'vcenter_driver'
+require 'uri'
 
 drv_action_enc = ARGV[0]
 id             = ARGV[1]
@@ -49,6 +50,8 @@ if ds_name.nil? ||
     STDERR.puts "Not enough information to delete the image."
     exit -1
 end
+
+img_src = URI.unescape img_src
 
 begin
     host_id      = VCenterDriver::VIClient.translate_hostname(hostname)

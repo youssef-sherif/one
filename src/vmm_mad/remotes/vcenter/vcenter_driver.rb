@@ -42,8 +42,8 @@ require 'yaml'
 require 'opennebula'
 require 'base64'
 require 'openssl'
-require 'openssl'
 require 'VirtualMachineDriver'
+require 'uri'
 
 
 ################################################################################
@@ -682,7 +682,7 @@ class VIClient
 
                 image_name = File.basename(image.path).reverse.sub("kdmv.","").reverse
 
-                if !ipool["IMAGE[NAME=\"#{image_name}\"]"]
+                if !ipool["IMAGE[NAME=\"#{image_name} - #{ds_name}\"]"]
                     img_templates << {
                         :name        => "#{image_name} - #{ds_name}",
                         :path        => image_path,
@@ -804,7 +804,7 @@ class VIClient
                                                     :modification => true)
         spec.matchPattern=[img_name]
 
-        search_params = {'datastorePath' => "[#{ds_name}] #{img_path}",
+        search_params = {'datastorePath' => "[#{ds_name}] '#{img_path}'",
                          'searchSpec'    => spec}
 
         # Perform search task and return results
@@ -838,9 +838,9 @@ class VIClient
     def copy_virtual_disk(source_path, source_ds, target_path, target_ds=nil)
         target_ds = source_ds if target_ds.nil?
 
-        copy_params= {:sourceName => "[#{source_ds}] #{source_path}",
+        copy_params= {:sourceName => "[#{source_ds}] '#{source_path}'",
                       :sourceDatacenter => @dc,
-                      :destName => "[#{target_ds}] #{target_path}"}
+                      :destName => "[#{target_ds}] '#{target_path}'"}
 
         @vdm.CopyVirtualDisk_Task(copy_params).wait_for_completion
 
@@ -868,7 +868,7 @@ class VIClient
 
         @vdm.CreateVirtualDisk_Task(
           :datacenter => @dc,
-          :name       => "[#{ds_name}] #{img_name}.vmdk",
+          :name       => "[#{ds_name}] '#{img_name}.vmdk'",
           :spec       => vmdk_spec
         ).wait_for_completion
 
@@ -882,7 +882,7 @@ class VIClient
     ############################################################################
     def delete_virtual_disk(img_name, ds_name)
         @vdm.DeleteVirtualDisk_Task(
-          name: "[#{ds_name}] #{img_name}",
+          name: "[#{ds_name}] '#{img_name}'",
           datacenter: @dc
         ).wait_for_completion
     end
@@ -894,7 +894,7 @@ class VIClient
     ############################################################################
     def create_directory(directory, ds_name)
         begin
-            path = "[#{ds_name}] #{directory}"
+            path = "[#{ds_name}] '#{directory}'"
             @file_manager.MakeDirectory(:name => path,
                                         :datacenter => @dc,
                                         :createParentDirectories => true)
@@ -2400,7 +2400,8 @@ private
             vm.config.hardware.device.select { |d|
                 if is_disk?(d)
                    disks.each{|disk|
-                      if disk.elements["SOURCE"].text == d.backing.fileName
+                      disk_source = disk.elements["SOURCE"].text
+                      if URI.unescape(disk_source) == d.backing.fileName
                          disks.delete(disk)
                       end
                    }
@@ -2412,7 +2413,7 @@ private
             disk_array = []
             disks.each{|disk|
                ds_name    = disk.elements["DATASTORE"].text
-               img_name   = disk.elements["SOURCE"].text
+               img_name   =  URI.unescape(disk.elements["SOURCE"].text)
 
                disk_array += attach_disk("", "", ds_name, img_name, 0, vm, connection)[:deviceChange]
             }
@@ -2466,7 +2467,7 @@ private
         vmdk_backing = RbVmomi::VIM::VirtualDiskFlatVer2BackingInfo(
               :datastore => ds,
               :diskMode  => 'persistent',
-              :fileName  => "[#{ds_name}] #{img_name}"
+              :fileName  => "[#{ds_name}] '#{img_name}'"
         )
 
         device = RbVmomi::VIM::VirtualDisk(
@@ -2607,7 +2608,7 @@ private
 
         vm          = connection.find_vm_template(deploy_id)
 
-        ds_and_img_name = "[#{ds_name}] #{img_path}"
+        ds_and_img_name = "[#{ds_name}] '#{img_path}'"
 
         disk  = vm.config.hardware.device.select { |d| is_disk?(d) &&
                                  d.backing.fileName == ds_and_img_name }
@@ -2664,7 +2665,8 @@ private
         spec = { :deviceChange => [] }
 
         disks.each{ |disk|
-          ds_and_img_name = "[#{disk['DATASTORE']}] #{disk['SOURCE']}"
+          disk_source = URI.unescape(disk['SOURCE'])  
+          ds_and_img_name = "[#{disk['DATASTORE']}] '#{disk_source}'"
           vcenter_disk = vm.config.hardware.device.select { |d| is_disk?(d) &&
                                     d.backing.fileName == ds_and_img_name }[0]
            spec[:deviceChange] <<  {

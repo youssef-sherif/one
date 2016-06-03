@@ -33,7 +33,7 @@ $: << File.dirname(__FILE__)
 
 require 'vcenter_driver'
 require 'digest'
-
+    
 drv_action_enc = ARGV[0]
 id             = ARGV[1]
 
@@ -49,6 +49,8 @@ if ds_name.nil? || hostname.nil? || img_path.nil?
                 " name or vcenter cluster name or image path."
     exit -1
 end
+
+img_path = img_path
 
 # Generate target path
 str_for_target_path = Time.now.to_s + id.to_s

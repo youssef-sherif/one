@@ -36,6 +36,7 @@ $: << File.dirname(__FILE__)
 require 'opennebula'
 require 'fileutils'
 require 'tempfile'
+require 'uri'
 
 def is_remote?(file)
     file.match(%r{^https?://})
@@ -160,8 +161,7 @@ end
 
 if img_path.start_with? "vcenter://"
     # File already in the vCenter datastore
-
-    puts img_path.sub("vcenter://","")
+    puts URI.escape(img_path.sub("vcenter://",""))
     exit(0)
 end
 
