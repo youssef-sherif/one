@@ -1539,9 +1539,10 @@ int DispatchManager::attach_nic(
         return -1;
     }
 
-    if (( vm->get_state()     != VirtualMachine::ACTIVE ||
-          vm->get_lcm_state() != VirtualMachine::RUNNING ) &&
-        vm->get_state()       != VirtualMachine::POWEROFF )
+    if ( ( vm->get_state() != VirtualMachine::ACTIVE ||
+            ( vm->get_lcm_state() != VirtualMachine::RUNNING &&
+              vm->get_lcm_state() != VirtualMachine::UNKNOWN    ) ) &&
+        vm->get_state() != VirtualMachine::POWEROFF )
     {
         oss << "Could not add a new NIC to VM " << vid << ", wrong state "
             << vm->state_str() << ".";
@@ -1642,9 +1643,10 @@ int DispatchManager::detach_nic(
         return -1;
     }
 
-    if (( vm->get_state()     != VirtualMachine::ACTIVE ||
-          vm->get_lcm_state() != VirtualMachine::RUNNING ) &&
-        vm->get_state()       != VirtualMachine::POWEROFF )
+    if ( ( vm->get_state() != VirtualMachine::ACTIVE ||
+            ( vm->get_lcm_state() != VirtualMachine::RUNNING &&
+              vm->get_lcm_state() != VirtualMachine::UNKNOWN    ) ) &&
+        vm->get_state() != VirtualMachine::POWEROFF )
     {
         oss << "Could not detach NIC from VM " << vid << ", wrong state "
             << vm->state_str() << ".";
