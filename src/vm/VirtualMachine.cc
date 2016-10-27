@@ -2888,30 +2888,30 @@ int VirtualMachine::set_up_attach_nic(VirtualMachineTemplate * tmpl, string& err
     // -------------------------------------------------------------------------
     // Check that we don't have a cluster incompatibility.
     // -------------------------------------------------------------------------
-    string nic_cluster_ids;
+    // string nic_cluster_ids;
 
-    if (new_nic->vector_value("CLUSTER_ID", nic_cluster_ids) == 0)
-    {
-        set<int> cluster_ids;
-        one_util::split_unique(nic_cluster_ids, ',', cluster_ids);
+    // if (new_nic->vector_value("CLUSTER_ID", nic_cluster_ids) == 0)
+    // {
+    //     set<int> cluster_ids;
+    //     one_util::split_unique(nic_cluster_ids, ',', cluster_ids);
 
-        if (cluster_ids.count(get_cid()) == 0)
-        {
-            ostringstream oss;
+    //     if (cluster_ids.count(get_cid()) == 0)
+    //     {
+    //         ostringstream oss;
 
-            release_network_leases(new_nic, oid);
+    //         release_network_leases(new_nic, oid);
 
-            delete new_nic;
+    //         delete new_nic;
 
-            oss << "Virtual network is not part of cluster [" << get_cid() << "]";
+    //         oss << "Virtual network is not part of cluster [" << get_cid() << "]";
 
-            err = oss.str();
+    //         err = oss.str();
 
-            NebulaLog::log("DiM", Log::ERROR, err);
+    //         NebulaLog::log("DiM", Log::ERROR, err);
 
-            return -1;
-        }
-    }
+    //         return -1;
+    //     }
+    // }
 
     // -------------------------------------------------------------------------
     // Get security groups for the new nic
