@@ -906,6 +906,13 @@ void VirtualMachineDeploy::request_execute(xmlrpc_c::paramList const& paramList,
     // ------------------------------------------------------------------------
     set_volatile_disk_info(vm, ds_id);
 
+    //-------------------------------------------------------------------------
+    // set system_ds to virtualMachineDisks
+    //-------------------------------------------------------------------------
+    vm->get_disks().set_system_ds(Image::disk_type_to_str(disk_type));
+
+    //------------------------------------------------------------------------
+
     if (set_vnc_port(vm, cluster_id, att) != 0)
     {
         failure_response(ACTION, att);
