@@ -1566,7 +1566,35 @@ void VirtualMachineDisks::set_system_ds(const string ds_name)
     for ( disk_iterator disk = begin() ; disk != end() ; ++disk )
     {
         (*disk)->replace("SYSTEM_DISK_TYPE", ds_name);
+        (*disk)->set_system_attr(ds_name);
     }
 }
 
+void VirtualMachineDisk::set_system_ds(const string ds_name)
+{
+    replace("SYSTEM_DISK_TYPE", ds_name);
+    set_system_attr(ds_name);
+}
+
+void VirtualMachineDisk::set_system_attr(const string ds_name){
+    string type;
+    type = vector_value("TYPE");
+        switch(Image::str_to_disk_type(type))
+        {
+            case Image::RBD_CDROM:
+            case Image::GLUSTER_CDROM:
+            case Image::SHEEPDOG_CDROM:
+            case Image::CD_ROM:
+                if (ds_name != "FILE" && ds_name != "ISCSI" && ds_name != "NONE")
+                {
+                    replace("SYSTEM_TYPE", ds_name+"_CDROM");
+                } else {
+                    replace("SYSTEM_TYPE", "CDROM");
+                }
+                break;
+            default:
+                replace("SYSTEM_TYPE", ds_name);
+                break;
+        }
+}
 /* -------------------------------------------------------------------------- */

@@ -2676,7 +2676,12 @@ void VirtualMachine::release_disk_images(vector<Template *>& quotas)
 
 int VirtualMachine::set_up_attach_disk(VirtualMachineTemplate * tmpl, string& err)
 {
+    Nebula&             nd = Nebula::instance();
+    DatastorePool * dspool = nd.get_dspool();
+
     VectorAttribute * new_vdisk = tmpl->get("DISK");
+    int ds_id;
+    string ds_name;
 
     if ( new_vdisk == 0 )
     {
@@ -2691,6 +2696,14 @@ int VirtualMachine::set_up_attach_disk(VirtualMachineTemplate * tmpl, string& er
     VirtualMachineDisk * new_disk;
 
     new_disk = disks.set_up_attach(oid, uid, get_cid(), new_vdisk, context, err);
+
+    ds_id =get_ds_id();
+
+    Datastore * ds = dspool->get(ds_id, true);
+    ds_name = Image::disk_type_to_str(ds->get_disk_type());
+    ds->unlock();
+
+    new_disk->set_system_ds(ds_name);
 
     if ( new_disk == 0 )
     {

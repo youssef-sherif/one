@@ -435,8 +435,8 @@ int LibVirtDriver::deployment_description_kvm(
 
     for (int i=0; i < num ;i++)
     {
-        type            = disk[i]->vector_value("SYSTEM_DISK_TYPE");
-        disk_type       = disk[i]->vector_value("DISK_TYPE");
+        type            = disk[i]->vector_value("SYSTEM_TYPE");
+        disk_type       = disk[i]->vector_value("SYSTEM_DISK_TYPE");
         target          = disk[i]->vector_value("TARGET");
         ro              = disk[i]->vector_value("READONLY");
         driver          = disk[i]->vector_value("DRIVER");
@@ -554,7 +554,7 @@ int LibVirtDriver::deployment_description_kvm(
                      << "\t\t\t</auth>\n";
             }
         }
-        else if ( type == "RBD" || type == "RBD_CDROM" || disk_type == "RBD" )
+        else if ( type == "RBD" || type == "RBD_CDROM")
         {
             if (type == "RBD_CDROM")
             {
