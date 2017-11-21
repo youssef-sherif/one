@@ -781,13 +781,25 @@ Image::DiskType Image::str_to_disk_type(string& s_disk_type)
     {
         type = Image::RBD;
     }
+    else if (s_disk_type == "RBD_CDROM")
+    {
+        type = Image::RBD_CDROM;
+    }
     else if (s_disk_type == "SHEEPDOG")
     {
         type = Image::SHEEPDOG;
     }
+    else if (s_disk_type == "SHEEPDOG_CDROM")
+    {
+        type = Image::SHEEPDOG_CDROM;
+    }
     else if (s_disk_type == "GLUSTER")
     {
         type = Image::GLUSTER;
+    }
+    else if (s_disk_type == "GLUSTER_CDROM")
+    {
+        type = Image::GLUSTER_CDROM;
     }
 
     return type;
