@@ -67,7 +67,7 @@ done < <(onevm show -x $VM_ID| $XPATH \
                     /VM/TEMPLATE/DISK[DISK_ID=$DISK_ID]/CEPH_USER \
                     /VM/TEMPLATE/DISK[DISK_ID=$DISK_ID]/CEPH_KEY \
                     /VM/TEMPLATE/DISK[DISK_ID=$DISK_ID]/CEPH_CONF \
-                    /VM/TEMPLATE/DISK[DISK_ID=$DISK_ID]/TYPE )
+                    /VM/TEMPLATE/DISK[DISK_ID=$DISK_ID]/SYSTEM_DISK_TYPE )
 
 DEPLOY_ID="${XPATH_ELEMENTS[j++]}"
 RBD_SRC="${XPATH_ELEMENTS[j++]}"
@@ -75,7 +75,7 @@ CLONE="${XPATH_ELEMENTS[j++]}"
 CEPH_USER="${XPATH_ELEMENTS[j++]}"
 CEPH_KEY="${XPATH_ELEMENTS[j++]}"
 CEPH_CONF="${XPATH_ELEMENTS[j++]}"
-TYPE="${XPATH_ELEMENTS[j++]}"
+DISK_TYPE="${XPATH_ELEMENTS[j++]}"
 
 if [ "$CLONE" = "NO" ]; then
     RBD_DST="${RBD_SRC}"
@@ -99,8 +99,8 @@ if [ -n "$CEPH_CONF" ]; then
     RBD="$RBD --conf ${CEPH_CONF}"
 fi
 
-if [ "${TYPE}" != 'RBD' ]; then
-    error_message "$script_name: Operation not supported on disk type ${TYPE}"
+if [ "${DISK_TYPE}" != 'RBD' ]; then
+    error_message "$script_name: Operation not supported on disk type ${DISK_TYPE}"
     exit 1
 fi
 

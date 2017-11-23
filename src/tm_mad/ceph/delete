@@ -116,7 +116,7 @@ done < <(onevm show -x $VM_ID | $XPATH \
                     /VM/TEMPLATE/DISK[DISK_ID=$DISK_ID]/CEPH_KEY \
                     /VM/TEMPLATE/DISK[DISK_ID=$DISK_ID]/CEPH_CONF \
                     /VM/TEMPLATE/DISK[DISK_ID=$DISK_ID]/POOL_NAME \
-                    /VM/TEMPLATE/DISK[DISK_ID=$DISK_ID]/TYPE )
+                    /VM/TEMPLATE/DISK[DISK_ID=$DISK_ID]/SYSTEM_DISK_TYPE )
 
 SRC="${XPATH_ELEMENTS[j++]}"
 CLONE="${XPATH_ELEMENTS[j++]}"
@@ -124,7 +124,7 @@ CEPH_USER="${XPATH_ELEMENTS[j++]}"
 CEPH_KEY="${XPATH_ELEMENTS[j++]}"
 CEPH_CONF="${XPATH_ELEMENTS[j++]}"
 POOL_NAME="${XPATH_ELEMENTS[j++]:-$POOL_NAME}"
-TYPE="${XPATH_ELEMENTS[j++]}"
+DISK_TYPE="${XPATH_ELEMENTS[j++]}"
 
 # No need to delete no cloned images
 if [ "$CLONE" = "NO" ]; then
@@ -159,7 +159,7 @@ fi
 
 log "Deleting $DST_PATH"
 
-if [ "${TYPE}" = 'FILE' ]; then
+if [ "${DISK_TYPE}" = 'FILE' ]; then
     exit 0
 else
     DELETE_CMD=$(cat <<EOF

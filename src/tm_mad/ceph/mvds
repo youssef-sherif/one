@@ -72,7 +72,7 @@ done < <(onevm show -x $VMID| $XPATH \
                     /VM/TEMPLATE/DISK[DISK_ID=$DISK_ID]/CEPH_USER \
                     /VM/TEMPLATE/DISK[DISK_ID=$DISK_ID]/CEPH_KEY \
                     /VM/TEMPLATE/DISK[DISK_ID=$DISK_ID]/CEPH_CONF \
-                    /VM/TEMPLATE/DISK[DISK_ID=$DISK_ID]/TYPE \
+                    /VM/TEMPLATE/DISK[DISK_ID=$DISK_ID]/SYSTEM_DISK_TYPE \
                     /VM/TEMPLATE/DISK[DISK_ID=$DISK_ID]/SIZE \
                     /VM/TEMPLATE/DISK[DISK_ID=$DISK_ID]/ORIGINAL_SIZE )
 
@@ -81,7 +81,7 @@ CLONE="${XPATH_ELEMENTS[j++]}"
 CEPH_USER="${XPATH_ELEMENTS[j++]}"
 CEPH_KEY="${XPATH_ELEMENTS[j++]}"
 CEPH_CONF="${XPATH_ELEMENTS[j++]}"
-TYPE="${XPATH_ELEMENTS[j++]}"
+DISK_TYPE="${XPATH_ELEMENTS[j++]}"
 SIZE="${XPATH_ELEMENTS[j++]}"
 ORIGINAL_SIZE="${XPATH_ELEMENTS[j++]}"
 
@@ -101,7 +101,7 @@ if [ -n "$CEPH_CONF" ]; then
     RBD="$RBD --conf ${CEPH_CONF}"
 fi
 
-if [ "${TYPE}" = 'FILE' ]; then
+if [ "${DISK_TYPE}" = 'FILE' ]; then
     MVDS_CMD=$(cat <<EOF
         RBD="${RBD}"
 

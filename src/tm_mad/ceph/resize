@@ -65,7 +65,7 @@ done < <(onevm show -x $VM_ID| $XPATH \
                     /VM/TEMPLATE/DISK[DISK_ID=$DISK_ID]/CEPH_CONF \
                     /VM/TEMPLATE/DISK[DISK_ID=$DISK_ID]/PERSISTENT \
                     /VM/TEMPLATE/DISK[DISK_ID=$DISK_ID]/POOL_NAME \
-                    /VM/TEMPLATE/DISK[DISK_ID=$DISK_ID]/TYPE )
+                    /VM/TEMPLATE/DISK[DISK_ID=$DISK_ID]/SYSTEM_DISK_TYPE )
 
 RBD_SRC="${XPATH_ELEMENTS[j++]}"
 CEPH_USER="${XPATH_ELEMENTS[j++]}"
@@ -73,7 +73,7 @@ CEPH_KEY="${XPATH_ELEMENTS[j++]}"
 CEPH_CONF="${XPATH_ELEMENTS[j++]}"
 PERSISTENT="${XPATH_ELEMENTS[j++]}"
 POOL_NAME="${XPATH_ELEMENTS[j++]:-$POOL_NAME}"
-TYPE="${XPATH_ELEMENTS[j++]}"
+DISK_TYPE="${XPATH_ELEMENTS[j++]}"
 
 if [ -n "${RBD_SRC}" ]; then
     if [ "${PERSISTENT}" = 'YES' ]; then
@@ -101,7 +101,7 @@ if [ -n "$CEPH_CONF" ]; then
     RBD="$RBD --conf ${CEPH_CONF}"
 fi
 
-if [ "${TYPE}" = 'FILE' ]; then
+if [ "${DISK_TYPE}" = 'FILE' ]; then
     RESIZE_CMD=$(cat <<EOF
         ${QEMU_IMG} resize "${SRC_PATH}" "${SIZE}M"
 EOF
