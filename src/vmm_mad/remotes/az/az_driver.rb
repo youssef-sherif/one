@@ -19,23 +19,50 @@ ONE_LOCATION = ENV["ONE_LOCATION"] if !defined?(ONE_LOCATION)
 
 if !ONE_LOCATION
     RUBY_LIB_LOCATION = "/usr/lib/one/ruby" if !defined?(RUBY_LIB_LOCATION)
-    ETC_LOCATION      = "/etc/one/" if !defined?(ETC_LOCATION)
+
+    ETC_LOCATION = "/etc/one/" if !defined?(ETC_LOCATION)
+    LIB_LOCATION = "/usr/lib/one" if !defined?(LIB_LOCATION)
+    VAR_LOCATION = "/var/lib/one" if !defined?(VAR_LOCATION)
+    BIN_LOCATION = "/usr/bin" if !defined?(BIN_LOCATION)
 else
     RUBY_LIB_LOCATION = ONE_LOCATION + "/lib/ruby" if !defined?(RUBY_LIB_LOCATION)
-    ETC_LOCATION      = ONE_LOCATION + "/etc/" if !defined?(ETC_LOCATION)
+
+    ETC_LOCATION  = ONE_LOCATION + "/etc/" if !defined?(ETC_LOCATION)
+    LIB_LOCATION = ONE_LOCATION + "/lib"  if !defined?(LIB_LOCATION)
+    VAR_LOCATION = ONE_LOCATION + "/var/" if !defined?(VAR_LOCATION)
+    BIN_LOCATION = ONE_LOCATION + "/bin"  if !defined?(BIN_LOCATION)
 end
+
+$: << RUBY_LIB_LOCATION
+$: << LIB_LOCATION + '/ruby'
+$: << LIB_LOCATION + '/ruby/az_driver'
+
+
+
 
 AZ_DRIVER_CONF = "#{ETC_LOCATION}/az_driver.conf"
 AZ_DRIVER_DEFAULT = "#{ETC_LOCATION}/az_driver.default"
 
 # Load Azure credentials and environment
+require 'azure'
+require 'azure_mgmt_resources'
+require 'azure_mgmt_network'
+require 'azure_mgmt_storage'
+require 'azure_mgmt_compute'
+
+
+# Azure library
+require 'az_client'
+require 'az_helper'
+require 'az_rgroup'
+
+
+# Util lib
 require 'yaml'
 require 'rubygems'
-require 'azure'
 require 'uri'
 require 'tempfile'
 
-$: << RUBY_LIB_LOCATION
 
 require 'CommandManager'
 require 'scripts_common'
