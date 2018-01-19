@@ -26,12 +26,23 @@ module AzDriver
             end
         end
 
-        def self.print_item(group)
+
+        def self.print_item(resource)
+		    resource.instance_variables.sort.each do |ivar|
+		        str = ivar.to_s.gsub /^@/, ''
+		        if resource.respond_to? str.to_sym
+		          puts "\t\t#{str}: #{resource.send(str.to_sym)}"
+		        end
+		    end
+		    puts "\n\n"
+		end
+
+        def self.print_group(group)
             puts "\tName: #{group.name}"
             puts "\tId: #{group.id}"
             puts "\tLocation: #{group.location}"
             puts "\tTags: #{group.tags}"
-            #print_properties(group.properties)
+            print_item(group.properties)
         end
 
     end
