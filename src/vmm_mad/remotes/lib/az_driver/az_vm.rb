@@ -1,9 +1,13 @@
 module AzDriver
     class VirtualMachine
-        def initialize(client, group, object)
-            @client = client
-            @az_item = object
-            @group_name = group
+
+        attr_accessor :az_item
+
+        def initialize(opts = {})
+            @group_name = opts[:gname]
+            @name = opts[:name]
+            @client = opts[:client].compute || opts[:client] || nil
+            @az_item = opts[:az_item] || nil
         end
 
 		def print()

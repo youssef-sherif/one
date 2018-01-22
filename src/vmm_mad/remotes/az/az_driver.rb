@@ -49,6 +49,7 @@ require 'azure_mgmt_resources'
 require 'azure_mgmt_network'
 require 'azure_mgmt_storage'
 require 'azure_mgmt_compute'
+require 'opennebula'
 
 
 # Azure library
@@ -56,6 +57,7 @@ require 'az_client'
 require 'az_helper'
 require 'az_rgroup'
 require 'az_vm'
+require 'az_net'
 
 
 # Util lib

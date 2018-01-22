@@ -45,5 +45,45 @@ module AzDriver
             print_item(group.properties)
         end
 
+        def self.get_deployment_info(host, xml_text, region = nil)
+            xml = REXML::Document.new xml_text
+            az = nil
+            all_az_elements = xml.root.get_elements("//USER_TEMPLATE/PUBLIC_CLOUD")
+
+            # Look for an azure location
+            # if we find the same LOCATION as @region name
+            # means that we have the final location
+            all_az_elements.each { |element|
+                type = element.elements["TYPE"].text.downcase
+                location = element.elements["LOCATION"].text.downcase rescue nil
+
+                next if type  != "azure"
+
+                if location.nil?
+                    az = element
+                elsif location && location == location.downcase
+                    az = element
+                    break
+                end
+            }
+
+            # If we don't find an Azure location raise an error
+            if !az
+                raise "Cannot find Azure element in VM template "<<
+                      "or couldn't find any Azure location matching "<<
+                      "one of the templates."
+            end
+
+            # If LOCATION not explicitly defined, try to get from host, if not
+            # try to use hostname as datacenter
+            if !az.elements["LOCATION"]
+                location=REXML::Element.new("LOCATION")
+                location.text = region  || host
+                az.elements << location
+            end
+
+            az
+        end
+
     end
 end

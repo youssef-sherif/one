@@ -28,25 +28,60 @@ $: << RUBY_LIB_LOCATION
 $: << File.dirname(__FILE__)
 
 require 'az_driver'
-require 'opennebula'
 
 dfile = ARGV[0]
 host  = ARGV[1]
 id    = ARGV[2]
 
+# command example
+# /var/lib/one/remotes/vmm/az/deploy '/var/lib/one/vms/123/deployment.0' 'azure00' 123 azure00
+
 begin
-    vm = OpenNebula::VirtualMachine.new_with_id(id, OpenNebula::Client.new)
-    vm.info
 
-    lcm_state = vm.lcm_state_str
-    deploy_id = vm.deploy_id
+    one_client = OpenNebula::Client.new
+    pool = OpenNebula::HostPool.new(one_client)
+    pool.info
 
-    az_drv = AzureDriver.new(host)
+    host_id = pool["/HOST_POOL/HOST[NAME='#{host}']/ID"].to_i
+    location = pool["/HOST_POOL/HOST[NAME='#{host}']/TEMPLATE/REGION_NAME"].to_s
 
-    text=File.read(dfile)
+    #vm = OpenNebula::VirtualMachine.new_with_id(id, one_client)
+    #vm.info
 
-    puts az_drv.deploy(id, host, text, lcm_state, deploy_id)
+    opts_credentials = AzDriver::Helper.host_credentials_with_id(host_id)
+    client = AzDriver::Client.new(opts_credentials)
+
+    opts_new = {
+        client: client,
+        region: location,
+        gname:  host
+    }
+
+    rgroup= AzDriver::ResourceGroup.new(opts_new).tap do |rg|
+        rg.create()
+    end
+
+    network = AzDriver::Network.new(opts_new).tap do |net|
+        net.az_item = rgroup.create_net()
+    end
+
+    opts_new[:name] = "one-#{id}"
+    vm = AzDriver::VirtualMachine.new(opts_new).tap do |az_vm|
+        network.create_nic(opts_new[:name])
+    end
+
+    #lcm_state = vm.lcm_state_str
+    #deploy_id = vm.deploy_id
+
+    xml=File.read(dfile)
+    dinfo = AzDriver::Helper.get_deployment_info(host, xml, location)
+    rgroup.create_vm(dinfo)
+
+    #az_drv = AzureDriver.new(host)
+
+
+    #puts az_drv.deploy(id, host, text, lcm_state, deploy_id)
 
 rescue => e
-    OpenNebula.handle_driver_exception("Deploy", e, host, deploy_id, id, dfile)
+    OpenNebula.handle_driver_exception("Deploy", e, host, "", id, dfile)
 end
