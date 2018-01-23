@@ -6,11 +6,26 @@ module AzDriver
             @group_name = opts[:gname]
             @client = opts[:client].network || opts[:client] || nil
             @az_item = opts[:az_item] || nil
+            @nics = {}
+        end
+
+        def subnets
+            if @az_item
+                @az_item.subnets
+            end
+        end
+
+        def retrieve_nics(vm)
+            if @nics[vm]
+                @nics[vm]
+            end
         end
 
         def create_nic(vm_name)
+            @nics[vm_name] = []
+
             location = @az_item.location
-            model = AzDriver::Client.model("network")
+            model = AzDriver::Client::NetworkModels
             nic_name = "nic-#{vm_name}"
             nic = @client.network_interfaces.create_or_update(
                 @group_name,

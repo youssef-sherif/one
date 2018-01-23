@@ -2,6 +2,7 @@ module AzDriver
     class Client
         # static
         ####################################
+        #
         Storage = Azure::Storage::Profiles::Latest::Mgmt
         Network = Azure::Network::Profiles::Latest::Mgmt
         Compute = Azure::Compute::Profiles::Latest::Mgmt
@@ -11,22 +12,10 @@ module AzDriver
         NetworkModels = Network::Models
         ComputeModels = Compute::Models
         ResourceModels = Resources::Models
-
-        def self.model(name)
-            if name == "resource"
-                ResourceModels
-            elsif name == "storage"
-                StorageModels
-            elsif name == "network"
-                NetworkModels
-            elsif name == "compute"
-                ComputeModels
-            end
-        end
-
+        #
         #####################################
 
-        # instance
+        # instance class
         REQUIRED_ATTRS = [:sub_id, :tenant_id, :client_id, :client_secret]
         def initialize(opts = {})
             # mandatory parameters:

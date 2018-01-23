@@ -9,9 +9,9 @@ module AzDriver
             @az_item = opts[:az_item] || nil
         end
 
-
+        # create the azure resource group
         def create()
-            model = AzDriver::Client.model("resource")
+            model = AzDriver::Client::ResourceModels
 
             resource_group_params = model::ResourceGroup.new.tap do |rg|
               rg.location = @region
@@ -21,12 +21,54 @@ module AzDriver
         end
 
         PARAMS = ["IMAGE", "PUBLISHER", "SKU", "VM_USER", "VM_PASSWORD"]
-        def create_vm(dinfo, opts = {})
+        def create_vm(dinfo, name, nic, storage = nil)
             opts = {}
+            model = AzDriver::Client::ComputeModels
 
             PARAMS.each do |param|
-                dinfo.elements[param].text
+                opts[param] = dinfo.elements[param].text
             end
+
+            vm_create_params = model::VirtualMachine.new.tap do |vm|
+                vm.location = @region
+                vm.os_profile = model::OSProfile.new.tap do |os_profile|
+                    os_profile.computer_name = name
+                    os_profile.admin_username = opts["VM_USER"]
+                    os_profile.admin_password = opts["VM_PASSWORD"]
+                end
+
+                vm.storage_profile = model::StorageProfile.new.tap do |store_profile|
+                    store_profile.image_reference = model::ImageReference.new.tap do |ref|
+                        ref.publisher = opts["PUBLISHER"]
+                        ref.offer = opts["IMAGE"]
+                        ref.sku = opts["SKU"]
+                        ref.version = "latest"
+                    end
+                    #store_profile.os_disk = model::OSDisk.new.tap do |os_disk|
+                    #    os_disk.name = "os-disk-#{name}"
+                    #    os_disk.caching = model::CachingTypes::None
+                    #    os_disk.create_option = model::DiskCreateOptionTypes::FromImage
+                    #    os_disk.vhd = model::VirtualHardDisk.new.tap do |vhd|
+                    #        vhd.uri = "https://#{storage_acct.name}.blob.core.windows.net/rubycontainer/#{name}.vhd"
+                    #    end
+                    #end
+                end
+
+                vm.hardware_profile = model::HardwareProfile.new.tap do |hardware|
+                    hardware.vm_size = model::VirtualMachineSizeTypes::StandardDS2V2
+                end
+
+                vm.network_profile = model::NetworkProfile.new.tap do |net_profile|
+                    net_profile.network_interfaces = [
+                        model::NetworkInterfaceReference.new.tap do |ref|
+                            ref.id = nic.id
+                            ref.primary = true
+                        end
+                    ]
+                end
+            end
+
+            vm = @client.compute.virtual_machines.create_or_update(@name, name, vm_create_params)
         end
 
         # create a virtual network in the resource group
@@ -37,7 +79,7 @@ module AzDriver
             subname     = opts[:subname] || 'default'
             sub_prefix  = opts[:sub_prefix] || '10.0.0.0/24'
 
-            model = AzDriver::Client.model("network")
+            model = AzDriver::Client::NetworkModels
             vnet_create_params = model::VirtualNetwork.new.tap do |vnet|
                 vnet.location = @region
                 vnet.address_space = model::AddressSpace.new.tap do |addr_space|

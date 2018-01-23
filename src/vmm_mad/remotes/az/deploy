@@ -34,6 +34,7 @@ host  = ARGV[1]
 id    = ARGV[2]
 
 # command example
+# /var/lib/one/remotes/vmm/az/deploy '/var/lib/one/vms/125/deployment.0' 'azure00' 125 azure00
 # /var/lib/one/remotes/vmm/az/deploy '/var/lib/one/vms/123/deployment.0' 'azure00' 123 azure00
 
 begin
@@ -44,6 +45,11 @@ begin
 
     host_id = pool["/HOST_POOL/HOST[NAME='#{host}']/ID"].to_i
     location = pool["/HOST_POOL/HOST[NAME='#{host}']/TEMPLATE/REGION_NAME"].to_s
+
+    xml=File.read(dfile)
+
+    # deployment info:
+    dinfo = AzDriver::Helper.get_deployment_info(host, xml, location)
 
     #vm = OpenNebula::VirtualMachine.new_with_id(id, one_client)
     #vm.info
@@ -67,18 +73,12 @@ begin
 
     opts_new[:name] = "one-#{id}"
     vm = AzDriver::VirtualMachine.new(opts_new).tap do |az_vm|
-        network.create_nic(opts_new[:name])
+        nic = network.create_nic(az_vm.name)
+        az_vm.az_item = rgroup.create_vm(dinfo, az_vm.name, nic)
     end
 
     #lcm_state = vm.lcm_state_str
     #deploy_id = vm.deploy_id
-
-    xml=File.read(dfile)
-    dinfo = AzDriver::Helper.get_deployment_info(host, xml, location)
-    rgroup.create_vm(dinfo)
-
-    #az_drv = AzureDriver.new(host)
-
 
     #puts az_drv.deploy(id, host, text, lcm_state, deploy_id)
 
