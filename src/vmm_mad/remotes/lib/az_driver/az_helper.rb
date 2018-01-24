@@ -1,6 +1,31 @@
 
 module AzDriver
-    class Helper
+    class Config
+        attr_reader  :public_cloud_az_conf
+        attr_reader  :instance_types
+        attr_reader  :to_inst
+
+        def initialize()
+            @to_inst ={}
+            @public_cloud_az_conf  = YAML::load(File.read(AZ_DRIVER_CONF))
+
+            if @public_cloud_az_conf['proxy_uri']
+                ENV['HTTP_PROXY'] = @public_cloud_az_conf['proxy_uri']
+            end
+
+            @instance_types = @public_cloud_az_conf['instance_types']
+            @instance_types.keys.each{ |key|
+                @to_inst[key.upcase] = key
+            }
+        end
+
+        def instance_type_capacity(name)
+            resource = @instance_types[@to_inst[name]] || @instance_types[name]
+            return 0, 0 if resource.nil?
+            return (resource['cpu'].to_f * 100).to_i ,
+                   (resource['memory'].to_f * 1024 * 1024).to_i
+        end
+    end
 
         def self.host_credentials(one_host)
             opts = {}
@@ -10,6 +35,13 @@ module AzDriver
             opts[:tenant_id]     = one_host["TEMPLATE/AZ_TENANT"]
 
             opts
+        end
+
+        def self.retrieve_host(name)
+            pool = OpenNebula::HostPool.new(OpenNebula::Client.new)
+            pool.info
+            objects=pool.select {|object| object.name == name }
+            objects.first
         end
 
         def self.host_credentials_with_id(host_id)
@@ -85,5 +117,28 @@ module AzDriver
             az
         end
 
-    end
+        # Build template for importation
+        def self.vm_to_one(vm, host, config)
+            cpu, mem = config.instance_type_capacity(vm.size)
+
+            mem = mem.to_i / 1024 # Memory for templates expressed in MB
+            cpu = cpu.to_f / 100  # CPU expressed in units
+
+            vm.set_resources(cpu, mem)
+
+            str = "NAME   = \"Instance from #{vm.name}\"\n"\
+                  "CPU    = \"#{cpu}\"\n"\
+                  "vCPU   = \"#{cpu.ceil}\"\n"\
+                  "MEMORY = \"#{mem}\"\n"\
+                  "HYPERVISOR = \"AZURE\"\n"\
+                  "PUBLIC_CLOUD = [\n"\
+                  "  TYPE  =\"azure\"\n"\
+                  "]\n"\
+                  "IMPORT_VM_ID    = \"#{vm.name}\"\n"\
+                  "SCHED_REQUIREMENTS=\"NAME=\\\"#{host}\\\"\"\n"\
+                  "DESCRIPTION = \"Instance imported from Azure, from instance"\
+                  " #{vm.name}\"\n"
+
+            str
+        end
 end

@@ -29,10 +29,23 @@ $: << RUBY_LIB_LOCATION
 require 'az_driver'
 
 host = ARGV[-1]
-az_drv = AzureDriver.new(host)
+
+#az_drv = AzureDriver.new(host)
 
 begin
-    az_drv.monitor_all_vms
+    one_host = AzDriver.retrieve_host(host)
+    opts_credentials = AzDriver.host_credentials(one_host)
+    client = AzDriver::Client.new(opts_credentials)
+
+    opts_new = {
+        client: client,
+        region: one_host["TEMPLATE/REGION_NAME"],
+        gname:  host
+    }
+    rgroup= AzDriver::ResourceGroup.new(opts_new)
+
+    rgroup.monitor_vms(host)
+
 rescue => e
     OpenNebula.handle_driver_exception("im poll", e, host)
 end

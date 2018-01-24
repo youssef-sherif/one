@@ -4,37 +4,66 @@ module AzDriver
         attr_accessor :az_item
         attr_accessor :name
 
+        ATTRS = {
+            AZ_DISK: :diskname
+        }
+
+
         def initialize(opts = {})
             @group_name = opts[:gname]
             @name = opts[:name]
 
             @client = opts[:client].compute || opts[:client] || nil
             @az_item = opts[:az_item] || nil
+            @one = {}
+        end
+
+        def size()
+            if @az_item
+                @az_item.hardware_profile.vm_size
+            end
+        end
+
+        def diskname()
+            if @az_item
+                os_disk = @az_item.storage_profile.os_disk.name
+            end
         end
 
 		def print()
             AzDriver::Helper.print_item(@az_item)
 		end
 
+        def set_resources(cpu, mem)
+            @one[:hw] = {
+                cpu: cpu,
+                mem: mem
+            }
+        end
+
+        def used_resources()
+            @one[:hw] unless @one[:hw].nil?
+        end
+
         def status
             @status unless @status.nil?
         end
 
         def info()
-            view = @client.virtual_machines.instance_view(@group_name, @az_item.name)
+            view = @client.virtual_machines.instance_view(@group_name, name)
             @status = view.statuses[1]
         end
 
         def start()
-            @client.virtual_machines.start(@group_name, @az_item.name)
+            @client.virtual_machines.start(@group_name, name)
         end
 
         def stop()
-            @client.virtual_machines.power_off(@group_name, @az_item.name)
+            @client.virtual_machines.power_off(@group_name, name)
         end
 
         def poweroff()
-            @client.virtual_machines.deallocate(@group_name, @az_item.name)
+            @client.virtual_machines.deallocate(@group_name, name)
         end
     end
 end

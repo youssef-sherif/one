@@ -38,7 +38,6 @@ id    = ARGV[2]
 # /var/lib/one/remotes/vmm/az/deploy '/var/lib/one/vms/123/deployment.0' 'azure00' 123 azure00
 
 begin
-
     one_client = OpenNebula::Client.new
     pool = OpenNebula::HostPool.new(one_client)
     pool.info
@@ -49,12 +48,12 @@ begin
     xml=File.read(dfile)
 
     # deployment info:
-    dinfo = AzDriver::Helper.get_deployment_info(host, xml, location)
+    dinfo = AzDriver.get_deployment_info(host, xml, location)
 
     #vm = OpenNebula::VirtualMachine.new_with_id(id, one_client)
     #vm.info
 
-    opts_credentials = AzDriver::Helper.host_credentials_with_id(host_id)
+    opts_credentials = AzDriver.host_credentials_with_id(host_id)
     client = AzDriver::Client.new(opts_credentials)
 
     opts_new = {

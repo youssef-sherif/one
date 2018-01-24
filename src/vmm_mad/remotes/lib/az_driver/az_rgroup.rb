@@ -4,8 +4,8 @@ module AzDriver
 
         def initialize(opts = {})
             @name   = opts[:gname]
-            @region = opts[:region]
             @client = opts[:client]
+            @region = opts[:region]
             @az_item = opts[:az_item] || nil
         end
 
@@ -55,7 +55,7 @@ module AzDriver
                 end
 
                 vm.hardware_profile = model::HardwareProfile.new.tap do |hardware|
-                    hardware.vm_size = model::VirtualMachineSizeTypes::StandardDS2V2
+                    hardware.vm_size = "Basic_A0"
                 end
 
                 vm.network_profile = model::NetworkProfile.new.tap do |net_profile|
@@ -108,32 +108,134 @@ module AzDriver
             end
         end
 
-        def monitor_vms()
+        def monitor_vms(host)
+
+            # hw vars:
+            totalmemory = 0
+            totalcpu    = 0
+            usedcpu    = 0
+            usedmemory = 0
+
+            conf = AzDriver::Config.new()
+
+            host_obj=AzDriver.retrieve_host(host)
+            capacity = host_obj.to_hash["HOST"]["TEMPLATE"]["CAPACITY"]
+            if !capacity.nil? && Hash === capacity
+                capacity.each{ |name, value|
+                    cpu, mem = conf.instance_type_capacity(name)
+
+                    totalmemory += mem * value.to_i
+                    totalcpu    += cpu * value.to_i
+                }
+            else
+                raise "you must define CAPACITY section properly! check the template"
+            end
+
+            host_info =  "HYPERVISOR=AZURE\n"
+            host_info << "PUBLIC_CLOUD=YES\n"
+            host_info << "PRIORITY=-1\n"
+            host_info << "TOTALMEMORY=#{totalmemory.round}\n"
+            host_info << "TOTALCPU=#{totalcpu}\n"
+            host_info << "HOSTNAME=\"#{host}\"\n"
+
+            vms_info   = "VM_POLL=YES\n"
+
             work_q = Queue.new
+            opts_new = {
+                gname: @name,
+                client: @client
+            }
             @client.compute.virtual_machines.list(@name).each do |vm|
-                work_q.push AzDriver::VirtualMachine.new(@client.compute, @name, vm)
+                opts_new[:az_item] = vm
+                opts_new[:name] = vm.name
+                work_q.push AzDriver::VirtualMachine.new(opts_new)
             end
             workers = (0...10).map do
                 Thread.new do
                     begin
                         while i = work_q.pop(true)
+
+                            # monitoring vm info:
                             i.info
-                            if i.status
-                                puts i.status.code
-                            end
+                            next if i.status.nil?
+
+                            poll_data = parse_poll(i)
+
+                            # basic vm info:
+                            vm_template_to_one = AzDriver.vm_to_one(i, host, conf)
+                            vm_template_to_one = Base64.encode64(vm_template_to_one)
+                            vm_template_to_one = vm_template_to_one.gsub("\n","")
+
+                            one_id = i.name.split('-').last
+
+                            vms_info << "VM=[\n"
+                            vms_info << "  ID=#{one_id || -1},\n"
+                            vms_info << "  DEPLOY_ID=#{i.name},\n"
+                            vms_info << "  VM_NAME=#{i.name},\n"
+                            vms_info << "  IMPORT_TEMPLATE=\"#{vm_template_to_one}\",\n"
+                            vms_info << "  POLL=\"#{poll_data}\" ]\n"
+
+                            used_res = i.used_resources
+                            usedcpu    += used_res[:cpu]
+                            usedmemory += used_res[:mem]
                         end
                     rescue ThreadError => e
                     rescue Exception => e
-                        raise e.message
+                        raise e
                     end
                 end
             end; "ok"
             workers.map(&:join); "ok"
+
+            host_info << "USEDMEMORY=#{usedmemory.round}\n"
+            host_info << "USEDCPU=#{usedcpu.round}\n"
+            host_info << "FREEMEMORY=#{(totalmemory - usedmemory).round}\n"
+            host_info << "FREECPU=#{(totalcpu - usedcpu).round}\n"
+
+            puts host_info
+            puts vms_info
         end
 
         def get_vm(name)
             object = @client.compute.virtual_machines.get(@name, name, 'InstanceView')
             return AzDriver::VirtualMachine.new(@client.compute, @name, object)
+        end
+
+    private
+
+        def parse_poll(instance)
+            begin
+                info =  "#{AzureDriver::POLL_ATTRIBUTE[:memory]}=0 " \
+                        "#{AzureDriver::POLL_ATTRIBUTE[:cpu]}=0 " \
+                        "#{AzureDriver::POLL_ATTRIBUTE[:nettx]}=0 " \
+                        "#{AzureDriver::POLL_ATTRIBUTE[:netrx]}=0 "
+
+                state = ""
+                if !instance
+                    state = VM_STATE[:deleted]
+                else
+                    state = case instance.status.code.split("/").last
+                    when "running", "starting"
+                        AzureDriver::VM_STATE[:active]
+                    when "suspended", "stopping",
+                        AzureDriver::VM_STATE[:paused]
+                    else
+                        AzureDriver::VM_STATE[:unknown]
+                    end
+                end
+                info << "#{AzureDriver::POLL_ATTRIBUTE[:state]}=#{state} "
+
+                AzDriver::VirtualMachine::ATTRS.each do |attr, function|
+                    info << "#{attr.to_s.upcase}="
+                    info << "\\\"#{instance.method(function).call}\\\" "
+                end
+
+                info
+            rescue
+                # Unknown state if exception occurs retrieving information from
+                # an instance
+                "#{AzureDriver::POLL_ATTRIBUTE[:state]}=#{VM_STATE[:unknown]} "
+            end
         end
     end
 end
