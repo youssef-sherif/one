@@ -34,8 +34,22 @@ file      = ARGV[1]
 host      = ARGV[2]
 
 begin
-    az_drv = AzureDriver.new(host)
-    az_drv.save(deploy_id)
+    #id = deploy_id.match(/([^_]+)-(.+)/)[-1]
+    #vm = OpenNebula::VirtualMachine.new_with_id(id, OpenNebula::Client.new)
+    #vm.info
+    #
+    opts_credentials = AzDriver.host_credentials_with_name(host)
+    client = AzDriver::Client.new(opts_credentials)
+
+    opts = {
+        gname: host,
+        name: deploy_id,
+        client: client
+    }
+
+    az_vm = AzDriver::VirtualMachine.new(opts).tap do |vm|
+        vm.stop
+    end
 rescue => e
     OpenNebula.handle_driver_exception("Save", e, host, deploy_id, nil, file)
 end

@@ -42,7 +42,10 @@ begin
         region: one_host["TEMPLATE/REGION_NAME"],
         gname:  host
     }
-    rgroup= AzDriver::ResourceGroup.new(opts_new)
+    rgroup= AzDriver::ResourceGroup.new(opts_new).tap do |rg|
+        rg.create() unless rg.exist?
+    end
+
 
     rgroup.monitor_vms(host)
 

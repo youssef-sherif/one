@@ -18,6 +18,10 @@ module AzDriver
             @one = {}
         end
 
+        def get(expand = nil)
+            @az_item = @client.virtual_machines.get(@group_name, @name , expand)
+        end
+
         def size()
             if @az_item
                 @az_item.hardware_profile.vm_size
@@ -55,15 +59,19 @@ module AzDriver
         end
 
         def start()
-            @client.virtual_machines.start(@group_name, name)
+            @client.virtual_machines.start(@group_name, @name)
         end
 
         def stop()
-            @client.virtual_machines.power_off(@group_name, name)
+            @client.virtual_machines.power_off(@group_name, @name)
         end
 
         def poweroff()
-            @client.virtual_machines.deallocate(@group_name, name)
+            @client.virtual_machines.deallocate(@group_name, @name)
+        end
+
+        def delete()
+            @client.virtual_machines.delete(@group_name, @name)
         end
     end
 end

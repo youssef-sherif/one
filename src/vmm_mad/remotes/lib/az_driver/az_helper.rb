@@ -37,6 +37,20 @@ module AzDriver
             opts
         end
 
+        def self.host_credentials_with_name(host)
+
+            pool = OpenNebula::HostPool.new(OpenNebula::Client.new)
+            pool.info
+
+            opts = {}
+            opts[:sub_id]        = pool["/HOST_POOL/HOST[NAME='#{host}']/TEMPLATE/AZ_SUB"]
+            opts[:client_id]     = pool["/HOST_POOL/HOST[NAME='#{host}']/TEMPLATE/AZ_CLIENT"]
+            opts[:client_secret] = pool["/HOST_POOL/HOST[NAME='#{host}']/TEMPLATE/AZ_SECRET"]
+            opts[:tenant_id]     = pool["/HOST_POOL/HOST[NAME='#{host}']/TEMPLATE/AZ_TENANT"]
+
+            opts
+        end
+
         def self.retrieve_host(name)
             pool = OpenNebula::HostPool.new(OpenNebula::Client.new)
             pool.info

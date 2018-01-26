@@ -2,6 +2,7 @@ module AzDriver
     class ResourceGroup
         attr_accessor :az_item
 
+        # create the driver resource object
         def initialize(opts = {})
             @name   = opts[:gname]
             @client = opts[:client]
@@ -9,10 +10,24 @@ module AzDriver
             @az_item = opts[:az_item] || nil
         end
 
-        # create the azure resource group
+        # check if the resource group exist
+        def exist?
+            @client.resource.resource_groups.check_existence(@name)
+        end
+
+        # check if object exist inside the resource group
+        def exist_object?(object)
+            @client.resource.deployments.check_existence(@name, object)
+        end
+
+
+        def get_object(object)
+        end
+
+
+        # create the azure remote resource group
         def create()
             model = AzDriver::Client::ResourceModels
-
             resource_group_params = model::ResourceGroup.new.tap do |rg|
               rg.location = @region
             end
@@ -20,6 +35,7 @@ module AzDriver
             @az_item = @client.resource.resource_groups.create_or_update(@name, resource_group_params)
         end
 
+        # create the azure remote virtual machine
         PARAMS = ["IMAGE", "PUBLISHER", "SKU", "VM_USER", "VM_PASSWORD"]
         def create_vm(dinfo, name, nic, storage = nil)
             opts = {}
@@ -44,14 +60,6 @@ module AzDriver
                         ref.sku = opts["SKU"]
                         ref.version = "latest"
                     end
-                    #store_profile.os_disk = model::OSDisk.new.tap do |os_disk|
-                    #    os_disk.name = "os-disk-#{name}"
-                    #    os_disk.caching = model::CachingTypes::None
-                    #    os_disk.create_option = model::DiskCreateOptionTypes::FromImage
-                    #    os_disk.vhd = model::VirtualHardDisk.new.tap do |vhd|
-                    #        vhd.uri = "https://#{storage_acct.name}.blob.core.windows.net/rubycontainer/#{name}.vhd"
-                    #    end
-                    #end
                 end
 
                 vm.hardware_profile = model::HardwareProfile.new.tap do |hardware|
@@ -202,6 +210,8 @@ module AzDriver
         end
 
     private
+    #deallocated
+    #starting
 
         def parse_poll(instance)
             begin
@@ -217,8 +227,10 @@ module AzDriver
                     state = case instance.status.code.split("/").last
                     when "running", "starting"
                         AzureDriver::VM_STATE[:active]
-                    when "suspended", "stopping",
+                    when "suspended", "stopping", "stopped"
                         AzureDriver::VM_STATE[:paused]
+                    when "deallocated"
+                        AzureDriver::VM_STATE[:deleted]
                     else
                         AzureDriver::VM_STATE[:unknown]
                     end

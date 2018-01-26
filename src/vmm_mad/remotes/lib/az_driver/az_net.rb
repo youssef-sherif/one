@@ -21,12 +21,10 @@ module AzDriver
             end
         end
 
-        def create_nic(vm_name)
-            @nics[vm_name] = []
+        def create_nic(nic_name)
 
             location = @az_item.location
             model = AzDriver::Client::NetworkModels
-            nic_name = "nic-#{vm_name}"
             nic = @client.network_interfaces.create_or_update(
                 @group_name,
                 nic_name,

@@ -50,7 +50,7 @@ begin
     # deployment info:
     dinfo = AzDriver.get_deployment_info(host, xml, location)
 
-    #vm = OpenNebula::VirtualMachine.new_with_id(id, one_client)
+    #vm = OpenNebula::VirtualMachine.new_with_id(id, OpenNebula::Client.new)
     #vm.info
 
     opts_credentials = AzDriver.host_credentials_with_id(host_id)
@@ -62,25 +62,23 @@ begin
         gname:  host
     }
 
-    rgroup= AzDriver::ResourceGroup.new(opts_new).tap do |rg|
-        rg.create()
-    end
-
+    rgroup= AzDriver::ResourceGroup.new(opts_new)
     network = AzDriver::Network.new(opts_new).tap do |net|
         net.az_item = rgroup.create_net()
     end
 
-    opts_new[:name] = "one-#{id}"
-    vm = AzDriver::VirtualMachine.new(opts_new).tap do |az_vm|
-        nic = network.create_nic(az_vm.name)
-        az_vm.az_item = rgroup.create_vm(dinfo, az_vm.name, nic)
+    vm_name = "one-#{id}"
+    opts_new[:name] = vm_name
+    nic_name = "nic-#{vm_name}"
+
+    unless rgroup.exist_object?(opts_new[:name])
+        vm = AzDriver::VirtualMachine.new(opts_new).tap do |az_vm|
+            nic = network.create_nic(nic_name)
+            az_vm.az_item = rgroup.create_vm(dinfo, az_vm.name, nic)
+        end
     end
 
-    #lcm_state = vm.lcm_state_str
-    #deploy_id = vm.deploy_id
-
-    #puts az_drv.deploy(id, host, text, lcm_state, deploy_id)
-
+    puts vm_name
 rescue => e
     OpenNebula.handle_driver_exception("Deploy", e, host, "", id, dfile)
 end
