@@ -722,6 +722,7 @@ static const map<std::string, unsigned int> MAX_HOST_VAR_SIZES = {
     {"EC2_SECRET", 41},
     {"AZ_ID", 41},
     {"AZ_CERT", 3130},
+    {"AZ_SECRET", 45},
     {"VCENTER_PASSWORD", 22}
 };
 
