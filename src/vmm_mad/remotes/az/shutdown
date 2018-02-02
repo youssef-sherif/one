@@ -35,8 +35,14 @@ host      = ARGV[1]
 vm_id     = ARGV[-2]
 
 
+TERMINATE_STATES = ["SHUTDOWN", "SAVE_SUSPEND"]
 
 begin
+    vm_one = OpenNebula::VirtualMachine.new_with_id(vm_id, OpenNebula::Client.new)
+    vm_one.info
+    lcm_state = vm_one.lcm_state_str
+
+
     opts_credentials = AzDriver.host_credentials_with_name(host)
     client = AzDriver::Client.new(opts_credentials)
 
@@ -46,9 +52,23 @@ begin
         client: client
     }
 
-    az_vm = AzDriver::VirtualMachine.new(opts).tap do |vm|
-        vm.poweroff
+    az_vm = AzDriver::VirtualMachine.new(opts)
+
+    if TERMINATE_STATES.include? lcm_state
+        nics = az_vm.nics
+
+        az_net = AzDriver::Network.new(opts)
+        disk = az_vm.diskname
+
+        az_vm.delete
+        az_vm.delete_disk(disk)
+        nics.each do |nic|
+            az_net.delete_nic(nic)
+        end
+    else
+       az_vm.poweroff
     end
+
 rescue => e
     OpenNebula.handle_driver_exception("Shutdown", e, host, deploy_id, vm_id)
 end

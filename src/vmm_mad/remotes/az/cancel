@@ -46,6 +46,7 @@ begin
     az_vm = AzDriver::VirtualMachine.new(opts).tap do |vm|
         vm.get
     end
+
     nics = az_vm.nics
 
     az_net = AzDriver::Network.new(opts)
@@ -53,9 +54,11 @@ begin
 
     az_vm.delete
     az_vm.delete_disk(disk)
+
     nics.each do |nic|
         az_net.delete_nic(nic)
     end
+
 rescue => e
     OpenNebula.handle_driver_exception("Cancel", e, host, deploy_id)
 end

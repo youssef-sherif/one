@@ -73,8 +73,14 @@ module AzDriver
         end
 
         def info()
-            view = @client.virtual_machines.instance_view(@group_name, @name)
-            @status = view.statuses[1]
+            begin
+                view = @client.virtual_machines.instance_view(@group_name, @name)
+                @status = view.statuses[1]
+            rescue => e
+                return false
+            end
+
+            return true
         end
 
         def start()
@@ -98,10 +104,9 @@ module AzDriver
             raise "Waiting for an invalid state" if !ready
             t_init = Time.now
             begin
-                info
-                unless @status.nil?
+                raise "Ended in invalid state" if Time.now - t_init > time_out
+                if info
                     wstate =  @status.code.split("/").last rescue nil
-                    raise "Ended in invalid state" if Time.now - t_init > time_out
                 end
                 sleep 3
             end while wstate != state

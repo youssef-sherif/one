@@ -45,17 +45,17 @@ begin
 
     lcm_state = vm_one.lcm_state_str
 
-    if lcm_state == "SAVE_SUSPEND"
-        opts = {
-            gname: host,
-            name: deploy_id,
-            client: client
-        }
+    opts = {
+        gname: host,
+        name: deploy_id,
+        client: client
+    }
+    az_vm = AzDriver::VirtualMachine.new(opts).tap do |vm|
+        vm.wait_for("running")
+    end
 
-        az_vm = AzDriver::VirtualMachine.new(opts).tap do |vm|
-            vm.wait_for("running")
-            vm.stop
-        end
+    if lcm_state == "SAVE_SUSPEND"
+        az_vm.stop
     elsif lcm_state == "SAVE_STOP"
         raise "not supported"
     end
