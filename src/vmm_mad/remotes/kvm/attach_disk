@@ -69,7 +69,9 @@ XML+=" <target dev='$(xml_esc "${TARGET}")'/>"
 [ "${READONLY}" = 'yes' ] && XML+=" <readonly/>"
 
 if [ -n "${TOTAL_BYTES_SEC}${READ_BYTES_SEC}${WRITE_BYTES_SEC}" ] || \
-   [ -n "${TOTAL_IOPS_SEC}${READ_IOPS_SEC}${WRITE_IOPS_SEC}" ];
+   [ -n "${TOTAL_IOPS_SEC}${READ_IOPS_SEC}${WRITE_IOPS_SEC}" ] || \
+   [ -n "${TOTAL_IOPS_SEC_MAX_LENGTH}${READ_IOPS_SEC_MAX_LENGTH}${WRITE_IOPS_SEC_MAX}" ] || \
+   [ -n "${TOTAL_IOPS_SEC_MAX_LENGTH}${READ_IOPS_SEC_MAX_LENGTH}${WRITE_IOPS_SEC_MAX}" ];
 then
     XML+=" <iotune>"
 
@@ -86,6 +88,20 @@ then
         XML+=" <read_iops_sec>$(xml_esc "${READ_IOPS_SEC}")</read_iops_sec>"
     [ -n "${WRITE_IOPS_SEC}" ] && \
         XML+=" <write_iops_sec>$(xml_esc "${WRITE_IOPS_SEC}")</write_iops_sec>"
+
+    [ -n "${TOTAL_BYTES_SEC_MAX_LENGTH}" ] && \
+        XML+=" <total_bytes_sec_max_length>$(xml_esc "${TOTAL_BYTES_SEC_MAX_LENGTH}")</total_bytes_sec_max_length>"
+    [ -n "${READ_BYTES_SEC_MAX_LENGTH}" ] && \
+        XML+=" <read_bytes_sec_max_length>$(xml_esc "${READ_BYTES_SEC_MAX_LENGTH}")</read_bytes_sec_max_length>"
+    [ -n "${WRITE_BYTES_SEC_MAX}" ] && \
+        XML+=" <write_bytes_sec_max>$(xml_esc "${WRITE_BYTES_SEC_MAX}")</write_bytes_sec_max>"
+
+    [ -n "${TOTAL_IOPS_SEC_MAX_LENGTH}" ] && \
+        XML+=" <total_iops_sec_max_length>$(xml_esc "${TOTAL_IOPS_SEC_MAX_LENGTH}")</total_iops_sec_max_length>"
+    [ -n "${READ_IOPS_SEC_MAX_LENGTH}" ] && \
+        XML+=" <read_iops_sec_max_length>$(xml_esc "${READ_IOPS_SEC_MAX_LENGTH}")</read_iops_sec_max_length>"
+    [ -n "${WRITE_IOPS_SEC_MAX}" ] && \
+        XML+=" <write_iops_sec_max>$(xml_esc "${WRITE_IOPS_SEC_MAX}")</write_iops_sec_max>"
 
     XML+=" </iotune>"
 fi
