@@ -36,15 +36,21 @@ DISCARD=${DISCARD:-${DEFAULT_ATTACH_DISCARD}}
 DISK_IO=${DISK_IO:-${DEFAULT_ATTACH_IO}}
 TOTAL_BYTES_SEC=${TOTAL_BYTES_SEC:-${DEFAULT_ATTACH_TOTAL_BYTES_SEC}}
 TOTAL_BYTES_SEC_MAX_LENGTH=${TOTAL_BYTES_SEC_MAX_LENGTH:-${DEFAULT_ATTACH_TOTAL_BYTES_SEC_MAX_LENGTH}}
+TOTAL_BYTES_SEC_MAX=${TOTAL_BYTES_SEC_MAX:-${DEFAULT_ATTACH_TOTAL_BYTES_SEC_MAX}}
 READ_BYTES_SEC=${READ_BYTES_SEC:-${DEFAULT_ATTACH_READ_BYTES_SEC}}
 READ_BYTES_SEC_MAX_LENGTH=${READ_BYTES_SEC_MAX_LENGTH:-${DEFAULT_ATTACH_READ_BYTES_SEC_MAX_LENGTH}}
+READ_BYTES_SEC_MAX=${READ_BYTES_SEC_MAX:-${DEFAULT_ATTACH_READ_BYTES_SEC_MAX}}
 WRITE_BYTES_SEC=${WRITE_BYTES_SEC:-${DEFAULT_ATTACH_WRITE_BYTES_SEC}}
+WRITE_BYTES_SEC_MAX_LENGTH=${WRITE_BYTES_SEC_MAX_LENGTH:-${DEFAULT_ATTACH_WRITE_BYTES_SEC_MAX_LENGTH}}
 WRITE_BYTES_SEC_MAX=${WRITE_BYTES_SEC_MAX:-${DEFAULT_ATTACH_WRITE_BYTES_SEC_MAX}}
 TOTAL_IOPS_SEC=${TOTAL_IOPS_SEC:-${DEFAULT_ATTACH_TOTAL_IOPS_SEC}}
 TOTAL_IOPS_SEC_MAX_LENGTH=${TOTAL_IOPS_SEC_MAX_LENGTH:-${DEFAULT_ATTACH_TOTAL_IOPS_SEC_MAX_LENGTH}}
+TOTAL_IOPS_SEC_MAX=${TOTAL_IOPS_SEC_MAX:-${DEFAULT_ATTACH_TOTAL_IOPS_SEC_MAX}}
 READ_IOPS_SEC=${READ_IOPS_SEC:-${DEFAULT_ATTACH_READ_IOPS_SEC}}
 READ_IOPS_SEC_MAX_LENGTH=${READ_IOPS_SEC_MAX_LENGTH:-${DEFAULT_ATTACH_READ_IOPS_SEC_MAX_LENGTH}}
+READ_IOPS_SEC_MAX=${READ_IOPS_SEC_MAX:-${DEFAULT_ATTACH_READ_IOPS_SEC_MAX}}
 WRITE_IOPS_SEC=${WRITE_IOPS_SEC:-${DEFAULT_ATTACH_WRITE_IOPS_SEC}}
+WRITE_IOPS_SEC_MAX_LENGTH=${WRITE_IOPS_SEC_MAX_LENGTH:-${DEFAULT_ATTACH_WRITE_IOPS_SEC_MAX_LENGTH}}
 WRITE_IOPS_SEC_MAX=${WRITE_IOPS_SEC_MAX:-${DEFAULT_ATTACH_WRITE_IOPS_SEC_MAX}}
 
 # disk XML
@@ -70,8 +76,10 @@ XML+=" <target dev='$(xml_esc "${TARGET}")'/>"
 
 if [ -n "${TOTAL_BYTES_SEC}${READ_BYTES_SEC}${WRITE_BYTES_SEC}" ] || \
    [ -n "${TOTAL_IOPS_SEC}${READ_IOPS_SEC}${WRITE_IOPS_SEC}" ] || \
-   [ -n "${TOTAL_IOPS_SEC_MAX_LENGTH}${READ_IOPS_SEC_MAX_LENGTH}${WRITE_IOPS_SEC_MAX}" ] || \
-   [ -n "${TOTAL_IOPS_SEC_MAX_LENGTH}${READ_IOPS_SEC_MAX_LENGTH}${WRITE_IOPS_SEC_MAX}" ];
+   [ -n "${TOTAL_IOPS_SEC_MAX_LENGTH}${READ_IOPS_SEC_MAX_LENGTH}${WRITE_IOPS_SEC_MAX_LENGTH}" ] || \
+   [ -n "${TOTAL_IOPS_SEC_MAX}${READ_IOPS_SEC_MAX}${WRITE_IOPS_SEC_MAX}" ] || \
+   [ -n "${TOTAL_IOPS_SEC_MAX_LENGTH}${READ_IOPS_SEC_MAX_LENGTH}${WRITE_IOPS_SEC_MAX_LENGTH}" ] || \
+   [ -n "${TOTAL_IOPS_SEC_MAX}${READ_IOPS_SEC_MAX}${WRITE_IOPS_SEC_MAX}" ];
 then
     XML+=" <iotune>"
 
@@ -89,19 +97,43 @@ then
     [ -n "${WRITE_IOPS_SEC}" ] && \
         XML+=" <write_iops_sec>$(xml_esc "${WRITE_IOPS_SEC}")</write_iops_sec>"
 
-    [ -n "${TOTAL_BYTES_SEC_MAX_LENGTH}" ] && \
+    [ -n "${TOTAL_BYTES_SEC_MAX_LENGTH}${TOTAL_BYTES_SEC_MAX}" ] && \
         XML+=" <total_bytes_sec_max_length>$(xml_esc "${TOTAL_BYTES_SEC_MAX_LENGTH}")</total_bytes_sec_max_length>"
-    [ -n "${READ_BYTES_SEC_MAX_LENGTH}" ] && \
-        XML+=" <read_bytes_sec_max_length>$(xml_esc "${READ_BYTES_SEC_MAX_LENGTH}")</read_bytes_sec_max_length>"
-    [ -n "${WRITE_BYTES_SEC_MAX}" ] && \
-        XML+=" <write_bytes_sec_max>$(xml_esc "${WRITE_BYTES_SEC_MAX}")</write_bytes_sec_max>"
 
-    [ -n "${TOTAL_IOPS_SEC_MAX_LENGTH}" ] && \
+    [ -n "${TOTAL_BYTES_SEC_MAX}" ] && \
+        XML+=" <total_bytes_sec_max>$(xml_esc "${TOTAL_BYTES_SEC_MAX}")</total_bytes_sec_max>"
+
+    [ -n "${READ_BYTES_SEC_MAX_LENGTH}${READ_BYTES_SEC_MAX}" ] && \
+        XML+=" <read_bytes_sec_max_length>$(xml_esc "${READ_BYTES_SEC_MAX_LENGTH}")</read_bytes_sec_max_length>"
+
+    [ -n "${READ_BYTES_SEC_MAX}" ] && \
+        XML+=" <read_bytes_sec_max>$(xml_esc "${READ_BYTES_SEC_MAX}")</read_bytes_sec_max>"
+
+    [ -n "${WRITE_BYTES_SEC_MAX_LENGTH}${WRITE_BYTES_SEC_MAX}" ] && \
+        XML+=" <write_bytes_sec_max_length>$(xml_esc "${WRITE_BYTES_SEC_MAX}")</write_bytes_sec_max_length>"
+
+    [ -n "${WRITE_BYTES_SEC_MAX}" ] && \
+        XML+=" <write_bytes_sec_max>$(xml_esc "${WRITE_BYTES_}")</write_bytes_sec_max>"
+
+
+    [ -n "${TOTAL_IOPS_SEC_MAX_LENGTH}${TOTAL_IOPS_SEC_MAX}" ] && \
         XML+=" <total_iops_sec_max_length>$(xml_esc "${TOTAL_IOPS_SEC_MAX_LENGTH}")</total_iops_sec_max_length>"
-    [ -n "${READ_IOPS_SEC_MAX_LENGTH}" ] && \
+
+    [ -n "${TOTAL_IOPS_SEC_MAX}" ] && \
+        XML+=" <total_iops_sec_max>$(xml_esc "${TOTAL_IOPS_SEC_MAX}")</total_iops_sec_max>"
+
+    [ -n "${READ_IOPS_SEC_MAX_LENGTH}${READ_IOPS_SEC_MAX}" ] && \
         XML+=" <read_iops_sec_max_length>$(xml_esc "${READ_IOPS_SEC_MAX_LENGTH}")</read_iops_sec_max_length>"
+
+    [ -n "${READ_IOPS_SEC_MAX}" ] && \
+        XML+=" <read_iops_sec_max>$(xml_esc "${READ_IOPS_SEC_MAX}")</read_iops_sec_max>"
+
+    [ -n "${WRITE_IOPS_SEC_MAX_LENGTH}${WRITE_IOPS_SEC_MAX}" ] && \
+        XML+=" <write_iops_sec_max_length>$(xml_esc "${WRITE_IOPS_SEC_MAX}")</write_iops_sec_max_length>"
+
     [ -n "${WRITE_IOPS_SEC_MAX}" ] && \
-        XML+=" <write_iops_sec_max>$(xml_esc "${WRITE_IOPS_SEC_MAX}")</write_iops_sec_max>"
+        XML+=" <write_iops_sec_max>$(xml_esc "${WRITE_IOPS_}")</write_iops_sec_max>"
+
 
     XML+=" </iotune>"
 fi
