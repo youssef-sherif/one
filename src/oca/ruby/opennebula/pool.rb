@@ -175,6 +175,7 @@ module OpenNebula
         # ONE_POOL_PAGE_SIZE. Any value > 2 will set a page size, a non
         # numeric value disables pagination.
         def get_hash(size=nil)
+
             allow_paginated = PAGINATED_POOLS.include?(@pool_name)
 
             if OpenNebula.pool_page_size && allow_paginated &&
@@ -185,9 +186,20 @@ module OpenNebula
                 return hash if OpenNebula.is_error?(hash)
                 { @pool_name => { @element_name => hash } }
             else
+
+            benchmarking_log_file = File.open($benchmarking_file_location, 'a')
+            benchmarking_log_file << "--Mark--\n"
+            t1 = Time.now
+
                 rc=info
                 return rc if OpenNebula.is_error?(rc)
+
+            t2 = Time.now
+            benchmarking_log_file << "#{t2} --- Previous request didn't use paginated queries and took an overall time of #{t2 - t1}\n"
+            benchmarking_log_file.close
+
                 to_hash
+
             end
         end
 
@@ -200,18 +212,36 @@ module OpenNebula
 
             parser=ParsePoolSax.new(@pool_name, @element_name)
 
+            benchmarking_log_file = File.open($benchmarking_file_location, 'a')
+            benchmarking_log_file << "--Mark--\n"
+            t1 = Time.now
+
+	    counter = 0
+
             while true
+#		t1_1 = Time.now
+#		benchmarking_log_file << "#{t1_1} --- Calling oned daemon, page #{current}\n"
+
                 a=@client.call("#{@pool_name.delete('_').downcase}.info",
                     @user_id, current, -size, -1)
                 return a if OpenNebula.is_error?(a)
+#		t1_2 = Time.now
+#		benchmarking_log_file << "#{t1_2} --- Received response from oned for page #{current}\n"
+#		benchmarking_log_file << "#{t1_2} --- Page #{current} took #{t1_2 - t1_1} seconds\n"
 
                 a_array=parser.parse(a)
 
                 array   += a_array
                 current += size
 
+		counter += 1
+
                 break if !a || a_array.length<size
             end
+
+            t2 = Time.now
+            benchmarking_log_file << "#{t2} --- Previous #{counter} queries belonged to the same paginated request, and they took a total amount of #{t2 - t1} seconds to execute\n"
+            benchmarking_log_file.close
 
             array.compact!
             array=nil if array.length == 0

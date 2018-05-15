@@ -68,7 +68,16 @@ module OpenNebula
         def info(xml_method, root_element)
             return Error.new('ID not defined') if !@pe_id
 
+            benchmarking_log_file = File.open($benchmarking_file_location, 'a')
+            benchmarking_log_file << "--Mark--\n"
+            t1 = Time.now
+
             rc = @client.call(xml_method, @pe_id)
+
+            t2 = Time.now
+            benchmarking_log_file << "#{t2} --- A request for an element's info was submitted and it was returned in #{t2 - t1} seconds!!\n"
+            benchmarking_log_file.close
+
 
             if !OpenNebula.is_error?(rc)
                 initialize_xml(rc, root_element)
