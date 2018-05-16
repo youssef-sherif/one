@@ -21,6 +21,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <syslog.h>
+#include <math.h>
 
 #include "PoolObjectSQL.h"
 
@@ -99,9 +100,10 @@ public:
         const char *            module,
         const MessageType       type,
         const char *            message);
-
-private:
+//---PROFILE
+protected:
     string log_file_name;
+//---PROFILE
 };
 
 /**
@@ -136,6 +138,66 @@ public:
 private:
     pthread_mutex_t log_mutex;
 };
+
+//---PROFILE
+/**
+ *  Log messages to a log file
+ */
+class ProfileLog : public FileLog
+{
+public:
+    ProfileLog(const string&       file_name,
+               const MessageType   level    = WARNING,
+               ios_base::openmode  mode     = ios_base::app)
+                       :FileLog(file_name, level, mode)
+    {
+        clock_gettime(CLOCK_MONOTONIC, &estart);
+    }
+
+    ~ProfileLog()
+    {
+    }
+
+    void log(
+        const char *            module,
+        const MessageType       type,
+        const char *            message)
+    {
+        FileLog::log(module,type,message);
+    }
+
+    template<typename T>
+    void plog(const char * prefix, T& value)
+    {
+        struct timespec eend;
+        double t;
+        ofstream    file;
+
+        file.open(log_file_name.c_str(), ios_base::app);
+
+        if (file.fail() == true)
+        {
+            return;
+        }
+
+        clock_gettime(CLOCK_MONOTONIC, &eend);
+
+        t = (eend.tv_sec + (eend.tv_nsec * pow(10,-9))) -
+            (estart.tv_sec+(estart.tv_nsec*pow(10,-9)));
+
+
+        file << prefix << ":" << t << "\t" << value << endl;
+
+        file.flush();
+
+        file.close();
+    }
+
+private:
+    struct timespec estart;
+};
+
+//---PROFILE
 
 
 /* -------------------------------------------------------------------------- */

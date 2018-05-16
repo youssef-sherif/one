@@ -137,6 +137,10 @@ void Nebula::start(bool bootstrap_only)
 #endif
 
         NebulaLog::log("ONE",Log::INFO,os);
+
+    //---PROFILE
+        Nebula::log("INIT", '-');
+    //---PROFILE
     }
     catch(runtime_error&)
     {

@@ -23,6 +23,10 @@
 #include "Nebula.h"
 #include "NebulaUtil.h"
 
+//---PROFILE
+#include <math.h>
+//---PROFILE
+
 using namespace std;
 
 /* -------------------------------------------------------------------------- */
@@ -47,13 +51,66 @@ time_t MonitorThread::monitor_interval;
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
+//---PROFILE
+static double profile(bool start, struct timespec * estart,
+        struct timespec * eend,  const char * message)
+{
+    static Nebula& nd = Nebula::instance();
+
+    double t;
+
+    if (start)
+    {
+        clock_gettime(CLOCK_MONOTONIC, estart);
+
+        return 0;
+    }
+
+    clock_gettime(CLOCK_MONOTONIC, eend);
+
+    t = (eend->tv_sec + (eend->tv_nsec * pow(10,-9))) -
+        (estart->tv_sec+(estart->tv_nsec*pow(10,-9)));
+
+    if (message != 0)
+    {
+        nd.log(message, one_util::float_to_str(t));
+    }
+
+    return t;
+}
+//---PROFILE
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 extern "C" void * do_message_thread(void *arg)
 {
+//---PROFILE
+    struct timespec estart, eend;
+    static int messages_done = 0;
+
+    static Nebula& nd = Nebula::instance();
+
+    static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+//---PROFILE
+
     MonitorThread * mt = static_cast<MonitorThread *>(arg);
+
+//---PROFILE
+    profile(true, &estart, &eend, 0);
+//---PROFILE
 
     mt->do_message();
 
     MonitorThread::mthpool->exit_monitor_thread();
+
+//---PROFILE
+    profile(false, &estart, &eend, "MESSAGE_TIME");
+
+    pthread_mutex_lock(&mutex);
+    nd.log("DONE_MESSAGES", ++messages_done);
+    pthread_mutex_unlock(&mutex);
+//---PROFILE
 
     delete mt;
 
@@ -336,6 +393,9 @@ MonitorThreadPool::MonitorThreadPool(int max_thr):concurrent_threads(max_thr),
 void MonitorThreadPool::do_message(int hid, const string& result,
     const string& hinfo)
 {
+    //---PROFILE
+    static int messages = 0;
+    //---PROFILE
     pthread_attr_t attr;
     pthread_t id;
 
@@ -352,6 +412,12 @@ void MonitorThreadPool::do_message(int hid, const string& result,
     MonitorThread * mt = new MonitorThread(hid, result, hinfo);
 
     running_threads++;
+
+    //---PROFILE
+    Nebula& nd = Nebula::instance();
+    nd.log("NUMBER_THREADS", running_threads);
+    nd.log("READ_MESSAGES", ++messages);
+    //---PROFILE
 
     pthread_create(&id, &attr, do_message_thread, (void *)mt);
 

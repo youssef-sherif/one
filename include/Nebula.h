@@ -237,6 +237,17 @@ public:
         return frm;
     };
 
+    //---PROFILE
+    template<typename T>
+    static void log(const char * prefix, T value)
+    {
+        static std::string fname  = instance().log_location + "profile.log";
+        static ProfileLog *logger = new ProfileLog(fname.c_str());
+
+        logger->plog(prefix, value);
+    }
+    //---PROFILE
+
     // --------------------------------------------------------------
     // Environment & Configuration
     // --------------------------------------------------------------
