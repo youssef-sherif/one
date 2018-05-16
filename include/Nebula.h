@@ -241,8 +241,9 @@ public:
     template<typename T>
     static void log(const char * prefix, T value)
     {
-        static std::string fname  = instance().log_location + "profile.log";
-        static ProfileLog *logger = new ProfileLog(fname.c_str());
+        static std::string fname  = instance().log_location + "oned_profile.log";
+        static ProfileLog *logger = new ProfileLog(fname.c_str(), Log::INFO,
+                ios_base::trunc & ios_base::out);
 
         logger->plog(prefix, value);
     }

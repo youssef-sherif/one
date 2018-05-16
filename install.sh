@@ -1372,7 +1372,9 @@ RUBY_OPENNEBULA_LIB_FILES="src/oca/ruby/opennebula/acl_pool.rb \
                             src/oca/ruby/opennebula/marketplace.rb \
                             src/oca/ruby/opennebula/marketplaceapp_pool.rb \
                             src/oca/ruby/opennebula/marketplaceapp.rb \
-                            src/oca/ruby/opennebula/utils.rb"
+                            src/oca/ruby/opennebula/utils.rb \
+                            src/oca/ruby/opennebula/profile.rb"
+
 
 #-------------------------------------------------------------------------------
 # Common Cloud Files

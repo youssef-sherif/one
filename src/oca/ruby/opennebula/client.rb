@@ -70,7 +70,6 @@ module OpenNebula
     end
 
     DEFAULT_POOL_PAGE_SIZE = 200
-    $benchmarking_file_location = "/var/log/one/benchmarking"
 
     if size=ENV['ONE_POOL_PAGE_SIZE']
         if size.strip.match(/^\d+$/) && size.to_i >= 2
@@ -198,31 +197,19 @@ module OpenNebula
 
         def call(action, *args)
             begin
-	
-            benchmarking_log_file = File.open($benchmarking_file_location, 'a')
-            benchmarking_log_file << "--Mark--\n"
-            t1 = Time.now
-            benchmarking_log_file << "#{t1} --- Calling oned from OCA client, action=#{action}, args=#{args}, parser=#{@used_parser}\n"
-
+                OpenNebula.profile("#{@used_parser}#{action}") {
                 if @async
-                    benchmarking_log_file << "#{Time.now} --- Sending request to server using async mode\n"			
                     response = @server.call_async("one."+action, @one_auth, *args)
                 else
-                    benchmarking_log_file << "#{Time.now} --- Sending request to server using sync mode\n"			
                     response = @server.call("one."+action, @one_auth, *args)
                 end
-
-            t2 = Time.now
-            benchmarking_log_file << "#{t2} --- Call completed in #{t2 - t1} seconds\n"
-            benchmarking_log_file.close
 
                 if response[0] == false
                     Error.new(response[1], response[2])
                 else
                     response[1] #response[1..-1]
                 end
-
-
+                }
             rescue Exception => e
                 Error.new(e.message, Error::EXML_RPC_CALL)
             end

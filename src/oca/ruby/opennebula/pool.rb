@@ -186,20 +186,17 @@ module OpenNebula
                 return hash if OpenNebula.is_error?(hash)
                 { @pool_name => { @element_name => hash } }
             else
+                rc = ""
 
-            benchmarking_log_file = File.open($benchmarking_file_location, 'a')
-            benchmarking_log_file << "--Mark--\n"
-            t1 = Time.now
+                OpenNebula.profile("no_page.info") {
+                    rc=info
+                }
 
-                rc=info
                 return rc if OpenNebula.is_error?(rc)
 
-            t2 = Time.now
-            benchmarking_log_file << "#{t2} --- Previous request didn't use paginated queries and took an overall time of #{t2 - t1}\n"
-            benchmarking_log_file.close
-
-                to_hash
-
+                OpenNebula.profile("no_page.to_hash") {
+                    to_hash
+                }
             end
         end
 
