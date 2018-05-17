@@ -19,7 +19,6 @@ require 'bigdecimal'
 require 'stringio'
 require 'openssl'
 
-
 module OpenNebula
     def self.pool_page_size
         @@pool_page_size
