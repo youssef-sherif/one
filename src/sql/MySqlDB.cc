@@ -21,6 +21,42 @@
  * Doc: http://dev.mysql.com/doc/refman/5.5/en/c-api-function-overview.html
  ********/
 
+//---PROFILE
+
+#include "Nebula.h"
+
+static double profile(bool start, struct timespec * estart,
+        struct timespec * eend,  const char * message, ostringstream& cmd)
+{
+    static Nebula& nd = Nebula::instance();
+
+    double t;
+
+    if (start)
+    {
+        clock_gettime(CLOCK_MONOTONIC, estart);
+
+        return 0;
+    }
+
+    clock_gettime(CLOCK_MONOTONIC, eend);
+
+    t = (eend->tv_sec + (eend->tv_nsec * pow(10,-9))) -
+        (estart->tv_sec+(estart->tv_nsec*pow(10,-9)));
+
+    if (message != 0 && t > 1.0)
+    {
+        std::string sql_cmd(message);
+
+        sql_cmd.append(cmd.str(), 0, 30);
+
+        nd.log(sql_cmd.c_str(), one_util::float_to_str(t));
+    }
+
+    return t;
+}
+//---PROFILE
+
 /* -------------------------------------------------------------------------- */
 
 MySqlDB::MySqlDB(
@@ -169,6 +205,12 @@ int MySqlDB::exec(ostringstream& cmd, Callbackable* obj, bool quiet)
 
     MYSQL *db;
 
+//---PROFILE
+    struct timespec estart, eend;
+
+    profile(true, &estart, &eend, 0, cmd);
+//---PROFILE
+
     db = get_db_connection();
 
     rc = mysql_query(db, c_str);
@@ -264,6 +306,10 @@ int MySqlDB::exec(ostringstream& cmd, Callbackable* obj, bool quiet)
     }
 
     free_db_connection(db);
+
+//---PROFILE
+    profile(false, &estart, &eend, "DB.", cmd);
+//---PROFILE
 
     return rc;
 }

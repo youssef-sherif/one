@@ -24,17 +24,16 @@ module OpenNebula
     end
 
     PROFILE_PATH = VAR_LOCATION + "/oca_profile.log"
-    REFERENCE    = Time.now
 
     def self.profile(msg, &pb)
     begin
         file = File.open(PROFILE_PATH, 'a')
 
-        t1   = Time.now
-        rc   = yield
-        t2   = Time.now
+        t1 = Time.now
+        rc = yield
+        t2 = Time.now
 
-        file << "#{msg}: #{t2-REFERENCE} #{t2 - t1}\n"
+        file << "#{msg}: #{t2 - t1}\n"
 
         return rc
     ensure

@@ -181,7 +181,12 @@ module OpenNebula
             if OpenNebula.pool_page_size && allow_paginated &&
                     ( ( size && size >= 2 ) || !size )
                 size = OpenNebula.pool_page_size if !size
-                hash=info_paginated(size)
+
+                hash = {}
+
+                OpenNebula.profile("page.info") {
+                    hash = info_paginated(size)
+                }
 
                 return hash if OpenNebula.is_error?(hash)
                 { @pool_name => { @element_name => hash } }
@@ -189,7 +194,7 @@ module OpenNebula
                 rc = ""
 
                 OpenNebula.profile("no_page.info") {
-                    rc=info
+                    rc = info
                 }
 
                 return rc if OpenNebula.is_error?(rc)
@@ -209,19 +214,20 @@ module OpenNebula
 
             parser=ParsePoolSax.new(@pool_name, @element_name)
 
-	    counter = 0
-
             while true
                 a=@client.call("#{@pool_name.delete('_').downcase}.info",
                     @user_id, current, -size, -1)
+
                 return a if OpenNebula.is_error?(a)
 
-                a_array=parser.parse(a)
+                a_array = Array.new
+
+                OpenNebula.profile("page.parser") {
+                    a_array = parser.parse(a)
+                }
 
                 array   += a_array
                 current += size
-
-		counter += 1
 
                 break if !a || a_array.length<size
             end
