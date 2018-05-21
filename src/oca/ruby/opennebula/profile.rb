@@ -34,7 +34,9 @@ module OpenNebula
         omask= File.umask(0000)
         file = File.new(PROFILE_PATH, File::CREAT|File::APPEND|File::RDWR, 0666)
 
-        file << "#{msg}: #{t2 - t1}\n" if file
+        tstamp = Time.now.strftime("%m/%d-%H%M.%S")
+
+        file << "[#{Process.pid}][#{tstamp}] #{msg}: #{t2 - t1}\n" if file
 
         return rc
     ensure
