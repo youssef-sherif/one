@@ -891,20 +891,26 @@ int LibVirtDriver::deployment_description_kvm(
         {
             file << "\t\t\t<iotune>" << endl;
 
-            insert_sec(file, "read_bytes", read_bytes_sec ,
-                    read_bytes_sec_max , read_bytes_sec_max_length);
+            if ( total_bytes_sec.empty() )
+            {
+                insert_sec(file, "read_bytes", read_bytes_sec ,
+                        read_bytes_sec_max , read_bytes_sec_max_length);
 
-            insert_sec(file, "write_bytes", write_bytes_sec ,
-                    write_bytes_sec_max , write_bytes_sec_max_length);
+                insert_sec(file, "write_bytes", write_bytes_sec ,
+                        write_bytes_sec_max , write_bytes_sec_max_length);
+            }
 
             insert_sec(file, "total_bytes", total_bytes_sec ,
                     total_bytes_sec_max , total_bytes_sec_max_length);
 
-            insert_sec(file, "read_iops", read_iops_sec ,
-                    read_iops_sec_max , read_iops_sec_max_length);
+            if ( total_iops_sec.empty() )
+            {
+                insert_sec(file, "read_iops", read_iops_sec ,
+                        read_iops_sec_max , read_iops_sec_max_length);
 
-            insert_sec(file, "write_iops", write_iops_sec ,
-                    write_iops_sec_max , write_iops_sec_max_length);
+                insert_sec(file, "write_iops", write_iops_sec ,
+                        write_iops_sec_max , write_iops_sec_max_length);
+            }
 
             insert_sec(file, "total_iops", total_iops_sec ,
                     total_iops_sec_max , total_iops_sec_max_length);

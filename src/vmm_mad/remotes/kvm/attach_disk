@@ -103,15 +103,19 @@ if [ -n "${TOTAL_BYTES_SEC}${READ_BYTES_SEC}${WRITE_BYTES_SEC}" ] || \
 then
     XML+=" <iotune>"
 
-    insert_sec "read_bytes" $READ_BYTES_SEC $READ_BYTES_SEC_MAX $READ_BYTES_SEC_MAX_LENGTH
+    if [ -z "${TOTAL_BYTES_SEC}" ]
+        insert_sec "read_bytes" $READ_BYTES_SEC $READ_BYTES_SEC_MAX $READ_BYTES_SEC_MAX_LENGTH
 
-    insert_sec "write_bytes" $WRITE_BYTES_SEC $WRITE_BYTES_SEC_MAX $WRITE_BYTES_SEC_MAX_LENGTH
+        insert_sec "write_bytes" $WRITE_BYTES_SEC $WRITE_BYTES_SEC_MAX $WRITE_BYTES_SEC_MAX_LENGTH
+    fi
 
     insert_sec "total_bytes" $TOTAL_BYTES_SEC $TOTAL_BYTES_SEC_MAX $TOTAL_BYTES_SEC_MAX_LENGTH
 
-    insert_sec "read_iops" $READ_IOPS_SEC $READ_IOPS_SEC_MAX $READ_IOPS_SEC_MAX_LENGTH
+    if [ -z "${TOTAL_IOPS_SEC}" ]
+        insert_sec "read_iops" $READ_IOPS_SEC $READ_IOPS_SEC_MAX $READ_IOPS_SEC_MAX_LENGTH
 
-    insert_sec "write_iops" $WRITE_IOPS_SEC $WRITE_IOPS_SEC_MAX $WRITE_IOPS_SEC_MAX_LENGTH
+        insert_sec "write_iops" $WRITE_IOPS_SEC $WRITE_IOPS_SEC_MAX $WRITE_IOPS_SEC_MAX_LENGTH
+    fi
 
     insert_sec "total_iops" $TOTAL_IOPS_SEC $TOTAL_IOPS_SEC_MAX $TOTAL_IOPS_SEC_MAX_LENGTH
 
