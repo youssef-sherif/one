@@ -27,17 +27,17 @@ module OpenNebula
 
     def self.profile(msg, &pb)
     begin
-        file = File.open(PROFILE_PATH, 'a')
+        file = File.new(PROFILE_PATH, File::CREAT|File::APPEND|File::RDWR, 0666)
 
         t1 = Time.now
         rc = yield
         t2 = Time.now
 
-        file << "#{msg}: #{t2 - t1}\n"
+        file << "#{msg}: #{t2 - t1}\n" if file
 
         return rc
     ensure
-        file.close
+        file.close unless file.nil?
     end
     end
 end
