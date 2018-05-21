@@ -27,17 +27,19 @@ module OpenNebula
 
     def self.profile(msg, &pb)
     begin
-        file = File.new(PROFILE_PATH, File::CREAT|File::APPEND|File::RDWR, 0666)
-
         t1 = Time.now
         rc = yield
         t2 = Time.now
+
+        omask= File.umask(0000)
+        file = File.new(PROFILE_PATH, File::CREAT|File::APPEND|File::RDWR, 0666)
 
         file << "#{msg}: #{t2 - t1}\n" if file
 
         return rc
     ensure
         file.close unless file.nil?
+        File.umask(omask)
     end
     end
 end
