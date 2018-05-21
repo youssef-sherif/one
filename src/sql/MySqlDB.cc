@@ -44,7 +44,7 @@ static double profile(bool start, struct timespec * estart,
     t = (eend->tv_sec + (eend->tv_nsec * pow(10,-9))) -
         (estart->tv_sec+(estart->tv_nsec*pow(10,-9)));
 
-    if (message != 0 && t > 1.0)
+    if (message != 0 && t > 0.5)
     {
         std::string sql_cmd(message);
 
