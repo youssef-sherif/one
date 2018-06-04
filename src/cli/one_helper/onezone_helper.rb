@@ -115,7 +115,7 @@ class OneZoneHelper < OpenNebulaHelper::OneHelper
         index_followers = {}
 
         servers.each do |server|
-            if server["STATE"] == "0"
+            if server["STATE"] == "3"
                 index_leader = server["COMMIT"].to_i
             else
                 index_followers[server["ID"].to_i] = server["COMMIT"].to_i
@@ -224,8 +224,8 @@ class OneZoneHelper < OpenNebulaHelper::OneHelper
 
                 column :"HEALTH", "", :left, :size=>10 do |d|
                     d["HEALTH"] = case d["HEALTH"]
-                        when "0" then "ok"
-                        when "1" then "warning"
+                        when "0" then "Ok"
+                        when "1" then "Warning"
                         when "2" then "error"
                         else "-"
                     end
