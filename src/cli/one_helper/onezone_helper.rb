@@ -116,15 +116,15 @@ class OneZoneHelper < OpenNebulaHelper::OneHelper
 
         servers.each do |server|
             if server["STATE"] == "3"
-                index_leader = server["COMMIT"].to_i
+                index_leader = server["LOG_INDEX"].to_i
             else
-                index_followers[server["ID"].to_i] = server["COMMIT"].to_i
+                index_followers[server["ID"].to_i] = server["LOG_INDEX"].to_i
             end
         end
 
         servers.each do |server|
             if !index_followers.empty? && !index_followers[server["ID"]].nil? &&
-                index_followers[server["ID"].to_i] < (index_leader - conf["RAFT/LOG_RETENTION"].to_i)
+                (index_leader - index_followers[server["ID"].to_i]).abs > conf["RAFT/LOG_RETENTION"].to_i
                 server["HEALTH"] = "1"
             else
                 server["HEALTH"] = "0"
@@ -179,7 +179,9 @@ class OneZoneHelper < OpenNebulaHelper::OneHelper
             puts
             CLIHelper.print_header(str_h1 % "HA & FEDERATION SYNC STATUS",false)
 
-            check_healthy(zone_hash['ZONE']['SERVER_POOL']['SERVER'])
+            if (zone_hash['ZONE']['SERVER_POOL']['SERVER'].kind_of?(Array))
+                check_healthy(zone_hash['ZONE']['SERVER_POOL']['SERVER'])
+            end
 
             CLIHelper::ShowTable.new(nil, self) do
 
