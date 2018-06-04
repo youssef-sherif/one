@@ -286,6 +286,25 @@ public:
      */
 	void delete_server(int follower_id);
 
+    /**
+     *  Adds a new server to array of out of sync servers.
+     *    @param follower_id id of server
+     */
+	void out_of_sync(int follower_id);
+
+    /**
+     *  checks if a follower is out of sync.
+     *    @param follower_id id of server
+     *  @return true if server is out of sync
+     */
+	bool is_out_of_sync(int follower_id);
+
+    /**
+     *  Deletes a follower to the out of sync list.
+     *    @param follower_id id of server
+     */
+	void delete_out_of_sync(int follower_id);
+
 private:
     friend void * raft_manager_loop(void *arg);
 
@@ -408,6 +427,8 @@ private:
     std::map<int, unsigned int> match;
 
     std::map<int, std::string>  servers;
+
+    std::set<int>  servers_out_sync;
 
     // -------------------------------------------------------------------------
     // Hooks
