@@ -338,6 +338,15 @@ private:
 	struct timespec last_heartbeat;
 
     /**
+     *  Heartbeat statistics
+     *    - number: number heartbeats
+     *    - interval: average time between two heartbeats 
+     */
+    long long hb_number;
+
+    double hb_interval;
+
+    /**
      *  ID of the last candidate we voted for  ( -1 if none )
      */
     int votedfor;

@@ -562,6 +562,15 @@ void RaftManager::follower(unsigned int _term)
 
     requests.clear();
 
+    //Reset heartbeat when turning into follower when a higher term is found:
+    // 1. On vote request (CANDIDATE)
+    // 2. On heartbeat response (LEADER)
+    // 3. On log replicate request (LEADER)
+	clock_gettime(CLOCK_REALTIME, &last_heartbeat);
+
+    hb_number   = 0;
+    hb_interval = 0;
+    
     pthread_mutex_unlock(&mutex);
 
     if ( nd.is_federation_master() )
@@ -704,11 +713,24 @@ void RaftManager::replicate_failure(int follower_id)
 
 void RaftManager::update_last_heartbeat(int _leader_id)
 {
+    struct timespec lhb_back;
+
+    double interval;
+
     pthread_mutex_lock(&mutex);
 
     leader_id = _leader_id;
 
+    lhb_back  = last_heartbeat;
+
 	clock_gettime(CLOCK_REALTIME, &last_heartbeat);
+
+    interval = (last_heartbeat.tv_sec + (last_heartbeat.tv_nsec * 1.0e-9)) -
+        (lhb_back.tv_sec + (lhb_back.tv_nsec * 1.0e-9));
+
+    hb_number++;
+
+    hb_interval = ((hb_number - 1) * hb_interval + interval) / hb_number;
 
     pthread_mutex_unlock(&mutex);
 }
@@ -1266,6 +1288,15 @@ std::string& RaftManager::to_xml(std::string& raft_xml)
     {
         oss << "<LOG_INDEX>" << lindex << "</LOG_INDEX>"
             << "<LOG_TERM>"  << lterm  << "</LOG_TERM>";
+    }
+
+    if ( state == FOLLOWER )
+    {
+        oss << "<HEARTBEAT_INTERVAL>" << hb_interval << "</HEARTBEAT_INTERVAL>";
+    }
+    else
+    {
+        oss << "<HEARTBEAT_INTERVAL/>";
     }
 
     if ( nd.is_federation_enabled() )
