@@ -30,7 +30,8 @@ module OpenNebula
             :rename         => "zone.rename",
             :delete         => "zone.delete",
             :addserver      => "zone.addserver",
-            :delserver      => "zone.delserver"
+            :delserver      => "zone.delserver",
+            :syncserver     => "zone.syncserver"
         }
 
         # Creates a Zone description with just its identifier
@@ -91,7 +92,8 @@ module OpenNebula
                     add_element(server, "COMMIT", "-")
                     add_element(server, "LOG_INDEX", "-")
                     add_element(server, "FEDLOG_INDEX", "-")
-
+                    add_element(server, "HEARTBEAT_INTERVAL","-")
+                    add_element(server, "SYNC", "-")
                     next
                 end
 
@@ -103,6 +105,8 @@ module OpenNebula
                 add_element_xml(server, xml, "COMMIT", "RAFT/COMMIT")
                 add_element_xml(server, xml, "LOG_INDEX", "RAFT/LOG_INDEX")
                 add_element_xml(server, xml, "FEDLOG_INDEX","RAFT/FEDLOG_INDEX")
+                add_element_xml(server, xml, "HEARTBEAT_INTERVAL","RAFT/HEARTBEAT_INTERVAL")
+                add_element_xml(server, xml, "SYNC","RAFT/SYNC")
             end
         end
 
@@ -166,6 +170,16 @@ module OpenNebula
         #   otherwise
         def delete_servers(server_id)
             return call(ZONE_METHODS[:delserver], @pe_id, server_id)
+        end
+
+        # Delete server form out of sync list
+        #
+        # @param id [Int] Server ID
+        #
+        # @return [nil, OpenNebula::Error] nil in case of success, Error
+        #   otherwise
+        def sync_servers(server_id)
+            return call(ZONE_METHODS[:syncserver], @pe_id, server_id)
         end
 
         private

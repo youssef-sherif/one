@@ -174,15 +174,15 @@ class OneZoneHelper < OpenNebulaHelper::OneHelper
                     d["STATE"] if !d.nil?
                 end
 
-                column :"TERM", "", :left, :size=>10 do |d|
+                column :"TERM", "", :left, :size=>5 do |d|
                     d["TERM"] if !d.nil?
                 end
 
-                column :"INDEX", "", :left, :size=>10 do |d|
+                column :"INDEX", "", :left, :size=>5 do |d|
                     d["LOG_INDEX"] if !d.nil?
                 end
 
-                column :"COMMIT", "", :left, :size=>10 do |d|
+                column :"COMMIT", "", :left, :size=>6 do |d|
                     d["COMMIT"] if !d.nil?
                 end
 
@@ -190,8 +190,25 @@ class OneZoneHelper < OpenNebulaHelper::OneHelper
                     d["VOTEDFOR"] if !d.nil?
                 end
 
-                column :"FED_INDEX", "", :left, :size=>10 do |d|
+                column :"FED_INDEX", "", :left, :size=>9 do |d|
                     d["FEDLOG_INDEX"] if !d.nil?
+                end
+
+                column :"HB_INTERVAL", "", :left, :size=>12 do |d|
+                    if !d.nil? && d["STATE"] == "follower"
+                        d["HEARTBEAT_INTERVAL"].to_f.round(3)
+                    else
+                        "-"
+                    end
+                end
+
+                column :"SYNC", "", :left, :size=>5 do |d|
+                    d["SYNC"] = case d["SYNC"]
+                        when "0" then "Ready"
+                        when "1" then "Out"
+                        else "-"
+                    end
+                    d["SYNC"] if !d.nil?
                 end
 
             end.show([zone_hash['ZONE']['SERVER_POOL']['SERVER']].flatten, {})
