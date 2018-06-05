@@ -219,7 +219,7 @@ int LogDB::get_log_record(unsigned int index, LogDBRecord& lr)
 
     if ( lr.get_affected_rows() == 0 )
     {
-        rc = -1;
+        rc = -2;
     }
 
     return rc;
