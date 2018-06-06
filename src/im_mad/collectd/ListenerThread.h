@@ -124,7 +124,7 @@ public:
             log_location = nebula_location + "var/";
         }
 
-        std::string fname  = log_location + "oned_profile.log";
+        std::string fname  = log_location + "collectd_profile.log";
 
         logger = new ProfileLog(fname.c_str(), Log::INFO, ios_base::trunc & 
                     ios_base::out);
