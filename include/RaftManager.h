@@ -22,6 +22,7 @@
 #include "ReplicaRequest.h"
 #include "Template.h"
 #include "RaftHook.h"
+#include "ObjectCollection.h"
 
 extern "C" void * raft_manager_loop(void *arg);
 
@@ -428,7 +429,7 @@ private:
 
     std::map<int, std::string>  servers;
 
-    std::set<int>  servers_out_sync;
+    ObjectCollection servers_out_sync;
 
     // -------------------------------------------------------------------------
     // Hooks

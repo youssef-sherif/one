@@ -49,7 +49,8 @@ RaftManager::RaftManager(int id, const VectorAttribute * leader_hook_mad,
         const VectorAttribute * follower_hook_mad, time_t log_purge,
         long long bcast, long long elect, time_t xmlrpc,
         const string& remotes_location):server_id(id), term(0), num_servers(0),
-        reconciling(false), commit(0), leader_hook(0), follower_hook(0)
+        reconciling(false), commit(0), servers_out_sync("OUT_SYNC_SERVERS"),
+        leader_hook(0), follower_hook(0)
 {
     Nebula& nd    = Nebula::instance();
     LogDB * logdb = nd.get_logdb();
@@ -498,6 +499,8 @@ void RaftManager::leader()
 
         pthread_attr_destroy(&pattr);
     }
+
+    servers_out_sync.clear();
 
     NebulaLog::log("RCM", Log::INFO, "oned is now the leader of the zone");
 }
@@ -1264,6 +1267,8 @@ std::string& RaftManager::to_xml(std::string& raft_xml)
     Nebula& nd    = Nebula::instance();
     LogDB * logdb = nd.get_logdb();
 
+    string          servers_out_sync_xml;
+
     unsigned int lindex, lterm;
 
     std::ostringstream oss;
@@ -1299,20 +1304,15 @@ std::string& RaftManager::to_xml(std::string& raft_xml)
         oss << "<HEARTBEAT_INTERVAL/>";
     }
 
-    if ( state == FOLLOWER )
+    if ( state == LEADER )
     {
-        if ( is_out_of_sync(server_id) )
-        {
-            oss << "<SYNC>1</SYNC>";
-        }
-        else
-        {
-            oss << "<SYNC>0</SYNC>";
-        }
+        servers_out_sync.to_xml(servers_out_sync_xml);
+
+        oss << servers_out_sync_xml;
     }
     else
     {
-        oss << "<SYNC/>";
+        oss << "<OUT_SYNC_SERVERS/>";
     }
 
     if ( nd.is_federation_enabled() )
@@ -1338,7 +1338,7 @@ std::string& RaftManager::to_xml(std::string& raft_xml)
 
 void RaftManager::out_of_sync(int follower_id)
 {
-    servers_out_sync.insert(follower_id);
+    servers_out_sync.add(follower_id);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -1346,7 +1346,7 @@ void RaftManager::out_of_sync(int follower_id)
 
 bool RaftManager::is_out_of_sync(int follower_id)
 {
-    return servers_out_sync.count(follower_id) > 0;
+    return servers_out_sync.contains(follower_id);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -1354,12 +1354,5 @@ bool RaftManager::is_out_of_sync(int follower_id)
 
 void RaftManager::delete_out_of_sync(int follower_id)
 {
-    std::set<int>::iterator it;
-
-    it = servers_out_sync.find(follower_id);
-
-    if ( it != servers_out_sync.end() )
-    {
-        servers_out_sync.erase(it);
-    }
+    servers_out_sync.del(follower_id);
 }

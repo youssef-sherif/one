@@ -174,67 +174,69 @@ RaftReplicaThread::RaftReplicaThread(int fid):ReplicaThread(fid)
 
 int RaftReplicaThread::replicate()
 {
-    if ( !raftm->is_out_of_sync(follower_id) )
+    if ( raftm->is_out_of_sync(follower_id) )
     {
-        std::string error;
+        return -1;
+    }
 
-        LogDBRecord lr;
+    std::string error;
 
-        bool success = false;
+    LogDBRecord lr;
 
-        unsigned int follower_term = -1;
+    bool success = false;
 
-        unsigned int term  = raftm->get_term();
+    unsigned int follower_term = -1;
 
-        int next_index = raftm->get_next_index(follower_id);
+    unsigned int term  = raftm->get_term();
 
-        int rc = logdb->get_log_record(next_index, lr);
+    int next_index = raftm->get_next_index(follower_id);
 
-        if ( rc != 0 )
+    int rc = logdb->get_log_record(next_index, lr);
+
+    if ( rc != 0 )
+    {
+        ostringstream ess;
+
+        ess << "Failed to load log record at index: " << next_index;
+
+        if ( rc == -2 )
+        {
+            ess << ". Out of sync.";
+
+            raftm->out_of_sync(follower_id);
+        }
+
+        NebulaLog::log("RCM", Log::ERROR, ess);
+
+        return -1;
+    }
+
+    if ( raftm->xmlrpc_replicate_log(follower_id, &lr, success, follower_term,
+                error) != 0 )
+    {
+        return -1;
+    }
+
+    if ( success )
+    {
+        raftm->replicate_success(follower_id);
+    }
+    else
+    {
+        if ( follower_term > term )
         {
             ostringstream ess;
 
-            ess << "Failed to load log record at index: " << next_index;
+            ess << "Follower " << follower_id << " term (" << follower_term
+                << ") is higher than current (" << term << ")";
 
-            if ( rc == -2 )
-            {
-                ess << ". Out of sync.";
+            NebulaLog::log("RCM", Log::INFO, ess);
 
-                raftm->out_of_sync(follower_id);
-            }
-
-            NebulaLog::log("RCM", Log::ERROR, ess);
-
-            return -1;
-        }
-
-        if ( raftm->xmlrpc_replicate_log(follower_id, &lr, success, follower_term,
-                    error) != 0 )
-        {
-            return -1;
-        }
-
-        if ( success )
-        {
-            raftm->replicate_success(follower_id);
+            raftm->follower(follower_term);
         }
         else
         {
-            if ( follower_term > term )
-            {
-                ostringstream ess;
-
-                ess << "Follower " << follower_id << " term (" << follower_term
-                    << ") is higher than current (" << term << ")";
-
-                NebulaLog::log("RCM", Log::INFO, ess);
-
-                raftm->follower(follower_term);
-            }
-            else
-            {
-                raftm->replicate_failure(follower_id);
-            }
+            raftm->replicate_failure(follower_id);
         }
     }
     return 0;
