@@ -70,5 +70,5 @@ require 'opennebula/profile'
 module OpenNebula
 
     # OpenNebula version
-    VERSION = '5.4.12'
+    VERSION = '5.4.13'
 end
