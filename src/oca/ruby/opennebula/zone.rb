@@ -93,7 +93,7 @@ module OpenNebula
                     add_element(server, "LOG_INDEX", "-")
                     add_element(server, "FEDLOG_INDEX", "-")
                     add_element(server, "HEARTBEAT_INTERVAL","-")
-                    add_element(server, "SYNC", "-")
+                    add_element(server, "OUT_SYNC_SERVERS", "-")
                     next
                 end
 
@@ -106,7 +106,8 @@ module OpenNebula
                 add_element_xml(server, xml, "LOG_INDEX", "RAFT/LOG_INDEX")
                 add_element_xml(server, xml, "FEDLOG_INDEX","RAFT/FEDLOG_INDEX")
                 add_element_xml(server, xml, "HEARTBEAT_INTERVAL","RAFT/HEARTBEAT_INTERVAL")
-                add_element_xml(server, xml, "SYNC","RAFT/SYNC")
+                out_sync_servers = xml.at_xpath("RAFT/OUT_SYNC_SERVERS").children.map { |c| c }.join(",")
+                add_element(server, "OUT_SYNC_SERVERS",out_sync_servers)
             end
         end
 

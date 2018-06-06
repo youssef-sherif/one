@@ -150,6 +150,13 @@ class OneZoneHelper < OpenNebulaHelper::OneHelper
                 end
             end.show([zone_hash['ZONE']['SERVER_POOL']['SERVER']].flatten, {})
 
+            out_sync_servers = []
+            zone_hash['ZONE']['SERVER_POOL']['SERVER'].each do |s|
+                if s['STATE'] == '3' && !s['OUT_SYNC_SERVERS'].empty?
+                    out_sync_servers = s['OUT_SYNC_SERVERS'].split(",")
+                end
+            end
+
             puts
             CLIHelper.print_header(str_h1 % "HA & FEDERATION SYNC STATUS",false)
 
@@ -202,13 +209,12 @@ class OneZoneHelper < OpenNebulaHelper::OneHelper
                     end
                 end
 
-                column :"SYNC", "", :left, :size=>5 do |d|
-                    d["SYNC"] = case d["SYNC"]
-                        when "0" then "Ready"
-                        when "1" then "Out"
-                        else "-"
+                column :"OUT_SYNC_SERVERS", "", :left, :size=>5 do |d|
+                    if !d.nil? && out_sync_servers.include?(d["ID"])
+                        "Out"
+                    else
+                        "Ready"
                     end
-                    d["SYNC"] if !d.nil?
                 end
 
             end.show([zone_hash['ZONE']['SERVER_POOL']['SERVER']].flatten, {})
