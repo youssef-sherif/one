@@ -19,6 +19,10 @@
 
 #include <pthread.h>
 
+//---PROFILE
+#include "Log.h"
+//---
+
 /**
  *  This class implements a listener thread for the IM collector. It receives
  *  messages from a UDP port and sends them to oned. The class is controlled
@@ -97,13 +101,53 @@ public:
      *  @param num number of threads in the pool
      */
     ListenerPool(int fd, int sock, size_t num)
-        :listeners(num, ListenerThread(sock, fd)){};
+        :listeners(num, ListenerThread(sock, fd))
+    {
+//---PROFILE
+        std::string log_location;
+
+        const char * nl = getenv("ONE_LOCATION");
+
+        if (nl == 0) 
+        {
+            log_location = "/var/log/one/";
+        }
+        else
+        {
+            std::string nebula_location = nl;
+
+            if ( nebula_location.at(nebula_location.size()-1) != '/' )
+            {
+                nebula_location += "/";
+            }
+
+            log_location = nebula_location + "var/";
+        }
+
+        std::string fname  = log_location + "oned_profile.log";
+
+        logger = new ProfileLog(fname.c_str(), Log::INFO, ios_base::trunc & 
+                    ios_base::out);
+//----
+    };
 
     ~ListenerPool();
 
     void start_pool();
 
+//---PROFILE
+    template<typename T>
+    static void log(const char * prefix, T value)
+    {
+        logger->plog(prefix, value);
+    }
+//----
+
 private:
     std::vector<ListenerThread> listeners;
+
+//---PROFILE
+    static ProfileLog * logger;
+//---
 };
 

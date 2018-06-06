@@ -26,6 +26,8 @@ const size_t ListenerThread::MESSAGE_SIZE = 100000;
 
 pthread_mutex_t ListenerThread::mutex = PTHREAD_MUTEX_INITIALIZER;
 
+ProfileLog * ListenerPool::logger = 0;
+
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
@@ -37,6 +39,8 @@ void ListenerThread::monitor_loop()
     struct sockaddr addr;
     socklen_t addr_size = sizeof(struct sockaddr);
 
+    static long long messages = 0;
+
     while(true)
     {
         rc = recvfrom(socket, buffer, MESSAGE_SIZE, 0, &addr, &addr_size);
@@ -46,6 +50,10 @@ void ListenerThread::monitor_loop()
             lock();
 
             write(fd, buffer, rc);
+
+            //---PROFILE
+            ListenerPool::log("RECEIVED_MESSAGES", ++messages);
+            //---
 
             unlock();
         }

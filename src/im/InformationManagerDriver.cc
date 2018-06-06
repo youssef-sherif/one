@@ -121,6 +121,7 @@ void InformationManagerDriver::protocol(const string& message) const
             return;
         }
 
+
         mtpool->do_message(id, result, hinfo64);
     }
     else if (action == "LOG")
