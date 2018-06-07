@@ -176,7 +176,8 @@ int RaftReplicaThread::replicate()
 {
     if ( raftm->is_out_of_sync(follower_id) )
     {
-        return -1;
+        raftm->replicate_failure(follower_id);
+        return 0;
     }
 
     std::string error;
@@ -197,11 +198,12 @@ int RaftReplicaThread::replicate()
     {
         ostringstream ess;
 
-        ess << "Failed to load log record at index: " << next_index;
+        ess << "Failed to load log record for [" << follower_id <<
+            "] at index: " << next_index;
 
         if ( rc == -2 )
         {
-            ess << ". Out of sync.";
+            ess << ". Out of sync. [" << rc << "]";
 
             raftm->out_of_sync(follower_id);
         }

@@ -281,9 +281,7 @@ void ZoneSyncServer::request_execute(xmlrpc_c::paramList const& paramList,
         return;
     }
 
-    Zone * zone = (static_cast<ZonePool *>(pool))->get(id);
-
-    if ( zone == 0 )
+    if ( pool->exist(id) == -1 )
     {
         att.resp_id = id;
         failure_response(NO_EXISTS, att);

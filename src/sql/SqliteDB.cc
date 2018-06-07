@@ -138,11 +138,15 @@ int SqliteDB::exec(ostringstream& cmd, Callbackable* obj, bool quiet)
 
     if (obj != 0)
     {
-        int num_rows = sqlite3_changes(db);
-   
-        if ( num_rows > 0)
+        int num_rows = obj->get_affected_rows();
+
+        if ( num_rows == 0 )
         {
-            obj->set_affected_rows(num_rows);
+            num_rows = sqlite3_changes(db);
+            if ( num_rows > 0)
+            {
+                obj->set_affected_rows(num_rows);
+            }
         }
     }
 
