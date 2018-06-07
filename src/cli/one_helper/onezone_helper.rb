@@ -151,8 +151,13 @@ class OneZoneHelper < OpenNebulaHelper::OneHelper
             end.show([zone_hash['ZONE']['SERVER_POOL']['SERVER']].flatten, {})
 
             out_sync_servers = []
+
+            if !zone_hash['ZONE']['SERVER_POOL']['SERVER'].is_a?(Array)
+                zone_hash['ZONE']['SERVER_POOL']['SERVER'] = [zone_hash['ZONE']['SERVER_POOL']['SERVER']]
+            end
+
             zone_hash['ZONE']['SERVER_POOL']['SERVER'].each do |s|
-                if s['STATE'] == '3' && !s['OUT_SYNC_SERVERS'].empty?
+                if s.is_a?(Hash) && s['STATE'] == '3' && !s['OUT_SYNC_SERVERS'].empty?
                     out_sync_servers = s['OUT_SYNC_SERVERS'].split(",")
                 end
             end
