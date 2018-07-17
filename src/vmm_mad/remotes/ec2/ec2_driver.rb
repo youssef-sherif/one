@@ -225,11 +225,11 @@ class EC2Driver
     ]
 
     # EC2 constructor, loads credentials and endpoint
-    def initialize(host, host_id=nil)
+    def initialize(host, host_id=nil, pm=:none)
         @host    = host
         @host_id = host_id
 
-        @state_change_timeout = PUBLIC_CLOUD_EC2_CONF['state_wait_timeout_seconds'].to_i
+        @state_change_timeout = pm != :to ? PUBLIC_CLOUD_EC2_CONF['state_wait_timeout_seconds'].to_i : PUBLIC_CLOUD_EC2_CONF['state_wait_pm_timeout_seconds'].to_i
 
         @instance_types = PUBLIC_CLOUD_EC2_CONF['instance_types']
 
@@ -263,10 +263,15 @@ class EC2Driver
         conn_opts={}
 
         client   = OpenNebula::Client.new
-        pool = OpenNebula::HostPool.new(client)
-        pool.info
-        objects=pool.select {|object| object.name==host }
-        xmlhost = objects.first
+
+        if !host['PM_MAD']
+            pool = OpenNebula::HostPool.new(client)
+            pool.info
+            objects=pool.select {|object| object.name==host }
+            xmlhost = objects.first
+        else
+            xmlhost = host
+        end
 
         system = OpenNebula::System.new(client)
         config = system.get_configuration
@@ -274,14 +279,23 @@ class EC2Driver
 
         token = config["ONE_KEY"]
 
+        if xmlhost["TEMPLATE/PROVISION"]
+            @tmplBase = 'TEMPLATE/PROVISION'
+        else
+            @tmplBase = 'TEMPLATE'
+        end
+
         conn_opts = {
-            :access => xmlhost["TEMPLATE/EC2_ACCESS"],
-            :secret => xmlhost["TEMPLATE/EC2_SECRET"]
+            :access => xmlhost["#{@tmplBase}/EC2_ACCESS"],
+            :secret => xmlhost["#{@tmplBase}/EC2_SECRET"]
         }
 
         begin
-            conn_opts = OpenNebula.decrypt(conn_opts, token)
-            conn_opts[:region] = xmlhost["TEMPLATE/REGION_NAME"]
+            if !xmlhost["TEMPLATE/PROVISION"]
+                conn_opts = OpenNebula.decrypt(conn_opts, token)
+            end
+
+            conn_opts[:region] = xmlhost["#{@tmplBase}/REGION_NAME"]
         rescue
             raise "HOST: #{host} must have ec2 credentials and region in order to work properly"
         end
@@ -289,9 +303,24 @@ class EC2Driver
         return conn_opts
     end
 
+    def generate_cc(xobj, xpath_context)
+        cc = "#cloud-config\n"
+        ssh_key = xobj["#{xpath_context}/SSH_PUBLIC_KEY"]
+
+        if ssh_key
+            cc << "ssh_authorized_keys:\n"
+            ssh_key.split("\n").each do |key|
+                cc << "- #{key}\n"
+            end
+        end
+
+        #TODO: OneGate token?
+
+        cc
+    end
+
     # DEPLOY action, also sets ports and ip if needed
     def deploy(id, host, xml_text, lcm_state, deploy_id)
-
         # Restore if we need to
         if lcm_state != "BOOT" && lcm_state != "BOOT_FAILURE"
             restore(deploy_id)
@@ -299,7 +328,6 @@ class EC2Driver
         end
 
         # Otherwise deploy the VM
-
         begin
             ec2_info = get_deployment_info(host, xml_text)
         rescue Exception => e
@@ -316,11 +344,16 @@ class EC2Driver
             :min_count => 1,
             :max_count => 1})
 
+        if (host["#{@tmplBase}/CLOUD_INIT"] =~ /true/i || host["#{@tmplBase}/CLOUD_INIT"] =~ /yes/i) && !host["#{@tmplBase}/USERDATA"]
+            userdata_key = EC2[:run][:args]["USERDATA"][:opt]
+            opts[userdata_key] = Base64.encode64(generate_cc(host, 'TEMPLATE/CONTEXT'))
+        end
+
         # The OpenNebula context will be only included if not USERDATA
         #   is provided by the user
-        if !ec2_value(ec2_info, 'USERDATA')
+        if !ec2_value(ec2_info, 'USERDATA') && !host["#{@tmplBase}/CLOUD_INIT"]
             xml = OpenNebula::XMLElement.new
-            xml.initialize_xml(xml_text, 'VM')
+            xml.initialize_xml(xml_text, (!host.is_a?(OpenNebula::XMLElement)) ? 'VM' : 'HOST')
 
             if xml.has_elements?('TEMPLATE/CONTEXT')
                 # Since there is only 1 level ',' will not be added
@@ -341,6 +374,7 @@ class EC2Driver
 
         instances = @ec2.create_instances(opts)
         instance = instances.first
+
 
         start_time = Time.now
 
@@ -386,11 +420,17 @@ class EC2Driver
             @ec2.client.associate_address(address)
         end
 
-
-        instance.create_tags(tags: [{
-            key: 'ONE_ID',
-            value: id
-        }])
+        if !host['PM_MAD']
+            instance.create_tags(tags: [{
+                key: 'ONE_ID',
+                value: id
+            }])
+        else
+            instance.create_tags(tags: [{
+                key: 'Name',
+                value: host['//HOST/TEMPLATE/PROVISION/HOSTNAME']
+            }])
+        end
 
         puts(instance.id)
     end
@@ -398,21 +438,31 @@ class EC2Driver
     # Shutdown a EC2 instance
     def shutdown(deploy_id, lcm_state)
         case lcm_state
-            when "SHUTDOWN"
-                ec2_action(deploy_id, :terminate)
-            when "SHUTDOWN_POWEROFF", "SHUTDOWN_UNDEPLOY"
-                ec2_action(deploy_id, :stop)
+        when "SHUTDOWN"
+            ec2_action(deploy_id, :terminate)
+            wait_state('terminated', deploy_id)
+        when "SHUTDOWN_POWEROFF", "SHUTDOWN_UNDEPLOY"
+            ec2_action(deploy_id, :stop)
+            wait_state('stopped', deploy_id)
         end
     end
 
     # Reboot a EC2 instance
     def reboot(deploy_id)
         ec2_action(deploy_id, :reboot)
+        wait_state('running', deploy_id)
     end
 
     # Cancel a EC2 instance
-    def cancel(deploy_id)
-        ec2_action(deploy_id, :terminate)
+    def cancel(deploy_id, lcm_state=nil)
+        case lcm_state
+        when 'SHUTDOWN_POWEROFF', 'SHUTDOWN_UNDEPLOY'
+            ec2_action(deploy_id, :stop)
+            wait_state('stopped', deploy_id)
+        else
+            ec2_action(deploy_id, :terminate)
+            wait_state('terminated', deploy_id)
+        end
     end
 
     # Save a EC2 instance
@@ -424,8 +474,17 @@ class EC2Driver
 
     # Resumes a EC2 instance
     def restore(deploy_id)
-        wait_state('stopped', deploy_id)
         ec2_action(deploy_id, :start)
+        wait_state('running', deploy_id)
+    end
+
+    # Resets a EC2 instance
+    def reset(deploy_id)
+        ec2_action(deploy_id, :stop)
+        wait_state('stopped', deploy_id)
+
+        ec2_action(deploy_id, :start)
+        wait_state('running', deploy_id)
     end
 
     # Get info (IP, and state) for a EC2 instance
@@ -566,21 +625,27 @@ private
         ec2 = nil
         ec2_deprecated = nil
 
-        all_ec2_elements = xml.root.get_elements("//USER_TEMPLATE/PUBLIC_CLOUD")
+        if host['PM_MAD']
+            all_ec2_elements = xml.root.get_elements("//TEMPLATE/PROVISION")
+        else
+            all_ec2_elements = xml.root.get_elements("//USER_TEMPLATE/PUBLIC_CLOUD")
+        end
 
-        # First, let's see if we have an EC2 site that matches
-        # our desired host name
-        all_ec2_elements.each { |element|
-            cloud=element.elements["HOST"]
-            if cloud && cloud.text.upcase == host.upcase
-                ec2 = element
-            else
-                cloud=element.elements["CLOUD"]
+        if !host['PM_MAD']
+            # First, let's see if we have an EC2 site that matches
+            # our desired host name
+            all_ec2_elements.each { |element|
+                cloud=element.elements["HOST"]
                 if cloud && cloud.text.upcase == host.upcase
-                    ec2_deprecated = element
+                    ec2 = element
+                else
+                    cloud=element.elements["CLOUD"]
+                    if cloud && cloud.text.upcase == host.upcase
+                        ec2_deprecated = element
+                    end
                 end
-            end
-        }
+            }
+        end
 
         ec2 ||= ec2_deprecated
 
@@ -590,9 +655,9 @@ private
             if all_ec2_elements.size == 1
                 ec2 = all_ec2_elements[0]
             else
-        raise RuntimeError.new("Cannot find PUBLIC_CLOUD element in deployment "\
-                    " file or no HOST site matching the requested in the "\
-                    " template.")
+                raise RuntimeError.new("Cannot find PUBLIC_CLOUD element in deployment "\
+                                       " file or no HOST site matching the requested in the "\
+                                       " template.")
             end
         end
 
@@ -666,10 +731,10 @@ private
     # +ec2_action+: Symbol, one of the keys of the EC2 hash constant (i.e :run)
     def ec2_action(deploy_id, ec2_action)
         begin
-        i = get_instance(deploy_id)
-        i.send(EC2[ec2_action][:cmd])
+            i = get_instance(deploy_id)
+            i.send(EC2[ec2_action][:cmd])
         rescue => e
-                raise e
+            raise e
         end
     end
 
@@ -721,7 +786,7 @@ private
     end
 
     # Waits until ec2 machine reach the desired state
-    # +state+: String, is the desired state, needs to be a real state of Amazon ec2:  running, stopped, terminated, pending  
+    # +state+: String, is the desired state, needs to be a real state of Amazon ec2:  running, stopped, terminated, pending
     # +deploy_id+: String, VM id in EC2
     def wait_state(state, deploy_id)
         ready = (state == 'stopped') || (state == 'pending') || (state == 'running') || (state == 'terminated')
@@ -925,5 +990,13 @@ private
 
         onegate_token_64 = Base64.encode64(onegate_token).chop
     end
+end
+
+def error_message(message)
+    error_str = "ERROR MESSAGE --8<------\n"
+    error_str << message
+    error_str << "\nERROR MESSAGE ------>8--"
+
+    return error_str
 end
 
