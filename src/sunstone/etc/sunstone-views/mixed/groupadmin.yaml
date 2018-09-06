@@ -8,6 +8,7 @@ enabled_tabs:
     - dashboard-tab
     - instances-top-tab
     - vms-tab
+    - vcs-tab
     - oneflow-services-tab
     - vrouters-tab
     - templates-top-tab
@@ -403,6 +404,64 @@ tabs:
             VM.unlock: true
             VM.edit_labels: true
             VM.menu_labels: true
+    vcs-tab:
+        panel_tabs:
+            vc_info_tab: true
+        table_columns:
+            - 0       # Checkbox
+            - 1       # ID
+            - 2       # Owner
+            - 3       # Group
+            - 4       # Name
+            - 5       # Status
+            #- 6       # Used CPU
+            #- 7       # Used Memory
+            - 8       # Host
+            - 9       # IPs
+            #- 10      # Start Time
+            - 11      # VNC
+            #- 12      # Hidden Template
+            #- 13      # Labels
+            #- 14      # Search data
+        actions:
+            VC.refresh: true
+            VC.create_dialog: true
+            VC.rename: true
+            VC.chown: false
+            VC.chgrp: false
+            VC.chmod: true
+            VC.deploy: false
+            VC.migrate: false
+            VC.migrate_live: false
+            VC.hold: true
+            VC.release: true
+            VC.suspend: true
+            VC.resume: true
+            VC.stop: true
+            VC.recover: false
+            VC.reboot: true
+            VC.reboot_hard: true
+            VC.poweroff: true
+            VC.poweroff_hard: true
+            VC.undeploy: true
+            VC.undeploy_hard: true
+            VC.terminate: true
+            VC.terminate_hard: true
+            VC.resize: true
+            VC.attachdisk: true
+            VC.detachdisk: true
+            VC.attachnic: true
+            VC.detachnic: true
+            VC.snapshot_create: true
+            VC.snapshot_revert: true
+            VC.snapshot_delete: true                                    
+            VC.resched: false
+            VC.unresched: false            
+            VC.updateconf: true
+            VC.lockU: true
+            VC.unlock: true
+            VC.edit_labels: true
+            VC.menu_labels: true                        
     oneflow-services-tab:
         panel_tabs:
             service_info_tab: true

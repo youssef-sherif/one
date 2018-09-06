@@ -46,6 +46,7 @@ define(function(require) {
     "vrouter-templates-tab",
     "instances-top-tab",
     "vms-tab",
+    "vcs-tab",
     "oneflow-services-tab",
     "vrouters-tab",
     "infrastructure-top-tab",

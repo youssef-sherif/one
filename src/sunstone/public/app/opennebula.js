@@ -38,6 +38,7 @@ define(function(require) {
       User            = require('./opennebula/user'),
       Vdc             = require('./opennebula/vdc'),
       Vm              = require('./opennebula/vm'),
+      Vc              = require('./opennebula/vc'),
       VMGroup         = require('./opennebula/vmgroup'),
       Zone            = require('./opennebula/zone'),
       VirtualRouter   = require('./opennebula/virtualrouter');

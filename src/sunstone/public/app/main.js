@@ -137,6 +137,7 @@ require.config({
         'tabs/vrouter-templates-tab',
         'tabs/instances-top-tab',
         'tabs/vms-tab',
+        'tabs/vcs-tab',
         'tabs/oneflow-services-tab',
         'tabs/vrouters-tab',
         'tabs/infrastructure-top-tab',
