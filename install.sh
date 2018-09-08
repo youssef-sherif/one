@@ -1466,6 +1466,8 @@ RUBY_OPENNEBULA_LIB_FILES="src/oca/ruby/opennebula/acl_pool.rb \
                             src/oca/ruby/opennebula/vdc.rb \
                             src/oca/ruby/opennebula/virtual_machine.rb \
                             src/oca/ruby/opennebula/virtual_machine_pool.rb \
+                            src/oca/ruby/opennebula/virtual_cluster.rb \
+                            src/oca/ruby/opennebula/virtual_cluster_pool.rb \
                             src/oca/ruby/opennebula/virtual_network_pool.rb \
                             src/oca/ruby/opennebula/virtual_network.rb \
                             src/oca/ruby/opennebula/xml_element.rb \
@@ -1707,6 +1709,7 @@ SUNSTONE_MODELS_JSON_FILES="src/sunstone/models/OpenNebulaJSON/HostJSON.rb \
                     src/sunstone/models/OpenNebulaJSON/UserJSON.rb \
                     src/sunstone/models/OpenNebulaJSON/VMGroupJSON.rb \
                     src/sunstone/models/OpenNebulaJSON/VirtualMachineJSON.rb \
+                    src/sunstone/models/OpenNebulaJSON/VirtualClusterJSON.rb \
                     src/sunstone/models/OpenNebulaJSON/TemplateJSON.rb \
                     src/sunstone/models/OpenNebulaJSON/AclJSON.rb \
                     src/sunstone/models/OpenNebulaJSON/ClusterJSON.rb \
