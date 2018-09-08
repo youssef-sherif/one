@@ -41,7 +41,7 @@ define(function(require) {
     this.tabId = TAB_ID;
     this.actions = {
       'create': {
-        'title': Locale.tr("Create Virtual Machine"),
+        'title': Locale.tr("Create Virtual Cluster"),
         'buttonText': Locale.tr("Create"),
         'resetButton': true
       }

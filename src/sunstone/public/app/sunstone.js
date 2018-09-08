@@ -42,6 +42,7 @@ define(function(require) {
     "acls-tab",
     "templates-top-tab",
     "templates-tab",
+    "vc-templates-tab",
     "oneflow-templates-tab",
     "vrouter-templates-tab",
     "instances-top-tab",

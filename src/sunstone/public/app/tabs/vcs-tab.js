@@ -18,7 +18,7 @@ define(function(require) {
     var Locale = require('utils/locale');
     var Buttons = require('./vcs-tab/buttons');
     var Actions = require('./vcs-tab/actions');
-    // var Table = require('./vcs-tab/datatable');
+    var Table = require('./vcs-tab/datatable');
     require('utils/vnc');
     var TAB_ID = require('./vcs-tab/tabId');
     var DATATABLE_ID = "dataTableVcs";
@@ -57,10 +57,10 @@ define(function(require) {
     //   require('./vms-tab/panels/log')
     // ];
   
-    // var _formPanels = [
-    //   require('./vms-tab/form-panels/create'),
-    //   require('./vms-tab/form-panels/updateconf')
-    // ]
+    var _formPanels = [
+      require('./vcs-tab/form-panels/create'),
+      // require('./vms-tab/form-panels/updateconf')
+    ]
   
     var Tab = {
       tabId: TAB_ID,
@@ -79,10 +79,10 @@ define(function(require) {
       resource: 'VC',
       buttons: Buttons,
       actions: Actions,
-    //   dataTable: new Table(DATATABLE_ID, {actions: true, info: true}),
+      dataTable: new Table(DATATABLE_ID, {actions: true, info: true}),
     //   panels: _panels,
     //   panelsHooks: _panelsHooks,
-    //   formPanels: _formPanels,
+      formPanels: _formPanels,
     //   dialogs: _dialogs
     };
   

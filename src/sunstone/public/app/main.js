@@ -133,6 +133,7 @@ require.config({
         'tabs/acls-tab',
         'tabs/templates-top-tab',
         'tabs/templates-tab',
+        'tabs/vc-templates-tab',
         'tabs/oneflow-templates-tab',
         'tabs/vrouter-templates-tab',
         'tabs/instances-top-tab',
