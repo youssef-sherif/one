@@ -13,6 +13,7 @@ enabled_tabs:
     - vrouters-tab
     - templates-top-tab
     - templates-tab
+    - vc-templates-tab
     - oneflow-templates-tab
     - vrouter-templates-tab
     #- storage-top-tab
@@ -263,6 +264,50 @@ tabs:
             hybrid: true
             vmgroup: true
             other: true
+    vc-templates-tab:
+        panel_tabs:
+            vc-template_info_tab: true
+            vc-template_template_tab: true
+        table_columns:
+            - 0         # Checkbox
+            - 1         # ID
+            - 2         # Name
+            - 3         # Owner
+            - 4         # Group
+            - 5         # Registration time
+            #- 6        # Labels
+            #- 7        # Search data
+        actions:
+            VCTemplate.refresh: true
+            VCTemplate.create_dialog: true
+            VCTemplate.import_dialog: true
+            VCTemplate.update_dialog: true
+            VCTemplate.instantiate_vms: true
+            VCTemplate.rename: true
+            VCTemplate.chown: true
+            VCTemplate.chgrp: true
+            VCTemplate.chmod: true
+            VCTemplate.clone_dialog: true
+            VCTemplate.delete_dialog: true
+            VCTemplate.share: true
+            VCTemplate.unshare: true
+            VCTemplate.lockU: true
+            VCTemplate.unlock: true
+            VCTemplate.edit_labels: true
+            VCTemplate.menu_labels: true
+        template_creation_tabs:
+            general: true
+            storage: true
+            network: true
+            os_booting: true
+            features: true
+            input_output: true
+            context: true
+            actions: true
+            scheduling: true
+            hybrid: true
+            vmgroup: true
+            other: true                
     oneflow-templates-tab:
         panel_tabs:
             service_template_info_tab: true
