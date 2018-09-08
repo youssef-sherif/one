@@ -27,7 +27,7 @@ module OpenNebula
         attr_reader :pool_name
         attr_reader :element_name
 
-        PAGINATED_POOLS=%w{VM_POOL IMAGE_POOL TEMPLATE_POOL VN_POOL
+        PAGINATED_POOLS=%w{VM_POOL IMAGE_POOL TEMPLATE_POOL VN_POOL VC_POOL
                            DOCUMENT_POOL SECGROUP_POOL}
 
     protected
