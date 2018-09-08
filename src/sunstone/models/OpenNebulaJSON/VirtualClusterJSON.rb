@@ -21,15 +21,15 @@ module OpenNebulaJSON
     class VirtualClusterJSON < OpenNebula::VirtualCluster
         include JSONUtils
         def create(template_json)
-            vm_hash = parse_json(template_json, 'vm')
-            if OpenNebula.is_error?(vm_hash)
-                return vm_hash
+            vc_hash = parse_json(template_json, 'vc')
+            if OpenNebula.is_error?(vc_hash)
+                return vc_hash
             end
 
-            if vm_hash['vm_raw']
-                template = vm_hash['vm_raw']
+            if vm_hash['vc_raw']
+                template = vc_hash['vc_raw']
             else
-                template = template_to_str(vm_hash)
+                template = template_to_str(vc_hash)
             end
 
             self.allocate(template)
