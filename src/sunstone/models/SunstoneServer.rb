@@ -29,7 +29,7 @@ class SunstoneServer < CloudServer
     # Secs to sleep between checks to see if image upload to repo is finished
     IMAGE_POLL_SLEEP_TIME = 5
 
-    def initialize(client, config, logger)
+    def initialize(client, config, logger)        
         super(config, logger)
         @client = client
     end
