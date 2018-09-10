@@ -156,7 +156,7 @@ define(function(require) {
 
      context.on("change", "#CPU_COST", function() {
       var cpu = document.getElementById('CPU').value;
-      var cpu_cost = document.getElementById('CPU_COST').value;
+      var cpu_cost = document.getElementById('CPU_COST').value;    
       document.getElementById('total_value_cpu').textContent = convertCostNumber(cpu * cpu_cost * 24 * 30);
       $(".total_cpu_cost", context).show();
       CapacityCreate.calculatedRealCpu();

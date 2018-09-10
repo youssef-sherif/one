@@ -18,7 +18,7 @@ define(function(require) {
     var OpenNebulaAction = require('./action');
     var Config = require('sunstone-config');
   
-    var RESOURCE = "VCTemplate";
+    var RESOURCE = "VCTEMPLATE";
   
     var VCTemplate = {
       "resource": RESOURCE,

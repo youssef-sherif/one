@@ -20,7 +20,7 @@
       <div class="small-12 columns">
         <label class="" for="MEMORY">
           {{tr "Memory"}}
-          {{{tip (tr "Amount of RAM required for the VM, in Megabytes.")}}}
+          {{{tip (tr "Amount of RAM required for the VC, in Megabytes.")}}}
         </label>
       </div>
       <div class="small-12 columns">
@@ -94,10 +94,36 @@
 </div>
 <div class="row">
   <div class="medium-6 small-12 columns">
+    <div class="row">    
+      <div class="small-12 columns">
+        <label class="" for="VMs">
+          {{tr "Number of VMs"}}
+          {{{tip (tr "Number of Virtual Machines in the Virtual Cluster")}}}
+       </label>
+      </div>    
+    </div>
+    <input type="number" step="1" min="2" wizard_field="VMs" id="VMs" style="margin-bottom:0rem;"/>
+  </div>
+</div>
+{{!-- <div class="row">
+  <div class="medium-6 small-12 columns">
+    <div class="row">    
+      <div class="small-12 columns">
+        <label class="" for="CPU">
+          {{tr "Shared File System"}}
+          {{{tip (tr "Location of NFS shared file system")}}}
+       </label>
+      </div>    
+    </div>
+    <input type="text" wizard_field="CPU" id="CPU" style="margin-bottom:0rem;"/>
+  </div>
+</div> --}}
+<div class="row">
+  <div class="medium-6 small-12 columns">
     <div class="row">
       <div class="small-12 columns">
         <label class="" for="CPU">
-          {{tr "CPU"}}
+          {{tr "CPU / VM"}}
           {{{tip (tr "Percentage of CPU divided by 100 required for the Virtual Machine. Half a processor is written 0.5.")}}}
         </label>
         <div class="cpu_input">
@@ -145,7 +171,7 @@
     <div class="row">
       <div class="small-12 columns">
         <label class="" for="VCPU">
-          {{tr "VCPU"}}
+          {{tr "VCPU / VM"}}
           {{{tip (tr "Number of virtual cpus. This value is optional, the default hypervisor behavior is used, usually one virtual CPU.")}}}
         </label>
         <div class="vcpu_input">

@@ -107,6 +107,91 @@ define(function(require) {
       DISK_RESIZE_UNDEPLOYED          : 64
     };
 
+    var SHORT_LCM_STATES_STR = [
+      Locale.tr("LCM_INIT"),  // LCM_INIT
+      Locale.tr("PROLOG"),    // PROLOG
+      Locale.tr("BOOT"),      // BOOT
+      Locale.tr("RUNNING"),   // RUNNING
+      Locale.tr("MIGRATE"),   // MIGRATE
+      Locale.tr("SAVE"),      // SAVE_STOP
+      Locale.tr("SAVE"),      // SAVE_SUSPEND
+      Locale.tr("SAVE"),      // SAVE_MIGRATE
+      Locale.tr("MIGRATE"),   // PROLOG_MIGRATE
+      Locale.tr("PROLOG"),    // PROLOG_RESUME
+      Locale.tr("EPILOG"),    // EPILOG_STOP
+      Locale.tr("EPILOG"),    // EPILOG
+      Locale.tr("SHUTDOWN"),  // SHUTDOWN
+      Locale.tr("SHUTDOWN"),  // CANCEL
+      Locale.tr("FAILURE"),   // FAILURE
+      Locale.tr("CLEANUP"),   // CLEANUP_RESUBMIT
+      Locale.tr("UNKNOWN"),   // UNKNOWN
+      Locale.tr("HOTPLUG"),   // HOTPLUG
+      Locale.tr("SHUTDOWN"),  // SHUTDOWN_POWEROFF
+      Locale.tr("BOOT"),      // BOOT_UNKNOWN
+      Locale.tr("BOOT"),      // BOOT_POWEROFF
+      Locale.tr("BOOT"),      // BOOT_SUSPENDED
+      Locale.tr("BOOT"),      // BOOT_STOPPED
+      Locale.tr("CLEANUP"),   // CLEANUP_DELETE
+      Locale.tr("SNAPSHOT"),  // HOTPLUG_SNAPSHOT
+      Locale.tr("HOTPLUG"),   // HOTPLUG_NIC
+      Locale.tr("HOTPLUG"),   // HOTPLUG_SAVEAS
+      Locale.tr("HOTPLUG"),   // HOTPLUG_SAVEAS_POWEROFF
+      Locale.tr("HOTPLUG"),   // HOTPLUG_SAVEAS_SUSPENDED
+      Locale.tr("SHUTDOWN"),  // SHUTDOWN_UNDEPLOY
+      Locale.tr("EPILOG"),    // EPILOG_UNDEPLOY
+      Locale.tr("PROLOG"),    // PROLOG_UNDEPLOY
+      Locale.tr("BOOT"),      // BOOT_UNDEPLOY
+      Locale.tr("HOTPLUG"),   // HOTPLUG_PROLOG_POWEROFF
+      Locale.tr("HOTPLUG"),   // HOTPLUG_EPILOG_POWEROFF
+      Locale.tr("BOOT"),      // BOOT_MIGRATE
+      Locale.tr("FAILURE"),   // BOOT_FAILURE
+      Locale.tr("FAILURE"),   // BOOT_MIGRATE_FAILURE
+      Locale.tr("FAILURE"),   // PROLOG_MIGRATE_FAILURE
+      Locale.tr("FAILURE"),   // PROLOG_FAILURE
+      Locale.tr("FAILURE"),   // EPILOG_FAILURE
+      Locale.tr("FAILURE"),   // EPILOG_STOP_FAILURE
+      Locale.tr("FAILURE"),   // EPILOG_UNDEPLOY_FAILURE
+      Locale.tr("MIGRATE"),   // PROLOG_MIGRATE_POWEROFF
+      Locale.tr("FAILURE"),   // PROLOG_MIGRATE_POWEROFF_FAILURE
+      Locale.tr("MIGRATE"),   // PROLOG_MIGRATE_SUSPEND
+      Locale.tr("FAILURE"),   // PROLOG_MIGRATE_SUSPEND_FAILURE
+      Locale.tr("FAILURE"),   // BOOT_UNDEPLOY_FAILURE
+      Locale.tr("FAILURE"),   // BOOT_STOPPED_FAILURE
+      Locale.tr("FAILURE"),   // PROLOG_RESUME_FAILURE
+      Locale.tr("FAILURE"),   // PROLOG_UNDEPLOY_FAILURE
+      // Locale.tr("SNAPSHOT"),  // DISK_SNAPSHOT_POWEROFF
+      // Locale.tr("SNAPSHOT"),  // DISK_SNAPSHOT_REVERT_POWEROFF
+      // Locale.tr("SNAPSHOT"),  // DISK_SNAPSHOT_DELETE_POWEROFF
+      // Locale.tr("SNAPSHOT"),  // DISK_SNAPSHOT_SUSPENDED
+      // Locale.tr("SNAPSHOT"),  // DISK_SNAPSHOT_REVERT_SUSPENDED
+      // Locale.tr("SNAPSHOT"),  // DISK_SNAPSHOT_DELETE_SUSPENDED
+      // Locale.tr("SNAPSHOT"),  // DISK_SNAPSHOT
+      // Locale.tr("SNAPSHOT"),  // DISK_SNAPSHOT_REVERT
+      // Locale.tr("SNAPSHOT"),  // DISK_SNAPSHOT_DELETE
+      Locale.tr("MIGRATE"),   // PROLOG_MIGRATE_UNKNOWN
+      Locale.tr("FAILURE"),   // PROLOG_MIGRATE_UNKNOWN_FAILURE
+      Locale.tr("DISK_RSZ"),  // DISK_RESIZE
+      Locale.tr("DISK_RSZ"),  // DISK_RESIZE_POWEROFF
+      Locale.tr("DISK_RSZ")   // DISK_RESIZE_UNDEPLOYED
+    ];
+  
+    var VNC_STATES = [
+      LCM_STATES.RUNNING,
+      LCM_STATES.MIGRATE,
+      LCM_STATES.SHUTDOWN,
+      LCM_STATES.CANCEL,
+      LCM_STATES.UNKNOWN,
+      LCM_STATES.HOTPLUG,
+      LCM_STATES.SHUTDOWN_POWEROFF,
+      LCM_STATES.HOTPLUG_SNAPSHOT,
+      LCM_STATES.HOTPLUG_NIC,
+      LCM_STATES.HOTPLUG_SAVEAS,
+      LCM_STATES.HOTPLUG_SAVEAS_POWEROFF,
+      LCM_STATES.HOTPLUG_SAVEAS_SUSPENDED,
+      LCM_STATES.SHUTDOWN_UNDEPLOY,
+    ];
+  
+
     var VC = {
         "resource": RESOURCE,
         "create": function(params) {
@@ -216,8 +301,17 @@ define(function(require) {
           var action_obj = params.data.extra_param;
           OpenNebulaAction.simple_action(params, RESOURCE, "rename", action_obj);
         },
+        "stateStr": function(stateId) {
+          return STATES_STR[stateId];
+        },
         "STATES": STATES,
-        "LCM_STATES": LCM_STATES
+        "lcmStateStr": function(stateId) {
+          return LCM_STATES_STR[stateId];
+        },
+        "LCM_STATES": LCM_STATES,
+        "shortLcmStateStr": function(stateId) {
+          return SHORT_LCM_STATES_STR[stateId];
+        },
     }
 
     return VC;
