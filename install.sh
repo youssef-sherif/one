@@ -593,6 +593,7 @@ INSTALL_ETC_FILES=(
 BIN_FILES="src/nebula/oned \
            src/scheduler/src/sched/mm_sched \
            src/cli/onevm \
+           src/cli/onevc \
            src/cli/oneacct \
            src/cli/oneshowback \
            src/cli/onehost \
@@ -1612,6 +1613,7 @@ ONE_CLI_LIB_FILES="src/cli/one_helper/onegroup_helper.rb \
                    src/cli/one_helper/onequota_helper.rb \
                    src/cli/one_helper/oneuser_helper.rb \
                    src/cli/one_helper/onevm_helper.rb \
+                   src/cli/one_helper/onevc_helper.rb \
                    src/cli/one_helper/onevnet_helper.rb \
                    src/cli/one_helper/oneacl_helper.rb \
                    src/cli/one_helper/onedatastore_helper.rb \
@@ -1627,6 +1629,7 @@ ONE_CLI_LIB_FILES="src/cli/one_helper/onegroup_helper.rb \
                    src/cli/one_helper/onemarket_helper.rb"
 
 CLI_BIN_FILES="src/cli/onevm \
+               src/cli/onevc \
                src/cli/onehost \
                src/cli/onevnet \
                src/cli/oneuser \
@@ -1654,6 +1657,7 @@ CLI_CONF_FILES="src/cli/etc/onegroup.yaml \
                 src/cli/etc/onetemplate.yaml \
                 src/cli/etc/oneuser.yaml \
                 src/cli/etc/onevm.yaml \
+                src/cli/etc/onevc.yaml \
                 src/cli/etc/onevnet.yaml \
                 src/cli/etc/oneacl.yaml \
                 src/cli/etc/onedatastore.yaml \
