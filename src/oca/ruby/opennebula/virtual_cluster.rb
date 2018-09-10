@@ -234,6 +234,8 @@ module OpenNebula
         # Class constructor
         def initialize(xml, client)
             super(xml,client)
+            @vms_amt = 2
+            @nfs_loc = "/nfs"
         end
 
         #######################################################################
@@ -627,6 +629,16 @@ module OpenNebula
             end
 
             short_state_str
+        end
+
+        # Returns number of Virtual Machines
+        def vms_amt
+            return @vms_amt
+        end
+
+        # Returns the NFS shared file system location
+        def nfs_loc
+            return @nfs_loc
         end
 
         # Returns the group identifier
