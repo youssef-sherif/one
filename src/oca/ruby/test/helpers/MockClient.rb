@@ -22,6 +22,18 @@ class MockClient
                 return nil
             when "one.vm.migrate"
                 return nil
+            when "one.vc.info"
+                return File.read("fixtures/vc.xml")
+            when "one.vc.allocate"
+                return 6
+            when "one.vc.delete"
+                return nil
+            when "one.vc.action"
+                return nil
+            when "one.vc.deploy"
+                return nil
+            when "one.vc.migrate"
+                return nil
             when "one.host.info"
                 return File.read("fixtures/host.xml")
             when "one.host.allocate"
@@ -40,6 +52,8 @@ class MockClient
                 return File.read("fixtures/vnetpool.xml")
             when "one.vmpool.info"
                 return File.read("fixtures/vmpool.xml")
+            when "one.vcpool.info"
+                return File.read("fixtures/vcpool.xml")
             when "one.hostpool.info"
                 return File.read("fixtures/hostpool.xml")
             when "one.userpool.info"
