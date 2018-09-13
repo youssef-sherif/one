@@ -1,0 +1,28 @@
+<VCTEMPLATE_POOL>
+    <VCTEMPLATE>
+        <NAME>test_vc</NAME>
+        <ID>5</ID>
+        <CPU>2</CPU>
+        <MEMORY>1024</MEMORY>
+        <DISK>
+            <IMAGE_ID>2</IMAGE_ID>
+        </DISK>
+        <DISK>
+            <IMAGE>Data</IMAGE>
+            <IMAGE_UNAME>oneadmin</IMAGE_UNAME>
+        </DISK>
+    </VCTEMPLATE>
+    <VCTEMPLATE>
+        <NAME>test_vc</NAME>
+        <ID>5</ID>
+        <CPU>2</CPU>
+        <MEMORY>1024</MEMORY>
+        <DISK>
+            <IMAGE_ID>2</IMAGE_ID>
+        </DISK>
+        <DISK>
+            <IMAGE>Data</IMAGE>
+            <IMAGE_UNAME>oneadmin</IMAGE_UNAME>
+        </DISK>
+    </VCTEMPLATE>
+</VCTEMPLATE_POOL>

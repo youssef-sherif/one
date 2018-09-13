@@ -1,0 +1,13 @@
+<VCTEMPLATE>
+  <NAME>test-vc</NAME>
+  <ID>6</ID>
+  <CPU>2</CPU>
+  <MEMORY>1024</MEMORY>
+  <DISK>
+    <IMAGE_ID>2</IMAGE_ID>
+  </DISK>
+  <DISK>
+    <IMAGE>Data</IMAGE>
+    <IMAGE_UNAME>oneadmin</IMAGE_UNAME>
+  </DISK>
+</VCTEMPLATE>
