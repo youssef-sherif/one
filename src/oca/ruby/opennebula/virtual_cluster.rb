@@ -210,13 +210,9 @@ module OpenNebula
             }
         end
 
-        # Creates a VirtualMachine description with just its identifier
+        # Creates a VirtualCluster description with just its identifier
         # this method should be used to create plain VirtualMachine objects.
-        # +id+ the id of the vm
-        #
-        # Example:
-        #   vnet = VirtualMachine.new(VirtualMachine.build_xml(3),rpc_client)
-        #
+        # +id+ the id of the vc
         def VirtualCluster.build_xml(pe_id=nil)
             if pe_id
                 vc_xml = "<VC><ID>#{pe_id}</ID></VC>"
@@ -232,28 +228,28 @@ module OpenNebula
         end
 
         # Class constructor
+        # Number of Virtual Machines defaults to 2
+        # NFS shared location defaults to /nfs
         def initialize(xml, client)
-            super(xml,client)
-            @vms_amt = 2
-            @nfs_loc = "/nfs"
+            super(xml,client)             
         end
 
         #######################################################################
         # XML-RPC Methods for the Virtual Machine Object
         #######################################################################
 
-        # Retrieves the information of the given VirtualMachine.
+        # Retrieves the information of the given VirtualCluster.
         def info()
             super(VC_METHODS[:info], 'VC')
         end
 
         alias_method :info!, :info
 
-        # Allocates a new VirtualMachine in OpenNebula
+        # Allocates a new VirtualCluster in OpenNebula
         #
         # @param description [String] A string containing the template of
-        #   the VirtualMachine.
-        # @param hold [true,false] false to create the VM in pending state,
+        #   the VirtualCluster.
+        # @param hold [true,false] false to create the VC in pending state,
         #   true to create it on hold
         #
         # @return [nil, OpenNebula::Error] nil in case of success, Error
@@ -298,14 +294,14 @@ module OpenNebula
             super(opts, "USER_TEMPLATE")
         end
 
-        # Initiates the instance of the VM on the target host.
+        # Initiates the instance of the VC on the target host.
         #
         # @param host_id [Interger] The host id (hid) of the target host where
-        #   the VM will be instantiated.
+        #   the VC will be instantiated.
         # @param enforce [true|false] If it is set to true, the host capacity
         #   will be checked, and the deployment will fail if the host is
         #   overcommited. Defaults to false
-        # @param ds_id [Integer] The System Datastore where to deploy the VM. To
+        # @param ds_id [Integer] The System Datastore where to deploy the VC. To
         #   use the default, set it to -1
         #
         # @return [nil, OpenNebula::Error] nil in case of success, Error
@@ -323,54 +319,54 @@ module OpenNebula
                         ds_id.to_i)
         end
 
-        # Shutdowns an already deployed VM
+        # Shutdowns an already deployed VC
         def terminate(hard=false)
             action(hard ? 'terminate-hard' : 'terminate')
         end
 
         alias_method :shutdown, :terminate
 
-        # Shuts down an already deployed VM, saving its state in the system DS
+        # Shuts down an already deployed VC, saving its state in the system DS
         def undeploy(hard=false)
             action(hard ? 'undeploy-hard' : 'undeploy')
         end
 
-        # Powers off a running VM
+        # Powers off a running VC
         def poweroff(hard=false)
             action(hard ? 'poweroff-hard' : 'poweroff')
         end
 
-        # Reboots an already deployed VM
+        # Reboots an already deployed VC
         def reboot(hard=false)
             action(hard ? 'reboot-hard' : 'reboot')
         end
 
-        # Sets a VM to hold state, scheduler will not deploy it
+        # Sets a VC to hold state, scheduler will not deploy it
         def hold
             action('hold')
         end
 
-        # Releases a VM from hold state
+        # Releases a VC from hold state
         def release
             action('release')
         end
 
-        # Stops a running VM
+        # Stops a running VC
         def stop
             action('stop')
         end
 
-        # Saves a running VM
+        # Saves a running VC
         def suspend
             action('suspend')
         end
 
-        # Resumes the execution of a saved VM
+        # Resumes the execution of a saved VC
         def resume
             action('resume')
         end
 
-        # Attaches a disk to a running VM
+        # Attaches a disk to a running VC
         #
         # @param disk_template [String] Template containing a DISK element
         # @return [nil, OpenNebula::Error] nil in case of success, Error
@@ -381,7 +377,7 @@ module OpenNebula
 
         alias_method :attachdisk, :disk_attach
 
-        # Detaches a disk from a running VM
+        # Detaches a disk from a running VC
         #
         # @param disk_id [Integer] Id of the disk to be detached
         # @return [nil, OpenNebula::Error] nil in case of success, Error
@@ -392,7 +388,7 @@ module OpenNebula
 
         alias_method :detachdisk, :disk_detach
 
-        # Attaches a NIC to a running VM
+        # Attaches a NIC to a running VC
         #
         # @param nic_template [String] Template containing a NIC element
         # @return [nil, OpenNebula::Error] nil in case of success, Error
@@ -401,7 +397,7 @@ module OpenNebula
             return call(VC_METHODS[:attachnic], @pe_id, nic_template)
         end
 
-        # Detaches a NIC from a running VM
+        # Detaches a NIC from a running VC
         #
         # @param nic_id [Integer] Id of the NIC to be detached
         # @return [nil, OpenNebula::Error] nil in case of success, Error
@@ -410,27 +406,27 @@ module OpenNebula
             return call(VC_METHODS[:detachnic], @pe_id, nic_id)
         end
 
-        # Sets the re-scheduling flag for the VM
+        # Sets the re-scheduling flag for the VC
         def resched
             action('resched')
         end
 
-        # Unsets the re-scheduling flag for the VM
+        # Unsets the re-scheduling flag for the VC
         def unresched
             action('unresched')
         end
 
-        # Moves a running VM to the specified host. With live=true the
+        # Moves a running VC to the specified host. With live=true the
         # migration is done withdout downtime.
         #
         # @param host_id [Interger] The host id (hid) of the target host where
-        #   the VM will be migrated.
+        #   the VC will be migrated.
         # @param live [true|false] If true the migration is done without
         #   downtime. Defaults to false
         # @param enforce [true|false] If it is set to true, the host capacity
         #   will be checked, and the deployment will fail if the host is
         #   overcommited. Defaults to false
-        # @param ds_id [Integer] The System Datastore where to migrate the VM.
+        # @param ds_id [Integer] The System Datastore where to migrate the VC.
         #   To use the current one, set it to -1
         #
         # @return [nil, OpenNebula::Error] nil in case of success, Error
@@ -445,7 +441,7 @@ module OpenNebula
             migrate(host_id, true, enforce)
         end
 
-        # Resize the VM
+        # Resize the VC
         #
         # @param capacity_template [String] Template containing the new capacity
         #   elements CPU, VCPU, MEMORY. If one of them is not present, or its
@@ -488,40 +484,29 @@ module OpenNebula
                 group_m, group_a, other_u, other_m, other_a)
         end
 
-        # Retrieves this VM's monitoring data from OpenNebula
+        # Retrieves this VC's monitoring data from OpenNebula
         #
         # @param [Array<String>] xpath_expressions Elements to retrieve.
         #
         # @return [Hash<String, Array<Array<int>>>, OpenNebula::Error] Hash with
         #   the requested xpath expressions, and an Array of 'timestamp, value'.
-        #
-        # @example
-        #   vm.monitoring( ['MONITORING/CPU', 'MONITORING/NETTX'] )
-        #
-        #   {
-        #    "MONITORING/CPU"=>[["1435085098", "47"], ["1435085253", "5"],
-        #      ["1435085410", "48"], ["1435085566", "3"], ["1435088136", "2"]],
-        #    "MONITORING/NETTX"=>[["1435085098", "0"], ["1435085253", "50"],
-        #      ["1435085410", "50"], ["1435085566", "50"], ["1435085723", "50"]]
-        #   }
-        #
         def monitoring(xpath_expressions)
             return super(VC_METHODS[:monitoring], 'VC',
                 'LAST_POLL', xpath_expressions)
         end
 
-        # Retrieves this VM's monitoring data from OpenNebula, in XML
+        # Retrieves this VC's monitoring data from OpenNebula, in XML
         #
-        # @return [String] VM monitoring data, in XML
+        # @return [String] VC monitoring data, in XML
         def monitoring_xml()
             return Error.new('ID not defined') if !@pe_id
 
             return @client.call(VC_METHODS[:monitoring], @pe_id)
         end
 
-        # Renames this VM
+        # Renames this VC
         #
-        # @param name [String] New name for the VM.
+        # @param name [String] New name for the VC.
         #
         # @return [nil, OpenNebula::Error] nil in case of success, Error
         #   otherwise
@@ -529,7 +514,7 @@ module OpenNebula
             return call(VC_METHODS[:rename], @pe_id, name)
         end
 
-        # Creates a new VM snapshot
+        # Creates a new VC snapshot
         #
         # @param name [String] Name for the snapshot.
         #
@@ -552,18 +537,18 @@ module OpenNebula
             return call(VC_METHODS[:snapshotrevert], @pe_id, snap_id)
         end
 
-        # Recovers an ACTIVE VM
+        # Recovers an ACTIVE VC
         #
         # @param result [Integer] Recover with failure (0), success (1),
         # retry (2), delete (3), delete-recreate (4)
-        # @param result [info] Additional information needed to recover the VM
+        # @param result [info] Additional information needed to recover the VC
         # @return [nil, OpenNebula::Error] nil in case of success, Error
         #   otherwise
         def recover(result)
             return call(VC_METHODS[:recover], @pe_id, result)
         end
 
-        # Deletes a VM from the pool
+        # Deletes a VC from the pool
         def delete(recreate=false)
             if recreate
                 recover(4)
@@ -572,11 +557,11 @@ module OpenNebula
             end
         end
 
-		#  Changes the attributes of a VM in power off, failure and undeploy
+		#  Changes the attributes of a VC in power off, failure and undeploy
 		#  states
 		#  @param new_conf, string describing the new attributes. Each attribute
         #  will replace the existing ones or delete it if empty. Attributes that
-        #  can be updated are: INPUT/{TYPE, BUS}; RAW/{TYPE, DATA, DATA_VMX},
+        #  can be updated are: INPUT/{TYPE, BUS}; RAW/{TYPE, DATA, DATA_VCX},
         #  OS/{BOOT, BOOTLOADER, ARCH, MACHINE, KERNEL, INITRD},
         #  FEATURES/{ACPI, APIC, PAE, LOCALTIME, HYPERV, GUEST_AGENT},
         #  and GRAPHICS/{TYPE, LISTEN, PASSWD, KEYMAP}
@@ -586,41 +571,41 @@ module OpenNebula
             return call(VC_METHODS[:updateconf], @pe_id, new_conf)
         end
 
-        # Lock a VM
+        # Lock a VC
         def lock(level)
             return call(VC_METHODS[:lock], @pe_id, level)
         end
 
-        # Unlock a VM
+        # Unlock a VC
         def unlock()
             return call(VC_METHODS[:unlock], @pe_id)
         end
 
         ########################################################################
-        # Helpers to get VirtualMachine information
+        # Helpers to get VirtualCluster information
         ########################################################################
 
-        # Returns the VM state of the VirtualMachine (numeric value)
+        # Returns the VC state of the VirtualCluster (numeric value)
         def state
             self['STATE'].to_i
         end
 
-        # Returns the VM state of the VirtualMachine (string value)
+        # Returns the VC state of the VirtualCluster (string value)
         def state_str
             VC_STATE[state]
         end
 
-        # Returns the LCM state of the VirtualMachine (numeric value)
+        # Returns the LCM state of the VirtualCluster (numeric value)
         def lcm_state
             self['LCM_STATE'].to_i
         end
 
-        # Returns the LCM state of the VirtualMachine (string value)
+        # Returns the LCM state of the VirtualCluster (string value)
         def lcm_state_str
             LCM_STATE[lcm_state]
         end
 
-        # Returns the short status string for the VirtualMachine
+        # Returns the short status string for the VirtualCluster
         def status
             short_state_str=SHORT_VC_STATES[state_str]
 
@@ -632,13 +617,13 @@ module OpenNebula
         end
 
         # Returns number of Virtual Machines
-        def vms_amt
-            return @vms_amt
+        def vms_amount
+            self['VMS_AMT'].to_i
         end
 
         # Returns the NFS shared file system location
-        def nfs_loc
-            return @nfs_loc
+        def nfs_location
+            self['NFS_LOC'].to_s
         end
 
         # Returns the group identifier
