@@ -48,6 +48,8 @@ class MockClient
                 return File.read("fixtures/user.xml")
             when "one.user.delete"
                 return nil
+            when "one.vctemplate.info"
+                return File.read("fixtures/vctemplate.xml")
             when "one.vnpool.info"
                 return File.read("fixtures/vnetpool.xml")
             when "one.vmpool.info"
@@ -58,6 +60,8 @@ class MockClient
                 return File.read("fixtures/hostpool.xml")
             when "one.userpool.info"
                 return File.read("fixtures/userpool.xml")
+            when "one.vctemplatepool.info"
+                return File.read("fixtures/vctemplatepool.xml")
         end
     end
 end
