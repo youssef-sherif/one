@@ -20,17 +20,17 @@ module OpenNebulaJSON
 
     class VirtualClusterJSON < OpenNebula::VirtualCluster
         include JSONUtils
-        def create(template_json)
+        def create(template_json)            
             vc_hash = parse_json(template_json, 'vc')
             if OpenNebula.is_error?(vc_hash)
                 return vc_hash
             end
 
-            if vm_hash['vc_raw']
+            if vc_hash['vc_raw']
                 template = vc_hash['vc_raw']
             else
                 template = template_to_str(vc_hash)
-            end
+            end            
 
             self.allocate(template)
         end
@@ -124,7 +124,7 @@ module OpenNebulaJSON
         end
 
         def resize(params=Hash.new)
-            template_json = params['vc_template']
+            template_json = params['vctemplate']
             template = template_to_str(template_json)
             super(template, params['enforce'])
         end
@@ -151,14 +151,14 @@ module OpenNebulaJSON
 
         def update(params=Hash.new)
             if !params['append'].nil?
-                super(params['template_raw'], params['append'])
+                super(params['vctemplate_raw'], params['append'])
             else
-                super(params['template_raw'])
+                super(params['vctemplate_raw'])
             end
         end
 
         def updateconf(params=Hash.new)
-            super(params['template_raw'])
+            super(params['vctemplate_raw'])
         end
 
         def rename(params=Hash.new)

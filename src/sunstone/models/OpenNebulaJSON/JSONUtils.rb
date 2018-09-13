@@ -29,6 +29,7 @@ module OpenNebulaJSON
 
         def self.parse_json(json_str, root_element)
             begin
+                puts "#{json_str} #{root_element} "
                 hash = JSON.parse(json_str)
             rescue Exception => e
                 return OpenNebula::Error.new(e.message)

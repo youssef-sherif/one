@@ -40,6 +40,8 @@ class SunstoneServer < CloudServer
     def get_pool(kind,user_flag, client=nil)
         client = @client if !client
 
+        puts "#{kind}"
+
         user_flag = Integer(user_flag)
 
         pool = case kind
@@ -48,6 +50,7 @@ class SunstoneServer < CloudServer
             when "host"             then HostPoolJSON.new(client)
             when "image"            then ImagePoolJSON.new(client, user_flag)
             when "vmtemplate"       then TemplatePoolJSON.new(client, user_flag)
+            when "vctemplate"       then VCTemplatePoolJSON.new(client, user_flag)
             when "vm_group"         then VMGroupPoolJSON.new(client, user_flag)
             when "vm"               then VirtualMachinePoolJSON.new(client, user_flag)            
             when "vc"               then VirtualClusterPoolJSON.new(client, user_flag)                
@@ -110,6 +113,7 @@ class SunstoneServer < CloudServer
             when "host"             then HostJSON.new(Host.build_xml, @client)
             when "image"            then ImageJSON.new(Image.build_xml, @client)
             when "vmtemplate"       then TemplateJSON.new(Template.build_xml, @client)
+            when "vctemplate"       then VCTemplateJSON.new(VCTemplate.build_xml, @client)
             when "vm_group"         then VMGroupJSON.new(VMGroup.build_xml,@client)
             when "vm"               then VirtualMachineJSON.new(VirtualMachine.build_xml,@client)
             when "vc"               then VirtualClusterJSON.new(VirtualCluster.build_xml,@client)
@@ -485,6 +489,7 @@ class SunstoneServer < CloudServer
             when "host"             then HostJSON.new_with_id(id, @client)
             when "image"            then ImageJSON.new_with_id(id, @client)
             when "vmtemplate"       then TemplateJSON.new_with_id(id, @client)
+            when "vctemplate"       then VCTemplateJSON.new_with_id(id, @client)
             when "vm_group"          then VMGroupJSON.new_with_id(id, @client)
             when "vm"               then VirtualMachineJSON.new_with_id(id, @client)
             when "vc"               then VirtualClusterJSON.new_with_id(id, @client)
