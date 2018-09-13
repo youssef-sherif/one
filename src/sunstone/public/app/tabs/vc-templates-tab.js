@@ -27,14 +27,14 @@ define(function(require) {
       require('./vc-templates-tab/dialogs/clone')
     ];
   
-    // var _panels = [
-    //   require('./vc-templates-tab/panels/info'),
-    //   require('./vc-templates-tab/panels/template')
-    // ];
+    var _panels = [
+      require('./vc-templates-tab/panels/info'),
+      require('./vc-templates-tab/panels/template')
+    ];
   
-    // var _panelsHooks = [
-    //   require('../utils/hooks/header')
-    // ];
+    var _panelsHooks = [
+      require('../utils/hooks/header')
+    ];
   
     var _formPanels = [
       require('./vc-templates-tab/form-panels/create'),
@@ -51,14 +51,14 @@ define(function(require) {
       infoHeader: Locale.tr("VC Template"),
       lockable: true,
       subheader: '<span>\
-          <span class="total_templates"/> <small>'+Locale.tr("TOTAL")+'</small>\
+          <span class="total_vc_templates"/> <small>'+Locale.tr("TOTAL")+'</small>\
         </span>',
       resource: 'VCTemplate',
       buttons: Buttons,
       actions: Actions,
       dataTable: new Table(DATATABLE_ID, {actions: true, info: true}),
-    //   panels: _panels,
-    //   panelsHooks: _panelsHooks,
+      panels: _panels,
+      panelsHooks: _panelsHooks,
       formPanels: _formPanels,
       dialogs: _dialogs
     };
