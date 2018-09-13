@@ -26,22 +26,12 @@ module OpenNebula
             @vc.id.should eql(6)                        
         end
 
-        it "should have VMs Ammount" do            
-            @vc.vms_amt.should eql(2)
-        end
-
-        it "should have NFS Location" do
-            @vc.nfs_loc.should eql("/nfs")
-        end
-
         it "should update the VC info" do
             @vc.info()
 
             @vc.id.should eql(6)
             @vc.name.should eql('vc-example')
             @vc.state.should eql(3)
-            @vc.vms_amt.should eql(2)
-            @vc.nfs_loc.should eql("/nfs")
             @vc.state_str.should eql('ACTIVE')
             @vc.lcm_state.should eql(3)
             @vc.lcm_state_str.should eql('RUNNING')
@@ -73,6 +63,8 @@ module OpenNebula
             @vc['ID'].should eql('6')
             @vc['NAME'].should eql('vc-example')
             @vc['LCM_STATE'].should eql('3')
+            @vc['VMS_AMT'].should eql('2')
+            @vc['NFS_LOC'].should eql('/nfs')
             @vc['DEPLOY_ID'].should eql('dummy')
             @vc['TEMPLATE/MEMORY'].should eql('512')
             @vc['TEMPLATE/CONTEXT/DNS'].should eql('192.169.1.4')
@@ -90,12 +82,22 @@ module OpenNebula
             vc_hash['VC']['ID'].should eql('6')
             vc_hash['VC']['NAME'].should eql('vc-example')
             vc_hash['VC']['LCM_STATE'].should eql('3')
+            vc_hash['VC']['VMS_AMT'].should eql('2')
+            vc_hash['VC']['NFS_LOC'].should eql('/nfs')
             vc_hash['VC']['DEPLOY_ID'].should eql('dummy')
             vc_hash['VC']['TEMPLATE']['MEMORY'].should eql('512')
             vc_hash['VC']['TEMPLATE']['CONTEXT']['DNS'].should eql('192.169.1.4')
             vc_hash['VC']['TEMPLATE']['DISK'][1]['SIZE'].should eql('1024')
             vc_hash['VC']['HISTORY']['HOSTNAME'].should eql('dummyhost')
             vc_hash['VC']['HISTORY']['PSTIME'].should eql('1277375186')
+        end
+
+        it "should have VMs Amount" do            
+            @vc.vms_amount.should eql(2)
+        end
+
+        it "should have NFS Location" do
+            @vc.nfs_location.should eql("/nfs")
         end
     end
 
