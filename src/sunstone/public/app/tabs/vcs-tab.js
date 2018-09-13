@@ -24,42 +24,42 @@ define(function(require) {
     var DATATABLE_ID = "dataTableVcs";
   
     // var _dialogs = [
-    //   require('./vms-tab/dialogs/deploy'),
-    //   require('./vms-tab/dialogs/migrate'),
-    //   require('./vms-tab/dialogs/resize'),
-    //   require('./vms-tab/dialogs/attach-disk'),
-    //   require('./vms-tab/dialogs/disk-snapshot'),
-    //   require('./vms-tab/dialogs/disk-saveas'),
-    //   require('./vms-tab/dialogs/disk-resize'),
-    //   require('./vms-tab/dialogs/attach-nic'),
-    //   require('./vms-tab/dialogs/snapshot'),
-    //   require('./vms-tab/dialogs/revert'),
-    //   require('./vms-tab/dialogs/vnc'),
-    //   require('./vms-tab/dialogs/spice'),
-    //   require('./vms-tab/dialogs/saveas-template')
+    //   require('./vcs-tab/dialogs/deploy'),
+    //   require('./vcs-tab/dialogs/migrate'),
+    //   require('./vcs-tab/dialogs/resize'),
+    //   require('./vcs-tab/dialogs/attach-disk'),
+    //   require('./vcs-tab/dialogs/disk-snapshot'),
+    //   require('./vcs-tab/dialogs/disk-saveas'),
+    //   require('./vcs-tab/dialogs/disk-resize'),
+    //   require('./vcs-tab/dialogs/attach-nic'),
+    //   require('./vcs-tab/dialogs/snapshot'),
+    //   require('./vcs-tab/dialogs/revert'),
+    //   require('./vcs-tab/dialogs/vnc'),
+    //   require('./vcs-tab/dialogs/spice'),
+    //   require('./vcs-tab/dialogs/saveas-template')
     // ];
   
-    // var _panelsHooks = [
-    //   require('./vms-tab/hooks/header'),
-    //   require('./vms-tab/hooks/state')
-    // ];
+    var _panelsHooks = [
+      require('./vcs-tab/hooks/header'),
+      require('./vcs-tab/hooks/state')
+    ];
   
-    // var _panels = [
-    //   require('./vms-tab/panels/info'),
-    //   require('./vms-tab/panels/capacity'),
-    //   require('./vms-tab/panels/storage'),
-    //   require('./vms-tab/panels/network'),
-    //   require('./vms-tab/panels/snapshots'),
-    //   require('./vms-tab/panels/placement'),
-    //   require('./vms-tab/panels/actions'),
-    //   require('./vms-tab/panels/conf'),
-    //   require('./vms-tab/panels/template'),
-    //   require('./vms-tab/panels/log')
-    // ];
+    var _panels = [
+      require('./vcs-tab/panels/info'),
+      require('./vcs-tab/panels/capacity'),
+      require('./vcs-tab/panels/storage'),
+      require('./vcs-tab/panels/network'),
+      require('./vcs-tab/panels/snapshots'),
+      require('./vcs-tab/panels/placement'),
+      require('./vcs-tab/panels/actions'),
+      require('./vcs-tab/panels/conf'),
+      require('./vcs-tab/panels/template'),
+      require('./vcs-tab/panels/log')
+    ];
   
     var _formPanels = [
       require('./vcs-tab/form-panels/create'),
-      // require('./vms-tab/form-panels/updateconf')
+      // require('./vcs-tab/form-panels/updateconf')
     ]
   
     var Tab = {
@@ -71,17 +71,17 @@ define(function(require) {
       listHeader: Locale.tr("VCs"),
       infoHeader: Locale.tr("VC"),
       lockable: true,
-      subheader: '<span class="total_vms"/> <small>' + Locale.tr("TOTAL") + '</small>&emsp;\
-          <span class="active_vms"/> <small>' + Locale.tr("ACTIVE") + '</small>&emsp;\
-          <span class="off_vms"/> <small>' + Locale.tr("OFF") + '</small>&emsp;\
-          <span class="pending_vms"/> <small>' + Locale.tr("PENDING") + '</small>&emsp;\
-          <span class="failed_vms"/> <small>' + Locale.tr("FAILED") + '</small>',
+      subheader: '<span class="total_vcs"/> <small>' + Locale.tr("TOTAL") + '</small>&emsp;\
+          <span class="active_vcs"/> <small>' + Locale.tr("ACTIVE") + '</small>&emsp;\
+          <span class="off_vcs"/> <small>' + Locale.tr("OFF") + '</small>&emsp;\
+          <span class="pending_vcs"/> <small>' + Locale.tr("PENDING") + '</small>&emsp;\
+          <span class="failed_vcs"/> <small>' + Locale.tr("FAILED") + '</small>',
       resource: 'VC',
       buttons: Buttons,
       actions: Actions,
       dataTable: new Table(DATATABLE_ID, {actions: true, info: true}),
-    //   panels: _panels,
-    //   panelsHooks: _panelsHooks,
+      panels: _panels,
+      panelsHooks: _panelsHooks,
       formPanels: _formPanels,
     //   dialogs: _dialogs
     };

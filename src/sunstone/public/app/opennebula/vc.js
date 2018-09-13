@@ -16,8 +16,8 @@
 
 define(function(require) {
     var OpenNebulaAction = require('./action'),
-        // OpenNebulaHelper = require('./helper'),
-        // OpenNebulaError  = require('./error');
+        OpenNebulaHelper = require('./helper'),
+        OpenNebulaError  = require('./error');
         Locale = require('utils/locale'),
         Navigation = require('utils/navigation');
       
