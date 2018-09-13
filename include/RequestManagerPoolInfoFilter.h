@@ -206,6 +206,112 @@ public:
 /* ------------------------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
+class VirtualClusterPoolInfo : public RequestManagerPoolInfoFilter
+{
+public:
+    /* -------------------------------------------------------------------- */
+
+    static const int ALL_VC;   /**< VMs in any state  (-2) */
+    static const int NOT_DONE; /**< VMs in any state expect DONE (-1)*/
+
+    /* -------------------------------------------------------------------- */
+
+    VirtualClusterPoolInfo():
+        RequestManagerPoolInfoFilter("one.vcpool.info",
+                                     "Returns the virtual cluster instances pool",
+                                     "A:siiii")
+    {
+        Nebula& nd  = Nebula::instance();
+        pool        = nd.get_vcpool();
+        auth_object = PoolObjectSQL::VC;
+    };
+
+    ~VirtualClusterPoolInfo(){};
+
+    /* -------------------------------------------------------------------- */
+
+    void request_execute(
+            xmlrpc_c::paramList const& paramList, RequestAttributes& att);
+};
+
+/* ------------------------------------------------------------------------- */
+/* --------------------------------------------------------------- */
+
+class VirtualClusterPoolAccounting : public RequestManagerPoolInfoFilter
+{
+public:
+
+    VirtualClusterPoolAccounting():
+        RequestManagerPoolInfoFilter("one.vcpool.accounting",
+                                     "Returns the virtual cluster history records",
+                                     "A:siii")
+    {
+        Nebula& nd  = Nebula::instance();
+        pool        = nd.get_vcpool();
+        auth_object = PoolObjectSQL::VC;
+    };
+
+    ~VirtualClusterPoolAccounting(){};
+
+    /* -------------------------------------------------------------------- */
+
+    void request_execute(
+            xmlrpc_c::paramList const& paramList, RequestAttributes& att);
+};
+
+/* ------------------------------------------------------------------------- */
+/* --------------------------------------------------------------------- */
+
+class VirtualClusterPoolShowback : public RequestManagerPoolInfoFilter
+{
+public:
+
+    VirtualClusterPoolShowback():
+        RequestManagerPoolInfoFilter("one.vcpool.showback",
+                                     "Returns the virtual cluster showback records",
+                                     "A:siiiii")
+    {
+        Nebula& nd  = Nebula::instance();
+        pool        = nd.get_vcpool();
+        auth_object = PoolObjectSQL::VC;
+    };
+
+    ~VirtualClusterPoolShowback(){};
+
+    /* -------------------------------------------------------------------- */
+
+    void request_execute(
+            xmlrpc_c::paramList const& paramList, RequestAttributes& att);
+};
+
+/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+
+class VirtualClusterPoolMonitoring : public RequestManagerPoolInfoFilter
+{
+public:
+
+    VirtualClusterPoolMonitoring():
+        RequestManagerPoolInfoFilter("one.vcpool.monitoring",
+                                     "Returns the virtual cluster monitoring records",
+                                     "A:si")
+    {
+        Nebula& nd  = Nebula::instance();
+        pool        = nd.get_vcpool();
+        auth_object = PoolObjectSQL::VC;
+    };
+
+    ~VirtualClusterPoolMonitoring(){};
+
+/* -------------------------------------------------------------------- */
+
+    void request_execute(
+            xmlrpc_c::paramList const& paramList, RequestAttributes& att);
+};
+
+/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+
 class TemplatePoolInfo : public RequestManagerPoolInfoFilter
 {
 public:

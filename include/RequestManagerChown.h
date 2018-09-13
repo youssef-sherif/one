@@ -97,6 +97,29 @@ public:
 /* ------------------------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
+class VirtualClusterChown : public RequestManagerChown
+{
+public:
+    VirtualClusterChown():
+        RequestManagerChown("one.vc.chown",
+                            "Changes ownership of a virtual cluster")
+    {
+        Nebula& nd  = Nebula::instance();
+        pool        = nd.get_vcpool();
+        auth_object = PoolObjectSQL::VC;
+    };
+
+    ~VirtualClusterChown(){};
+
+    int check_name_unique(int oid, int noid, RequestAttributes& att)
+    {
+        return 0;
+    };
+};
+
+/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+
 class TemplateChown : public RequestManagerChown
 {
 public:

@@ -82,6 +82,31 @@ public:
 /* ------------------------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
+class VirtualClusterInfo : public RequestManagerInfo
+{
+public:
+    VirtualClusterInfo():
+        RequestManagerInfo("one.vc.info",
+                           "Returns virtual cluster instance information")
+    {
+        Nebula& nd  = Nebula::instance();
+        pool        = nd.get_vcpool();
+        auth_object = PoolObjectSQL::VC;
+    };
+
+    ~VirtualClusterInfo(){};
+
+    /* -------------------------------------------------------------------- */
+
+    void to_xml(RequestAttributes& att, PoolObjectSQL * object, string& str)
+    {
+        static_cast<VirtualCluster *>(object)->to_xml(str);
+    };
+};
+
+/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+
 class TemplateInfo : public RequestManagerInfo
 {
 public:

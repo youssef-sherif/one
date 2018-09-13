@@ -67,7 +67,8 @@ public:
         VROUTER        = 0x0004000000000000LL,
         MARKETPLACE    = 0x0008000000000000LL,
         MARKETPLACEAPP = 0x0010000000000000LL,
-        VMGROUP        = 0x0020000000000000LL
+        VMGROUP        = 0x0020000000000000LL,
+        VC             = 0x0040000000000000LL,        
     };
 
     /**
@@ -88,11 +89,12 @@ public:
         switch (ob)
         {
             case VM:             return "VM" ; break;
+            case VC:             return "VC" ; break;
             case HOST:           return "HOST" ; break;
             case NET:            return "NET" ; break;
             case IMAGE:          return "IMAGE" ; break;
             case USER:           return "USER" ; break;
-            case TEMPLATE:       return "TEMPLATE" ; break;
+            case TEMPLATE:       return "TEMPLATE" ; break;            
             case GROUP:          return "GROUP" ; break;
             case ACL:            return "ACL" ; break;
             case DATASTORE:      return "DATASTORE" ; break;
@@ -112,11 +114,12 @@ public:
     static ObjectType str_to_type(string type)
     {
         if ( type == "VM" )                  return VM ;
+        else if ( type == "VC" )             return VC ;
         else if ( type == "HOST" )           return HOST ;
         else if ( type == "NET" )            return NET ;
         else if ( type == "IMAGE" )          return IMAGE ;
         else if ( type == "USER" )           return USER ;
-        else if ( type == "TEMPLATE" )       return TEMPLATE ;
+        else if ( type == "TEMPLATE" )       return TEMPLATE ;        
         else if ( type == "GROUP" )          return GROUP ;
         else if ( type == "ACL" )            return ACL ;
         else if ( type == "DATASTORE" )      return DATASTORE ;

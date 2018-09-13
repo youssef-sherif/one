@@ -126,6 +126,30 @@ public:
 /* ------------------------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
+class VirtualClusterRename : public RequestManagerRename
+{
+public:
+    VirtualClusterRename():
+        RequestManagerRename("one.vc.rename","Renames a virtual cluster")
+    {
+        Nebula& nd  = Nebula::instance();
+        pool        = nd.get_vcpool();
+        auth_object = PoolObjectSQL::VC;
+
+        auth_op     = nd.get_vm_auth_op(History::RENAME_ACTION);
+    };
+
+    ~VirtualClusterRename(){};
+
+    int exist(const string& name, int uid)
+    {
+        return -1;
+    }
+};
+
+/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+
 class TemplateRename : public RequestManagerRename
 {
 public:

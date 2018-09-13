@@ -66,6 +66,24 @@ public:
 /* ------------------------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
+class VirtualClusterChmod : public RequestManagerChmod
+{
+public:
+    VirtualClusterChmod():
+        RequestManagerChmod("one.vc.chmod",
+                            "Changes permission bits of a virtual cluster")
+    {
+        Nebula& nd  = Nebula::instance();
+        pool        = nd.get_vcpool();
+        auth_object = PoolObjectSQL::VC;
+    };
+
+    ~VirtualClusterChmod(){};
+};
+
+/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+
 class TemplateChmod : public RequestManagerChmod
 {
 public:

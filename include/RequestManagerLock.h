@@ -147,6 +147,39 @@ public:
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
+class VirtualClusterLock: public RequestManagerLock
+{
+public:
+    VirtualClusterLock():
+        RequestManagerLock("one.vc.lock",
+                           "Lock a VC"){
+        Nebula& nd  = Nebula::instance();
+        auth_object = PoolObjectSQL::VC;
+        pool        =  nd.get_vcpool();
+    };
+
+    ~VirtualClusterLock(){};
+};
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+class VirtualClusterUnlock: public RequestManagerUnlock
+{
+public:
+    VirtualClusterUnlock():
+        RequestManagerUnlock("one.vc.unlock",
+                           "Unlock a VC"){
+        Nebula& nd  = Nebula::instance();
+        auth_object = PoolObjectSQL::VC;
+        pool        =  nd.get_vcpool();
+    };
+
+    ~VirtualClusterUnlock(){};
+};
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 class VMTemplateLock: public RequestManagerLock
 {
 public:

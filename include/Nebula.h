@@ -23,6 +23,7 @@
 #include "NebulaTemplate.h"
 
 #include "VirtualMachinePool.h"
+#include "VirtualClusterPool.h"
 #include "VirtualNetworkPool.h"
 #include "HostPool.h"
 #include "UserPool.h"
@@ -86,6 +87,11 @@ public:
     VirtualMachinePool * get_vmpool()
     {
         return vmpool;
+    };
+
+    VirtualClusterPool * get_vcpool()
+    {
+        return vcpool;
     };
 
     HostPool * get_hpool()
@@ -682,7 +688,7 @@ private:
                             "/DEFAULT_GROUP_QUOTAS/IMAGE_QUOTA",
                             "/DEFAULT_GROUP_QUOTAS/VM_QUOTA"),
         system_db(0), logdb(0), fed_logdb(0),
-        vmpool(0), hpool(0), vnpool(0), upool(0), ipool(0), gpool(0), tpool(0),
+        vmpool(0), vcpool(0), hpool(0), vnpool(0), upool(0), ipool(0), gpool(0), tpool(0),
         dspool(0), clpool(0), docpool(0), zonepool(0), secgrouppool(0),
         vdcpool(0), vrouterpool(0), marketpool(0), apppool(0), vmgrouppool(0),
         lcm(0), vmm(0), im(0), tm(0), dm(0), rm(0), hm(0), authm(0), aclm(0),
@@ -722,6 +728,7 @@ private:
     ~Nebula()
     {
         delete vmpool;
+        delete vcpool;
         delete vnpool;
         delete hpool;
         delete upool;
@@ -812,6 +819,7 @@ private:
     LogDB              * logdb;
     FedLogDB           * fed_logdb;
     VirtualMachinePool * vmpool;
+    VirtualClusterPool * vcpool;
     HostPool           * hpool;
     VirtualNetworkPool * vnpool;
     UserPool           * upool;
