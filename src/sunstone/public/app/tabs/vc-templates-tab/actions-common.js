@@ -18,7 +18,7 @@ define(function(require) {
     var Sunstone = require('sunstone');
     var Notifier = require('utils/notifier');
     var Locale = require('utils/locale');
-    var OpenNebulaResource = require('opennebula/template');
+    var OpenNebulaResource = require('opennebula/vctemplate');
     var CommonActions = require('utils/common-actions');
     var OpenNebulaAction = require('opennebula/action');
     var Navigation = require('utils/navigation');
@@ -156,10 +156,10 @@ define(function(require) {
           call: OpenNebulaResource.instantiate,
           callback: function(request, response) {
             Sunstone.hideFormPanel();
-            OpenNebulaAction.clear_cache("VM");
+            OpenNebulaAction.clear_cache("VC");
   
-            Notifier.notifyCustom(Locale.tr("VM created"),
-              Navigation.link(" ID: " + response, "vms-tab", response),
+            Notifier.notifyCustom(Locale.tr("VC created"),
+              Navigation.link(" ID: " + response, "vcs-tab", response),
               false);
           },
           elements: function(opts) {
@@ -177,7 +177,7 @@ define(function(require) {
           call: OpenNebulaResource.instantiate,
           callback: function(request, response) {
             Sunstone.hideFormPanel();
-            OpenNebulaAction.clear_cache("VM");
+            OpenNebulaAction.clear_cache("VC");
           },
           error: function(request, response){
             // without tab id param to work for both templates and vms tab
@@ -185,7 +185,7 @@ define(function(require) {
             Notifier.onError(request, response);
           }
         },
-        _actions[resource+".instantiate_vms"] =  {
+        _actions[resource+".instantiate_vcs"] =  {
           type: "custom",
           call: function(){
             //Sunstone.resetFormPanel(TAB_ID, INSTANTIATE_DIALOG_ID);
@@ -203,10 +203,10 @@ define(function(require) {
           call: OpenNebulaResource.instantiate_persistent,
           callback: function(request, response) {
             Sunstone.hideFormPanel();
-            OpenNebulaAction.clear_cache("VM");
+            OpenNebulaAction.clear_cache("VC");
   
-            Notifier.notifyCustom(Locale.tr("VM created"),
-              Navigation.link(" ID: " + response, "vms-tab", response),
+            Notifier.notifyCustom(Locale.tr("VC created"),
+              Navigation.link(" ID: " + response, "vcs-tab", response),
               false);
           },
           error: function(request, response){
@@ -230,9 +230,9 @@ define(function(require) {
           type: "single",
           call: OpenNebulaResource.clone,
           callback: function(request, response) {
-            OpenNebulaAction.clear_cache("VMTEMPLATE");
-            Notifier.notifyCustom(Locale.tr("VM Template created"),
-              Navigation.link(" ID: " + response.VMTEMPLATE.ID, "templates-tab", response.VMTEMPLATE.ID),
+            OpenNebulaAction.clear_cache("VCTEMPLATE");
+            Notifier.notifyCustom(Locale.tr("VC Template created"),
+              Navigation.link(" ID: " + response.VCTEMPLATE.ID, "vc-templates-tab", response.VCTEMPLATE.ID),
               false);
           },
           error: Notifier.onError,
@@ -243,9 +243,9 @@ define(function(require) {
           type: "single",
           call: OpenNebulaResource.clone_recursive,
           callback : function(request, response) {
-            OpenNebulaAction.clear_cache("VMTEMPLATE");
-            Notifier.notifyCustom(Locale.tr("VM Template created"),
-              Navigation.link(" ID: " + response.VMTEMPLATE.ID, "templates-tab", response.VMTEMPLATE.ID),
+            OpenNebulaAction.clear_cache("VCTEMPLATE");
+            Notifier.notifyCustom(Locale.tr("VC Template created"),
+              Navigation.link(" ID: " + response.VCTEMPLATE.ID, "vc-templates-tab", response.VCTEMPLATE.ID),
               false);
           },
           error: Notifier.onError,

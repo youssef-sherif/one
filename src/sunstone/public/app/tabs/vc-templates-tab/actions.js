@@ -15,28 +15,22 @@
 /* -------------------------------------------------------------------------- */
 
 define(function(require) {
-    var Sunstone = require("sunstone");
-    var Notifier = require("utils/notifier");
-    var Locale = require("utils/locale");
-    var OpenNebulaResource = require("opennebula/vctemplate");
-    var CommonActions = require("utils/common-actions");
-    var OpenNebulaAction = require("opennebula/action");
-    var Navigation = require("utils/navigation");
-  
-    var TAB_ID = require("./tabId");
-    var CREATE_DIALOG_ID = require("./form-panels/create/formPanelId");
-    var INSTANTIATE_DIALOG_ID = require("./form-panels/instantiate/formPanelId");
-    var CLONE_DIALOG_ID = require("./dialogs/clone/dialogId");
-    var XML_ROOT = "VCTemplate";
-    var RESOURCE = "VCTemplate";
-  
-    var _commonActions = new CommonActions(OpenNebulaResource, RESOURCE, TAB_ID,
-      XML_ROOT, Locale.tr("VC Template created"));
-  
-    var _actions = {
-      "VCTemplate.list" : _commonActions.list(),
-      "VCTemplate.create_dialog" : _commonActions.showCreate(CREATE_DIALOG_ID)
-    }      
-    return _actions;
-  });
-  
+  var Actions = require('tabs/vc-templates-tab/actions-common');
+
+  var TAB_ID = require('tabs/vc-templates-tab/tabId');
+  var CREATE_DIALOG_ID = require('tabs/vc-templates-tab/form-panels/create/formPanelId');
+  var CLONE_DIALOG_ID = require('tabs/vc-templates-tab/dialogs/clone/dialogId');
+  var INSTANTIATE_DIALOG_ID = require('tabs/vc-templates-tab/form-panels/instantiate/formPanelId');  
+  var CONFIRM_DIALOG_ID = require('utils/dialogs/generic-confirm/dialogId');
+
+  var RESOURCE = "VCTemplate"
+
+  return Actions(TAB_ID, RESOURCE, 
+    {
+      'TAB_ID'  : TAB_ID,
+      'CREATE_DIALOG_ID'  : CREATE_DIALOG_ID,
+      'CLONE_DIALOG_ID' : CLONE_DIALOG_ID,
+      'INSTANTIATE_DIALOG_ID' : INSTANTIATE_DIALOG_ID,      
+      'CONFIRM_DIALOG_ID' : CONFIRM_DIALOG_ID,
+    });
+});

@@ -32,7 +32,7 @@ define(function(require) {
       layout: "main",
       text: Locale.tr("Update")
     },
-    "VCTemplate.instantiate_vms" : {
+    "VCTemplate.instantiate_vcs" : {
       type: "action",
       layout: "main",
       text: Locale.tr("Instantiate")

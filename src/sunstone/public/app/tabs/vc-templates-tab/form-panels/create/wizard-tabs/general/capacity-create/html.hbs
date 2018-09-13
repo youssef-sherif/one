@@ -98,26 +98,26 @@
       <div class="small-12 columns">
         <label class="" for="VMs">
           {{tr "Number of VMs"}}
-          {{{tip (tr "Number of Virtual Machines in the Virtual Cluster")}}}
+          {{{tip (tr "Number of VMs in the Virtual Cluster (defaults to 2)")}}}
        </label>
       </div>    
     </div>
     <input type="number" step="1" min="2" wizard_field="VMs" id="VMs" style="margin-bottom:0rem;"/>
   </div>
 </div>
-{{!-- <div class="row">
+<div class="row">
   <div class="medium-6 small-12 columns">
     <div class="row">    
       <div class="small-12 columns">
         <label class="" for="CPU">
-          {{tr "Shared File System"}}
-          {{{tip (tr "Location of NFS shared file system")}}}
+          {{tr "Shared folder location"}}
+          {{{tip (tr "NFS shared folder (defaults to /nfs)")}}}
        </label>
       </div>    
     </div>
-    <input type="text" wizard_field="CPU" id="CPU" style="margin-bottom:0rem;"/>
+    <input type="text" wizard_field="NFS" id="NFS" style="margin-bottom:0rem;"/>
   </div>
-</div> --}}
+</div>
 <div class="row">
   <div class="medium-6 small-12 columns">
     <div class="row">

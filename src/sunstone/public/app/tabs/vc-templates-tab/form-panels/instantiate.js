@@ -24,7 +24,7 @@ define(function(require) {
   var TemplateRowHTML = require("hbs!./instantiate/templateRow");
   var Sunstone = require("sunstone");
   var Notifier = require("utils/notifier");
-  var OpenNebulaTemplate = require("opennebula/template");
+  var OpenNebulaTemplate = require("opennebula/vctemplate");
   var Locale = require("utils/locale");
   var Tips = require("utils/tips");
   var UserInputs = require("utils/user-inputs");
@@ -34,7 +34,7 @@ define(function(require) {
   var NicsSection = require("utils/nics-section");
   var VMGroupSection = require("utils/vmgroup-section");
   var VcenterVMFolder = require("utils/vcenter-vm-folder");
-  var CapacityInputs = require("tabs/templates-tab/form-panels/create/wizard-tabs/general/capacity-inputs");
+  var CapacityInputs = require("tabs/vc-templates-tab/form-panels/create/wizard-tabs/general/capacity-inputs");
   var Config = require("sunstone-config");
   var HostsTable = require("tabs/hosts-tab/datatable");
   var DatastoresTable = require("tabs/datastores-tab/datatable");
@@ -61,7 +61,7 @@ define(function(require) {
     this.tabId = TAB_ID;
     this.actions = {
       "instantiate": {
-        "title": Locale.tr("Instantiate VM Template"),
+        "title": Locale.tr("Instantiate VC Template"),
         "buttonText": Locale.tr("Instantiate"),
         "resetButton": false
       }
@@ -187,7 +187,7 @@ define(function(require) {
       return false;
     }
 
-    var vm_name = $("#vm_name", context).val();
+    var vm_name = $("#vc_name", context).val();
     var n_times = $("#vm_n_times", context).val();
     var n_times_int = 1;
 
@@ -315,9 +315,9 @@ define(function(require) {
 
       extra_info["template"] = tmp_json;
         for (var i = 0; i < n_times_int; i++) {
-          extra_info["vm_name"] = vm_name.replace(/%i/gi, i); // replace wildcard
+          extra_info["vc_name"] = vm_name.replace(/%i/gi, i); // replace wildcard
 
-          Sunstone.runAction("Template."+action, [template_id], extra_info);
+          Sunstone.runAction("VCTemplate."+action, [template_id], extra_info);
         }
     });
 
@@ -344,7 +344,7 @@ define(function(require) {
         },
         timeout: true,
         success: function (request, template_json) {
-          that.template_base_objects[template_json.VMTEMPLATE.ID] = template_json;
+          that.template_base_objects[template_json.VCTEMPLATE.ID] = template_json;
         }
       });
     });

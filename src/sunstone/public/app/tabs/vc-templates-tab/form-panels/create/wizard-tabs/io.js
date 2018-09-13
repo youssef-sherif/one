@@ -92,7 +92,7 @@ define(function(require) {
       var table = $('#input_table', context)[0];
       var rowCount = table.rows.length;
       var row = table.insertRow(-1);
-      $(row).addClass("vm_param");
+      $(row).addClass("vc_param");
 
       var cell1 = row.insertCell(0);
       var element1 = document.createElement("input");

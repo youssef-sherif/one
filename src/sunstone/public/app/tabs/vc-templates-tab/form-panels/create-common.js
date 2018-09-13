@@ -172,7 +172,7 @@ define(function(require) {
     var templateJSON = this.retrieve(context);
 
     if (this.action == "create") {
-      Sunstone.runAction(this.resource+".create", {'vmtemplate': templateJSON});
+      Sunstone.runAction(this.resource+".create", {'vctemplate': templateJSON});
       return false;
     } else if (this.action == "update") {
       Sunstone.runAction(this.resource+".update", this.resourceId, TemplateUtils.templateToString(templateJSON));
@@ -184,7 +184,7 @@ define(function(require) {
     var templateStr = $('textarea#template', context).val();
 
     if (this.action == "create") {
-      Sunstone.runAction(this.resource+".create", {"vmtemplate": {"template_raw": templateStr}});
+      Sunstone.runAction(this.resource+".create", {"vctemplate": {"template_raw": templateStr}});
       return false;
 
     } else if (this.action == "update") {

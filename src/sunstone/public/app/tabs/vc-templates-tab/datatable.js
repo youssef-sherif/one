@@ -19,12 +19,7 @@ define(function(require) {
     DEPENDENCIES
    */
 
-  var TabDataTable = require('utils/tab-datatable');
-  var SunstoneConfig = require('sunstone-config');
-  var Locale = require('utils/locale');
-  var LabelsUtils = require('utils/labels/utils');
-  var SearchDropdown = require('hbs!./datatable/search');
-  var Status = require('utils/status');
+  var CommonDataTable = require('./datatable-common');
 
   /*
     CONSTANTS
@@ -33,62 +28,22 @@ define(function(require) {
   var RESOURCE = "VCTemplate";
   var XML_ROOT = "DOCUMENT";
   var TAB_NAME = require('./tabId');
-  var LABELS_COLUMN = 5;
-  var SEARCH_COLUMN = 6;
-  var TEMPLATE_ATTR = 'TEMPLATE';
+  var TEMPLATE_ATTR = 'VCTEMPLATE';
 
   /*
     CONSTRUCTOR
    */
 
   function Table(dataTableId, conf) {
-    this.conf = conf || {};
-    this.tabId = TAB_NAME;
-    this.dataTableId = dataTableId;
-    this.resource = RESOURCE;
-    this.xmlRoot = XML_ROOT;
-    this.labelsColumn = LABELS_COLUMN;
-
-    this.dataTableOptions = {
-      "bAutoWidth": false,
-      "bSortClasses" : false,
-      "bDeferRender": true,
-      "aoColumnDefs": [
-          {"bSortable": false, "aTargets": ["check"]},
-          {"sWidth": "35px", "aTargets": [0]},
-          {"bVisible": true, "aTargets": SunstoneConfig.tabTableColumns(TAB_NAME)},
-          {"bVisible": false, "aTargets": ['_all']},
-          {"sType": "num", "aTargets": [1]}
-      ]
-    };
-
-    this.columns = [
-      Locale.tr("ID"),
-      Locale.tr("Name"),
-      Locale.tr("Owner"),
-      Locale.tr("Group"),
-      Locale.tr("Labels"),
-      "search_data"
-    ];
-
-    this.selectOptions = {
-      "id_index": 1,
-      "name_index": 2,
-      "select_resource": Locale.tr("Please select a Template from the list"),
-      "you_selected": Locale.tr("You selected the following Template:"),
-      "select_resource_multiple": Locale.tr("Please select one or more Templates from the list"),
-      "you_selected_multiple": Locale.tr("You selected the following Templates:")
-    };
-
-    this.conf.searchDropdownHTML = SearchDropdown({tableId: this.dataTableId});
-    this.searchColumn = SEARCH_COLUMN;
-
-    TabDataTable.call(this);
+    CommonDataTable.call(this, RESOURCE, TAB_NAME, dataTableId, conf);
+    this.totalTemplates = 0;
   }
 
-  Table.prototype = Object.create(TabDataTable.prototype);
+  Table.prototype = Object.create(CommonDataTable.prototype);
   Table.prototype.constructor = Table;
-  Table.prototype.elementArray = _elementArray;
+  Table.prototype.elementArray = _elementArray;  
+  Table.prototype.preUpdateView = _preUpdateView;
+  Table.prototype.postUpdateView = _postUpdateView;
 
   return Table;
 
@@ -97,27 +52,24 @@ define(function(require) {
    */
 
   function _elementArray(element_json) {
-    var element = element_json[XML_ROOT];
+    var element = element_json[this.xmlRoot];
 
-    var search = {
-      NAME:  element.NAME,
-      UNAME: element.UNAME,
-      GNAME: element.GNAME
+    if (element.TEMPLATE.VROUTER != undefined &&
+        element.TEMPLATE.VROUTER.toUpperCase() == "YES"){
+
+      return false;
     }
 
-    var color_html = Status.state_lock_to_color("SERVICE_TEMPLATE",false, element_json[XML_ROOT]["LOCK"]);
+    this.totalTemplates++;
 
-    return [
-      '<input class="check_item" type="checkbox" '+
-                          'style="vertical-align: inherit;" id="'+this.resource.toLowerCase()+'_' +
-                           element.ID + '" name="selected_items" value="' +
-                           element.ID + '"/>'+color_html,
-        element.ID,
-        element.NAME,
-        element.UNAME,
-        element.GNAME,
-        (LabelsUtils.labelsStr(element[TEMPLATE_ATTR])||''),
-        btoa(unescape(encodeURIComponent(JSON.stringify(search))))
-    ];
+    return this.elementArrayCommon(element_json);
+  }
+  
+  function _preUpdateView() {
+    this.totalTemplates = 0;
+  }
+
+  function _postUpdateView() {
+    $(".total_vc_templates").text(this.totalTemplates);
   }
 });

@@ -189,7 +189,7 @@ define(function(require) {
           '<input type="radio" class="hybridRadio" name="hybrid' + htmlId + '" value="custom" id="customRadio' + htmlId + '"><label for="customRadio' + htmlId + '">' + Locale.tr("Custom") + '</label>' +
         '</div>' +
       '</div>' +
-      '<div class="row hybrid_inputs vm_param">' +
+      '<div class="row hybrid_inputs vc_param">' +
       '</div>' +
     '</div>'
     $(html_tab_content).appendTo($("#template_create_hybrid_tabs_content", context));
