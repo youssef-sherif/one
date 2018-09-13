@@ -19,10 +19,10 @@ define(function(require) {
     DEPENDENCIES
    */
 
-  var InstantiateTemplateFormPanel = require('tabs/templates-tab/form-panels/instantiate');
+  var InstantiateTemplateFormPanel = require('tabs/vc-templates-tab/form-panels/instantiate');
   var Locale = require('utils/locale');
   var Tips = require('utils/tips');
-  var TemplatesTable = require('tabs/templates-tab/datatable');
+  var VCTemplatesTable = require('tabs/vc-templates-tab/datatable');
   /*
     CONSTANTS
    */
@@ -47,7 +47,7 @@ define(function(require) {
       }
     };
 
-    this.templatesTable = new TemplatesTable('vm_create', {'select': true});
+    this.templatesTable = new VCTemplatesTable('vc_create', {'select': true});
   }
 
   FormPanel.FORM_PANEL_ID = FORM_PANEL_ID;

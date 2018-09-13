@@ -64,9 +64,9 @@ define(function(require) {
     // VNC icon
     var vncIcon;
     if (OpenNebulaVC.isVNCSupported(element)) {
-      vncIcon = '<a class="vnc" href="#" vm_id="' + element.ID + '"><i class="fas fa-desktop"/></a>';
+      vncIcon = '<a class="vnc" href="#" vc_id="' + element.ID + '"><i class="fas fa-desktop"/></a>';
     } else if (OpenNebulaVC.isSPICESupported(element)) {
-      vncIcon = '<a class="spice" href="#" vm_id="' + element.ID + '"><i class="fas fa-desktop"/></a>';
+      vncIcon = '<a class="spice" href="#" vc_id="' + element.ID + '"><i class="fas fa-desktop"/></a>';
     } else {
       vncIcon = '';
     }
@@ -95,7 +95,7 @@ define(function(require) {
     } else if (element.USER_TEMPLATE.SERVICE_ID != undefined){
       type = "FLOW";
     } else {
-      type = "VM";
+      type = "VC";
     }
 
     var search = {
@@ -103,7 +103,7 @@ define(function(require) {
       UNAME:        element.UNAME,
       GNAME:        element.GNAME,
       STATUS:       state,
-      VM_TYPE:      type,
+      VC_TYPE:      type,
       HOST:         hostname,
       CLUSTER:      OpenNebulaVC.clusterStr(element),
       STIME_AFTER:  element.STIME,
@@ -114,7 +114,7 @@ define(function(require) {
     } else {
       value_state = OpenNebulaVC.stateStr(element.STATE)
     }
-    var color_html = Status.state_lock_to_color("VM", value_state, element_json[RESOURCE.toUpperCase()]["LOCK"]);
+    var color_html = Status.state_lock_to_color("VC", value_state, element_json[RESOURCE.toUpperCase()]["LOCK"]);
 
     return [
       '<input class="check_item" '+

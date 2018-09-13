@@ -18,7 +18,7 @@ define(function(require) {
   var Locale = require('utils/locale');
   var Tips = require('utils/tips');
   var Config = require('sunstone-config');
-  var confirm = Config.confirmVMActions;
+  var confirm = Config.confirmVCActions;
   var text = "action";
   if(confirm){
     text = "confirm";

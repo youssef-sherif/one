@@ -110,7 +110,7 @@ define(function(require) {
       var element = element_json[XML_ROOT];
       var state = parseInt(element.STATE);
   
-      this.totalVms++;
+      this.totalVcs++;
       switch (state) {
         case OpenNebulaVC.STATES.INIT:
         case OpenNebulaVC.STATES.PENDING:
@@ -150,19 +150,19 @@ define(function(require) {
     }
   
     function _postUpdateView() {
-      $(".total_vms").removeClass("fadeinout");
-      DashboardUtils.counterAnimation(".total_vms", this.totalVms);
+      $(".total_vcs").removeClass("fadeinout");
+      DashboardUtils.counterAnimation(".total_vcs", this.totalVcs);
   
-      $(".active_vms").removeClass("fadeinout");
-      DashboardUtils.counterAnimation(".active_vms", this.activeVms);
+      $(".active_vcs").removeClass("fadeinout");
+      DashboardUtils.counterAnimation(".active_vcs", this.activeVcs);
   
-      $(".pending_vms").removeClass("fadeinout");
-      DashboardUtils.counterAnimation(".pending_vms", this.pendingVms);
+      $(".pending_vcs").removeClass("fadeinout");
+      DashboardUtils.counterAnimation(".pending_vcs", this.pendingVcs);
   
-      $(".failed_vms").removeClass("fadeinout");
-      DashboardUtils.counterAnimation(".failed_vms", this.failedVms);
+      $(".failed_vcs").removeClass("fadeinout");
+      DashboardUtils.counterAnimation(".failed_vcs", this.failedVcs);
   
-      $(".off_vms").text(this.offVms);
+      $(".off_vcs").text(this.offVcs);
     }
   
     function _initialize(opts) {
@@ -171,7 +171,7 @@ define(function(require) {
       TabDataTable.prototype.initialize.call(this, opts);
   
       $('#' + this.dataTableId).on("click", '.vnc', function() {
-        var vmId = $(this).attr('vm_id');
+        var vmId = $(this).attr('vc_id');
   
         if (!Vnc.lockStatus()) {
           Vnc.lock();
@@ -184,11 +184,11 @@ define(function(require) {
       });
   
       $('#' + this.dataTableId).on("click", '.spice', function() {
-        var vmId = $(this).attr('vm_id');
+        var vmId = $(this).attr('vc_id');
   
         if (!Spice.lockStatus()) {
           Spice.lock();
-          Sunstone.runAction("VM.startspice_action", vmId);
+          Sunstone.runAction("VC.startspice_action", vmId);
         } else {
           Notifier.notifyError(Locale.tr("SPICE Connection in progress"))
         }

@@ -26,11 +26,11 @@ define(function(require) {
 
   var TAB_ID = require('./tabId');
   var CREATE_DIALOG_ID           = require('./form-panels/create/formPanelId');
-  // var DEPLOY_DIALOG_ID           = require('./dialogs/deploy/dialogId');
-  // var MIGRATE_DIALOG_ID          = require('./dialogs/migrate/dialogId');
-  // var VNC_DIALOG_ID              = require('./dialogs/vnc/dialogId');
-  // var SPICE_DIALOG_ID            = require('./dialogs/spice/dialogId');  
-  // var UPDATECONF_FORM_ID         = require('./form-panels/updateconf/formPanelId');
+  var DEPLOY_DIALOG_ID           = require('./dialogs/deploy/dialogId');
+  var MIGRATE_DIALOG_ID          = require('./dialogs/migrate/dialogId');
+  var VNC_DIALOG_ID              = require('./dialogs/vnc/dialogId');
+  var SPICE_DIALOG_ID            = require('./dialogs/spice/dialogId');  
+  var UPDATECONF_FORM_ID         = require('./form-panels/updateconf/formPanelId');
 
   var XML_ROOT = "VC";
   var RESOURCE = "VC";
@@ -45,7 +45,7 @@ define(function(require) {
       call: OpenNebulaVC.show,
       callback: function(request, response) {
         if (Config.isTabEnabled("provision-tab")) {
-          $(".provision_refresh_info", ".provision_list_vms").click();
+          $(".provision_refresh_info", ".provision_list_VCs").click();
         } else {
           Sunstone.getDataTable(TAB_ID).updateElement(request, response);
           if (Sunstone.rightInfoVisible($('#' + TAB_ID))) {
@@ -95,7 +95,6 @@ define(function(require) {
     "VC.snapshot_create": _commonActions.singleAction('snapshot_create'),
     "VC.snapshot_revert": _commonActions.singleAction('snapshot_revert'),
     "VC.snapshot_delete": _commonActions.singleAction('snapshot_delete'),
-
     "VC.create_dialog" : {
       type: "custom",
       call: function() {
@@ -112,109 +111,109 @@ define(function(require) {
       },
       error: Notifier.onError
     },
-    // "VC.deploy" : {
-    //   type: "custom",
-    //   call: function() {
-    //     Sunstone.getDialog(DEPLOY_DIALOG_ID).show();
-    //   }
-    // },
-    // "VC.silent_deploy_action" : {
-    //   type: "single",
-    //   call: OpenNebulaVC.deploy,
-    //   error: Notifier.onError
-    // },
-    // "VC.migrate" : {
-    //   type: "custom",
-    //   call: function() {
-    //    var dialog = Sunstone.getDialog(MIGRATE_DIALOG_ID);
-    //    dialog.reset();
-    //    dialog.setLive(false);
-    //    dialog.show();
-    //  }
-    // },
-    // "VC.migrate_live" : {
-    //   type: "custom",
-    //   call: function() {
-    //    var dialog = Sunstone.getDialog(MIGRATE_DIALOG_ID);
-    //    dialog.reset();
-    //    dialog.setLive(true);
-    //    dialog.show();
-    //  }
-    // },
-    // "VC.startvnc" : {
-    //   type: "custom",
-    //   call: function() {
-    //     $.each(Sunstone.getDataTable(TAB_ID).elements(), function(index, elem) {
-    //       if (!Vnc.lockStatus()) {
-    //         Vnc.lock();
-    //         Sunstone.runAction("VC.startvnc_action", elem);
-    //       } else {
-    //         Notifier.notifyError(Locale.tr("VNC Connection in progress"))
-    //         return false;
-    //       }
-    //     });
-    //   }
-    // },
-    // "VC.startvnc_action" : {
-    //   type: "single",
-    //   call: OpenNebulaVC.vnc,
-    //   callback: function(request, response) {
-    //    var dialog = Sunstone.getDialog(VNC_DIALOG_ID);
-    //    dialog.setElement(response);
-    //    dialog.show();
-    //   },
-    //   error: function(req, resp) {
-    //     Notifier.onError(req, resp);
-    //     Vnc.unlock();
-    //   },
-    //   notify: true
-    // },
-    // "VC.startspice" : {
-    //   type: "custom",
-    //   call: function() {
-    //     $.each(Sunstone.getDataTable(TAB_ID).elements(), function(index, elem) {
-    //       if (!Spice.lockStatus()) {
-    //         Spice.lock();
-    //         Sunstone.runAction("VC.startspice_action", elem);
-    //       } else {
-    //         Notifier.notifyError(Locale.tr("SPICE Connection in progress"))
-    //         return false;
-    //       }
-    //     });
-    //   }
-    // },
-    // "VC.startspice_action" : {
-    //   type: "single",
-    //   call: OpenNebulaVC.vnc,
-    //   callback: function(request, response) {
-    //    var dialog = Sunstone.getDialog(SPICE_DIALOG_ID);
-    //    dialog.setElement(response);
-    //    dialog.show();
-    //   },
-    //   error: function(req, resp) {
-    //     Notifier.onError(req, resp);
-    //     Spice.unlock();
-    //   },
-    //   notify: true
-    // },
-    // "VC.updateconf": {
-    //   type: "single",
-    //   call: OpenNebulaVC.updateconf,
-    //   callback: function (req) {
-    //     Sunstone.resetFormPanel(TAB_ID, UPDATECONF_FORM_ID);
-    //     Sunstone.hideFormPanel(TAB_ID);
+    "VC.deploy" : {
+      type: "custom",
+      call: function() {
+        Sunstone.getDialog(DEPLOY_DIALOG_ID).show();
+      }
+    },
+    "VC.silent_deploy_action" : {
+      type: "single",
+      call: OpenNebulaVC.deploy,
+      error: Notifier.onError
+    },
+    "VC.migrate" : {
+      type: "custom",
+      call: function() {
+       var dialog = Sunstone.getDialog(MIGRATE_DIALOG_ID);
+       dialog.reset();
+       dialog.setLive(false);
+       dialog.show();
+     }
+    },
+    "VC.migrate_live" : {
+      type: "custom",
+      call: function() {
+       var dialog = Sunstone.getDialog(MIGRATE_DIALOG_ID);
+       dialog.reset();
+       dialog.setLive(true);
+       dialog.show();
+     }
+    },
+    "VC.startvnc" : {
+      type: "custom",
+      call: function() {
+        $.each(Sunstone.getDataTable(TAB_ID).elements(), function(index, elem) {
+          if (!Vnc.lockStatus()) {
+            Vnc.lock();
+            Sunstone.runAction("VC.startvnc_action", elem);
+          } else {
+            Notifier.notifyError(Locale.tr("VNC Connection in progress"))
+            return false;
+          }
+        });
+      }
+    },
+    "VC.startvnc_action" : {
+      type: "single",
+      call: OpenNebulaVC.vnc,
+      callback: function(request, response) {
+       var dialog = Sunstone.getDialog(VNC_DIALOG_ID);
+       dialog.setElement(response);
+       dialog.show();
+      },
+      error: function(req, resp) {
+        Notifier.onError(req, resp);
+        Vnc.unlock();
+      },
+      notify: true
+    },
+    "VC.startspice" : {
+      type: "custom",
+      call: function() {
+        $.each(Sunstone.getDataTable(TAB_ID).elements(), function(index, elem) {
+          if (!Spice.lockStatus()) {
+            Spice.lock();
+            Sunstone.runAction("VC.startspice_action", elem);
+          } else {
+            Notifier.notifyError(Locale.tr("SPICE Connection in progress"))
+            return false;
+          }
+        });
+      }
+    },
+    "VC.startspice_action" : {
+      type: "single",
+      call: OpenNebulaVC.vnc,
+      callback: function(request, response) {
+       var dialog = Sunstone.getDialog(SPICE_DIALOG_ID);
+       dialog.setElement(response);
+       dialog.show();
+      },
+      error: function(req, resp) {
+        Notifier.onError(req, resp);
+        Spice.unlock();
+      },
+      notify: true
+    },
+    "VC.updateconf": {
+      type: "single",
+      call: OpenNebulaVC.updateconf,
+      callback: function (req) {
+        Sunstone.resetFormPanel(TAB_ID, UPDATECONF_FORM_ID);
+        Sunstone.hideFormPanel(TAB_ID);
 
-    //     Sunstone.runAction("VC.refresh");
-    //   },
-    //   elements: function(opts) {
-    //     return Sunstone.getDataTable(TAB_ID).elements(opts);
-    //   },
-    //   error: function(request, response) {
-    //     Sunstone.hideFormPanelLoading(TAB_ID);
-    //     Notifier.onError(request, response);
-    //   },
-    //   notify: false
-    // }
+        Sunstone.runAction("VC.refresh");
+      },
+      elements: function(opts) {
+        return Sunstone.getDataTable(TAB_ID).elements(opts);
+      },
+      error: function(request, response) {
+        Sunstone.hideFormPanelLoading(TAB_ID);
+        Notifier.onError(request, response);
+      },
+      notify: false
+    }
   };
 
   return _actions;

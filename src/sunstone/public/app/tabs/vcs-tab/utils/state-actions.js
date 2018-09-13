@@ -20,22 +20,22 @@ define(function(require) {
   var STATE_ACTIONS = {};
 
   STATE_ACTIONS[OpenNebulaVC.STATES.INIT] =
-    ["VM.resize", "VM.terminate_hard", "VM.recover"];
+    ["VC.resize", "VC.terminate_hard", "VC.recover"];
 
   STATE_ACTIONS[OpenNebulaVC.STATES.PENDING] =
-    ["VM.hold", "VM.deploy", "VM.updateconf", "VM.terminate_hard", "VM.recover", "VM.resize"];
+    ["VC.hold", "VC.deploy", "VC.updateconf", "VC.terminate_hard", "VC.recover", "VC.resize"];
 
   STATE_ACTIONS[OpenNebulaVC.STATES.HOLD] =
-    ["VM.release", "VM.deploy", "VM.updateconf", "VM.terminate_hard", "VM.recover", "VM.resize"];
+    ["VC.release", "VC.deploy", "VC.updateconf", "VC.terminate_hard", "VC.recover", "VC.resize"];
 
   STATE_ACTIONS[OpenNebulaVC.STATES.ACTIVE] =
-    ["VM.recover"];
+    ["VC.recover"];
 
   STATE_ACTIONS[OpenNebulaVC.STATES.STOPPED] =
-    ["VM.resume", "VM.deploy", "VM.terminate_hard", "VM.recover"];
+    ["VC.resume", "VC.deploy", "VC.terminate_hard", "VC.recover"];
 
   STATE_ACTIONS[OpenNebulaVC.STATES.SUSPENDED] =
-    ["VM.resume", "VM.disk_saveas", "VM.disk_snapshot_create", "VM.disk_snapshot_revert", "VM.disk_snapshot_delete", "VM.stop", "VM.terminate_hard", "VM.recover", "VM.migrate"];
+    ["VC.resume", "VC.disk_saveas", "VC.disk_snapshot_create", "VC.disk_snapshot_revert", "VC.disk_snapshot_delete", "VC.stop", "VC.terminate_hard", "VC.recover", "VC.migrate"];
 
   STATE_ACTIONS[OpenNebulaVC.STATES.DONE] =
     [];
@@ -44,23 +44,23 @@ define(function(require) {
     [];
 
   STATE_ACTIONS[OpenNebulaVC.STATES.POWEROFF] =
-    ["VM.resume", "VM.resize", "VM.attachdisk", "VM.detachdisk", "VM.attachnic", "VM.detachnic", "VM.disk_saveas", "VM.disk_snapshot_create", "VM.disk_snapshot_revert", "VM.disk_snapshot_delete", "VM.migrate", "VM.undeploy", "VM.undeploy_hard", "VM.save_as_template", "VM.updateconf", "VM.terminate_hard", "VM.recover", "VM.disk_resize", "VM.snapshot_delete"];
+    ["VC.resume", "VC.resize", "VC.attachdisk", "VC.detachdisk", "VC.attachnic", "VC.detachnic", "VC.disk_saveas", "VC.disk_snapshot_create", "VC.disk_snapshot_revert", "VC.disk_snapshot_delete", "VC.migrate", "VC.undeploy", "VC.undeploy_hard", "VC.save_as_template", "VC.updateconf", "VC.terminate_hard", "VC.recover", "VC.disk_resize", "VC.snapshot_delete"];
 
   STATE_ACTIONS[OpenNebulaVC.STATES.UNDEPLOYED] =
-    ["VM.resume", "VM.resize", "VM.deploy", "VM.updateconf", "VM.terminate_hard", "VM.recover"];
+    ["VC.resume", "VC.resize", "VC.deploy", "VC.updateconf", "VC.terminate_hard", "VC.recover"];
 
   STATE_ACTIONS[OpenNebulaVC.STATES.CLONING] =
-    ["VM.updateconf", "VM.terminate_hard", "VM.recover", "VM.resize"];
+    ["VC.updateconf", "VC.terminate_hard", "VC.recover", "VC.resize"];
 
   STATE_ACTIONS[OpenNebulaVC.STATES.CLONING_FAILURE] =
-    ["VM.updateconf", "VM.terminate_hard", "VM.recover", "VM.resize"];
+    ["VC.updateconf", "VC.terminate_hard", "VC.recover", "VC.resize"];
 
   var LCM_STATE_ACTIONS = {};
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.LCM_INIT ] = [];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG ] = ["VM.updateconf"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG ] = ["VC.updateconf"];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.BOOT ] = [];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.RUNNING ] =
-    ["VM.stop", "VM.suspend", "VM.reboot", "VM.reboot_hard", "VM.resched", "VM.unresched", "VM.poweroff", "VM.poweroff_hard", "VM.undeploy", "VM.undeploy_hard", "VM.migrate", "VM.migrate_live", "VM.attachdisk", "VM.detachdisk", "VM.attachnic", "VM.detachnic", "VM.disk_saveas", "VM.disk_snapshot_create", "VM.disk_snapshot_delete", "VM.terminate", "VM.terminate_hard", "VM.disk_resize"];
+    ["VC.stop", "VC.suspend", "VC.reboot", "VC.reboot_hard", "VC.resched", "VC.unresched", "VC.poweroff", "VC.poweroff_hard", "VC.undeploy", "VC.undeploy_hard", "VC.migrate", "VC.migrate_live", "VC.attachdisk", "VC.detachdisk", "VC.attachnic", "VC.detachnic", "VC.disk_saveas", "VC.disk_snapshot_create", "VC.disk_snapshot_delete", "VC.terminate", "VC.terminate_hard", "VC.disk_resize"];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.MIGRATE ] = [];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.SAVE_STOP ] = [];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.SAVE_SUSPEND ] = [];
@@ -68,50 +68,50 @@ define(function(require) {
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG_MIGRATE ] = [];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG_RESUME ] = [];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.EPILOG_STOP ] = [];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.EPILOG ] = ["VM.updateconf"];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.SHUTDOWN ] = ["VM.updateconf"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.EPILOG ] = ["VC.updateconf"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.SHUTDOWN ] = ["VC.updateconf"];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.CANCEL ] = [];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.FAILURE ] = ["VM.terminate"];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.CLEANUP_RESUBMIT ] = ["VM.updateconf"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.FAILURE ] = ["VC.terminate"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.CLEANUP_RESUBMIT ] = ["VC.updateconf"];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.UNKNOWN ] =
-    ["VM.resched", "VM.unresched", "VM.poweroff", "VM.poweroff_hard", "VM.undeploy", "VM.undeploy_hard", "VM.migrate", "VM.migrate_live", "VM.resume", "VM.terminate", "VM.terminate_hard"];
+    ["VC.resched", "VC.unresched", "VC.poweroff", "VC.poweroff_hard", "VC.undeploy", "VC.undeploy_hard", "VC.migrate", "VC.migrate_live", "VC.resume", "VC.terminate", "VC.terminate_hard"];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.HOTPLUG ] = [];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.SHUTDOWN_POWEROFF ] = ["VM.updateconf"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.SHUTDOWN_POWEROFF ] = ["VC.updateconf"];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.BOOT_UNKNOWN ] = [];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.BOOT_POWEROFF ] = [];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.BOOT_SUSPENDED ] = [];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.BOOT_STOPPED ] = [];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.CLEANUP_DELETE ] = ["VM.updateconf"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.CLEANUP_DELETE ] = ["VC.updateconf"];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.HOTPLUG_SNAPSHOT ] = [];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.HOTPLUG_NIC ] = [];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.HOTPLUG_SAVEAS ] = [];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.HOTPLUG_SAVEAS_POWEROFF ] = ["VM.updateconf"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.HOTPLUG_SAVEAS_POWEROFF ] = ["VC.updateconf"];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.HOTPLUG_SAVEAS_SUSPENDED ] = [];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.SHUTDOWN_UNDEPLOY ] = ["VM.updateconf"];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.EPILOG_UNDEPLOY ] = ["VM.updateconf"];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG_UNDEPLOY ] = ["VM.updateconf"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.SHUTDOWN_UNDEPLOY ] = ["VC.updateconf"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.EPILOG_UNDEPLOY ] = ["VC.updateconf"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG_UNDEPLOY ] = ["VC.updateconf"];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.BOOT_UNDEPLOY ] = [];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.HOTPLUG_PROLOG_POWEROFF ] = ["VM.updateconf"];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.HOTPLUG_EPILOG_POWEROFF ] = ["VM.updateconf"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.HOTPLUG_PROLOG_POWEROFF ] = ["VC.updateconf"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.HOTPLUG_EPILOG_POWEROFF ] = ["VC.updateconf"];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.BOOT_MIGRATE ] = [];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.BOOT_FAILURE ] = ["VM.updateconf", "VM.terminate"];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.BOOT_MIGRATE_FAILURE ] = ["VM.terminate"];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG_MIGRATE_FAILURE ] = ["VM.terminate"];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG_FAILURE ] = ["VM.updateconf", "VM.terminate"];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.EPILOG_FAILURE ] = ["VM.updateconf", "VM.terminate"];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.EPILOG_STOP_FAILURE ] = ["VM.terminate"];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.EPILOG_UNDEPLOY_FAILURE ] = ["VM.updateconf", "VM.terminate"];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG_MIGRATE_POWEROFF ] = ["VM.updateconf"];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG_MIGRATE_POWEROFF_FAILURE ] = ["VM.updateconf", "VM.terminate"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.BOOT_FAILURE ] = ["VC.updateconf", "VC.terminate"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.BOOT_MIGRATE_FAILURE ] = ["VC.terminate"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG_MIGRATE_FAILURE ] = ["VC.terminate"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG_FAILURE ] = ["VC.updateconf", "VC.terminate"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.EPILOG_FAILURE ] = ["VC.updateconf", "VC.terminate"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.EPILOG_STOP_FAILURE ] = ["VC.terminate"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.EPILOG_UNDEPLOY_FAILURE ] = ["VC.updateconf", "VC.terminate"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG_MIGRATE_POWEROFF ] = ["VC.updateconf"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG_MIGRATE_POWEROFF_FAILURE ] = ["VC.updateconf", "VC.terminate"];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG_MIGRATE_SUSPEND ] = [];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG_MIGRATE_SUSPEND_FAILURE ] = ["VM.terminate"];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.BOOT_UNDEPLOY_FAILURE ] = ["VM.updateconf", "VM.terminate"];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.BOOT_STOPPED_FAILURE ] = ["VM.terminate"];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG_RESUME_FAILURE ] = ["VM.terminate"];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG_UNDEPLOY_FAILURE ] = ["VM.updateconf", "VM.terminate"];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.DISK_SNAPSHOT_POWEROFF ] = ["VM.updateconf"];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.DISK_SNAPSHOT_REVERT_POWEROFF ] = ["VM.updateconf"];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.DISK_SNAPSHOT_DELETE_POWEROFF ] = ["VM.updateconf"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG_MIGRATE_SUSPEND_FAILURE ] = ["VC.terminate"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.BOOT_UNDEPLOY_FAILURE ] = ["VC.updateconf", "VC.terminate"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.BOOT_STOPPED_FAILURE ] = ["VC.terminate"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG_RESUME_FAILURE ] = ["VC.terminate"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG_UNDEPLOY_FAILURE ] = ["VC.updateconf", "VC.terminate"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.DISK_SNAPSHOT_POWEROFF ] = ["VC.updateconf"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.DISK_SNAPSHOT_REVERT_POWEROFF ] = ["VC.updateconf"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.DISK_SNAPSHOT_DELETE_POWEROFF ] = ["VC.updateconf"];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.DISK_SNAPSHOT_SUSPENDED ] = [];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.DISK_SNAPSHOT_REVERT_SUSPENDED ] = [];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.DISK_SNAPSHOT_DELETE_SUSPENDED ] = [];
@@ -119,7 +119,7 @@ define(function(require) {
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.DISK_SNAPSHOT_REVERT ] = [];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.DISK_SNAPSHOT_DELETE ] = [];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG_MIGRATE_UNKNOWN ] = [];
-  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG_MIGRATE_UNKNOWN_FAILURE ] = ["VM.terminate"];
+  LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.PROLOG_MIGRATE_UNKNOWN_FAILURE ] = ["VC.terminate"];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.DISK_RESIZE            ] = [];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.DISK_RESIZE_POWEROFF   ] = [];
   LCM_STATE_ACTIONS[ OpenNebulaVC.LCM_STATES.DISK_RESIZE_UNDEPLOYED ] = [];
@@ -134,22 +134,22 @@ define(function(require) {
 
   function disableAllStateActions() {
     $(".state-dependent").prop("disabled", true).
-        removeClass("vm-action-enabled").
-        addClass("vm-action-disabled").
+        removeClass("VC-action-enabled").
+        addClass("VC-action-disabled").
         on("click.stateaction", function(e) { return false; });
   }
 
   function resetStateButtons() {
     $(".state-dependent").
-        addClass("vm-action-enabled").
-        removeClass("vm-action-disabled").
+        addClass("VC-action-enabled").
+        removeClass("VC-action-disabled").
         off("click.stateaction");
   }
 
   function enableStateButton(button_action) {
     $(".state-dependent[href='" + button_action + "']").removeAttr("disabled").
-        addClass("vm-action-enabled").
-        removeClass("vm-action-disabled").
+        addClass("VC-action-enabled").
+        removeClass("VC-action-disabled").
         off("click.stateaction");
   }
 
@@ -170,7 +170,7 @@ define(function(require) {
   }
 
   // Returns true if the action is enabled for the given state
-  // action is "VM.action", state and lcm_state are numeric
+  // action is "VC.action", state and lcm_state are numeric
   function enabledStateAction(action, state, lcm_state) {
     var state = parseInt(state);
     var lcm_state = parseInt(lcm_state);
