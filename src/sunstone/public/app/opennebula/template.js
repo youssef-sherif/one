@@ -67,6 +67,10 @@ define(function(require) {
       var action_obj = params.data.extra_param ? params.data.extra_param : {};
       OpenNebulaAction.simple_action(params, RESOURCE, "instantiate", action_obj);
     },
+    "instantiateVC" : function(params) {
+      var action_obj = params.data.extra_param ? params.data.extra_param : {};
+      OpenNebulaAction.simple_action(params, RESOURCE, "instantiatevc", action_obj);
+    },
     "instantiate_persistent" : function(params) {
       var action_obj = params.data.extra_param ? params.data.extra_param : {};
       action_obj["persistent"] = true;

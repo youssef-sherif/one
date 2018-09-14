@@ -172,6 +172,27 @@ define(function(require) {
         },
         notify: false
       },
+      _actions[resource+".instantiateVC"] =  {
+        type: "multiple",
+        call: OpenNebulaResource.instantiateVC,
+        callback: function(request, response) {
+          Sunstone.hideFormPanel();
+          OpenNebulaAction.clear_cache("VC");
+
+          Notifier.notifyCustom(Locale.tr("VC created"),
+            Navigation.link(" ID: " + response, "vcs-tab", response),
+            false);
+        },
+        elements: function(opts) {
+          return Sunstone.getDataTable(TAB_ID).elements(opts);
+        },
+        error: function(request, response){
+          // without tab id param to work for both templates and vms tab
+          Sunstone.hideFormPanelLoading();
+          Notifier.onError(request, response);
+        },
+        notify: false
+      },
       _actions[resource+".instantiate_quiet"] =  {
         type: "single",
         call: OpenNebulaResource.instantiate,

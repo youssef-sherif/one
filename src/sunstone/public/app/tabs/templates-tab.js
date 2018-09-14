@@ -39,7 +39,7 @@ define(function(require) {
   var _formPanels = [
     require('./templates-tab/form-panels/create'),
     require('./templates-tab/form-panels/import'),
-    require('./templates-tab/form-panels/instantiate')
+    require('./templates-tab/form-panels/instantiate')    
   ];
 
   var Tab = {

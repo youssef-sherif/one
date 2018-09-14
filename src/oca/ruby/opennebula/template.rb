@@ -27,6 +27,7 @@ module OpenNebula
         TEMPLATE_METHODS = {
             :allocate    => "template.allocate",
             :instantiate => "template.instantiate",
+            :instantiatevc => "template.instantiatevc",
             :info        => "template.info",
             :update      => "template.update",
             :delete      => "template.delete",
@@ -131,6 +132,34 @@ module OpenNebula
             persistent = false if persistent.nil?
 
             rc = @client.call(TEMPLATE_METHODS[:instantiate], @pe_id,
+                name, hold, template, persistent)
+
+            return rc
+        end
+
+        # Creates a VC instance from a Template
+        #
+        # @param name [String] Name for the VC instance. If it is an empty
+        #   string OpenNebula will set a default name
+        # @param hold [true,false] false to create the VC in pending state,
+        #   true to create it on hold
+        # @param template [String] User provided Template to merge with the
+        #   one being instantiated
+        # @param persistent [true,false] true to create a private persistent
+        #   copy of the template plus any image defined in DISK, and instantiate
+        #   that copy
+        #
+        # @return [Integer, OpenNebula::Error] The new VC id, Error
+        #   otherwise
+        def instantiate_vc(name="", hold=false, template="", persistent=false)
+            return Error.new('ID not defined') if !@pe_id
+
+            name ||= ""
+            hold = false if hold.nil?
+            template ||= ""
+            persistent = false if persistent.nil?
+
+            rc = @client.call(TEMPLATE_METHODS[:instantiatevc], @pe_id,
                 name, hold, template, persistent)
 
             return rc

@@ -35,6 +35,7 @@
 
 #include "RequestManagerVirtualNetwork.h"
 #include "RequestManagerVirtualMachine.h"
+// #include "RequestManagerVirtualCluster.h"
 #include "RequestManagerVMTemplate.h"
 #include "RequestManagerHost.h"
 #include "RequestManagerImage.h"
@@ -286,6 +287,7 @@ void RequestManager::register_xml_methods()
 
     // VMTemplate Methods
     xmlrpc_c::methodPtr template_instantiate(new VMTemplateInstantiate());
+    xmlrpc_c::methodPtr template_instantiate_vc(new VMTemplateInstantiate());
 
     // VirtualMachine Methods
     xmlrpc_c::methodPtr vm_deploy(new VirtualMachineDeploy());
@@ -314,6 +316,33 @@ void RequestManager::register_xml_methods()
     xmlrpc_c::methodPtr vm_pool_showback(new VirtualMachinePoolShowback());
     xmlrpc_c::methodPtr vm_pool_calculate_showback(new VirtualMachinePoolCalculateShowback());
 
+    // VirtualCluster Methods
+    // xmlrpc_c::methodPtr vc_deploy(new VirtualClusterDeploy());
+    // xmlrpc_c::methodPtr vc_migrate(new VirtualClusterMigrate());
+    // xmlrpc_c::methodPtr vc_action(new VirtualClusterAction());
+    // xmlrpc_c::methodPtr vc_monitoring(new VirtualClusterMonitoring());
+    // xmlrpc_c::methodPtr vc_attach(new VirtualClusterAttach());
+    // xmlrpc_c::methodPtr vc_detach(new VirtualClusterDetach());
+    // xmlrpc_c::methodPtr vc_attachnic(new VirtualClusterAttachNic());
+    // xmlrpc_c::methodPtr vc_detachnic(new VirtualClusterDetachNic());
+    // xmlrpc_c::methodPtr vc_resize(new VirtualClusterResize());
+    // xmlrpc_c::methodPtr vc_snap_create(new VirtualClusterSnapshotCreate());
+    // xmlrpc_c::methodPtr vc_snap_revert(new VirtualClusterSnapshotRevert());
+    // xmlrpc_c::methodPtr vc_snap_delete(new VirtualClusterSnapshotDelete());
+    // xmlrpc_c::methodPtr vc_dsaveas(new VirtualClusterDiskSaveas());
+    // xmlrpc_c::methodPtr vc_dsnap_create(new VirtualClusterDiskSnapshotCreate());
+    // xmlrpc_c::methodPtr vc_dsnap_revert(new VirtualClusterDiskSnapshotRevert());
+    // xmlrpc_c::methodPtr vc_dsnap_delete(new VirtualClusterDiskSnapshotDelete());
+    // xmlrpc_c::methodPtr vc_recover(new VirtualClusterRecover());
+    // xmlrpc_c::methodPtr vc_updateconf(new VirtualClusterUpdateConf());
+    // xmlrpc_c::methodPtr vc_disk_resize(new VirtualClusterDiskResize());
+
+    // xmlrpc_c::methodPtr vc_pool_acct(new VirtualClusterPoolAccounting());
+    // xmlrpc_c::methodPtr vc_pool_monitoring(new VirtualClusterPoolMonitoring());
+
+    // xmlrpc_c::methodPtr vc_pool_showback(new VirtualClusterPoolShowback());
+    // xmlrpc_c::methodPtr vc_pool_calculate_showback(new VirtualClusterPoolCalculateShowback());
+
     // VirtualNetwork Methods
     xmlrpc_c::methodPtr vn_add_ar(new VirtualNetworkAddAddressRange());
     xmlrpc_c::methodPtr vn_rm_ar(new VirtualNetworkRmAddressRange());
@@ -326,6 +355,7 @@ void RequestManager::register_xml_methods()
     // Update Template Methods
     xmlrpc_c::methodPtr image_update(new ImageUpdateTemplate());
     xmlrpc_c::methodPtr vm_update(new VirtualMachineUpdateTemplate());
+    // xmlrpc_c::methodPtr vc_update(new VirtualClusterUpdateTemplate());
     xmlrpc_c::methodPtr template_update(new TemplateUpdateTemplate());
     xmlrpc_c::methodPtr host_update(new HostUpdateTemplate());
     xmlrpc_c::methodPtr vn_update(new VirtualNetworkUpdateTemplate());
@@ -338,6 +368,7 @@ void RequestManager::register_xml_methods()
 
     // Allocate Methods
     xmlrpc_c::methodPtr vm_allocate(new VirtualMachineAllocate());
+    // xmlrpc_c::methodPtr vc_allocate(new VirtualClusterAllocate());
     xmlrpc_c::methodPtr image_allocate(new ImageAllocate());
     xmlrpc_c::methodPtr vn_allocate(new VirtualNetworkAllocate());
     xmlrpc_c::methodPtr template_allocate(new TemplateAllocate());
@@ -368,6 +399,7 @@ void RequestManager::register_xml_methods()
 
     // Info Methods
     xmlrpc_c::methodPtr vm_info(new VirtualMachineInfo());
+    // xmlrpc_c::methodPtr vc_info(new VirtualClusterInfo());
     xmlrpc_c::methodPtr host_info(new HostInfo());
     xmlrpc_c::methodPtr template_info(new TemplateInfo());
     xmlrpc_c::methodPtr vn_info(new VirtualNetworkInfo());
@@ -384,6 +416,8 @@ void RequestManager::register_xml_methods()
     xmlrpc_c::methodPtr doc_unlock(new DocumentUnlock());
     xmlrpc_c::methodPtr vm_lock(new VirtualMachineLock());
     xmlrpc_c::methodPtr vm_unlock(new VirtualMachineUnlock());
+    // xmlrpc_c::methodPtr vc_lock(new VirtualClusterLock());
+    // xmlrpc_c::methodPtr vc_unlock(new VirtualClusterUnlock());
     xmlrpc_c::methodPtr template_lock(new VMTemplateLock());
     xmlrpc_c::methodPtr template_unlock(new VMTemplateUnlock());
     xmlrpc_c::methodPtr vn_lock(new VirtualNetworkLock());
@@ -399,6 +433,7 @@ void RequestManager::register_xml_methods()
     xmlrpc_c::methodPtr hostpool_info(new HostPoolInfo());
     xmlrpc_c::methodPtr datastorepool_info(new DatastorePoolInfo());
     xmlrpc_c::methodPtr vm_pool_info(new VirtualMachinePoolInfo());
+    // xmlrpc_c::methodPtr vc_pool_info(new VirtualClusterPoolInfo());
     xmlrpc_c::methodPtr template_pool_info(new TemplatePoolInfo());
     xmlrpc_c::methodPtr vnpool_info(new VirtualNetworkPoolInfo());
     xmlrpc_c::methodPtr imagepool_info(new ImagePoolInfo());
@@ -427,6 +462,7 @@ void RequestManager::register_xml_methods()
 
     // Chown Methods
     xmlrpc_c::methodPtr vm_chown(new VirtualMachineChown());
+    // xmlrpc_c::methodPtr vc_chown(new VirtualClusterChown());
     xmlrpc_c::methodPtr template_chown(new TemplateChown());
     xmlrpc_c::methodPtr vn_chown(new VirtualNetworkChown());
     xmlrpc_c::methodPtr image_chown(new ImageChown());
@@ -438,6 +474,7 @@ void RequestManager::register_xml_methods()
 
     // Chmod Methods
     xmlrpc_c::methodPtr vm_chmod(new VirtualMachineChmod());
+    // xmlrpc_c::methodPtr vc_chmod(new VirtualClusterChmod());
     xmlrpc_c::methodPtr template_chmod(new TemplateChmod());
     xmlrpc_c::methodPtr vn_chmod(new VirtualNetworkChmod());
     xmlrpc_c::methodPtr image_chmod(new ImageChmod());
@@ -463,6 +500,7 @@ void RequestManager::register_xml_methods()
 
     // Rename Methods
     xmlrpc_c::methodPtr vm_rename(new VirtualMachineRename());
+    // xmlrpc_c::methodPtr vc_rename(new VirtualClusterRename());
     xmlrpc_c::methodPtr template_rename(new TemplateRename());
     xmlrpc_c::methodPtr vn_rename(new VirtualNetworkRename());
     xmlrpc_c::methodPtr image_rename(new ImageRename());
@@ -517,9 +555,41 @@ void RequestManager::register_xml_methods()
     RequestManagerRegistry.addMethod("one.vmpool.showback", vm_pool_showback);
     RequestManagerRegistry.addMethod("one.vmpool.calculateshowback", vm_pool_calculate_showback);
 
+    /* VC related methods  */
+    // RequestManagerRegistry.addMethod("one.vc.deploy", vc_deploy);
+    // RequestManagerRegistry.addMethod("one.vc.action", vc_action);
+    // RequestManagerRegistry.addMethod("one.vc.migrate", vc_migrate);
+    // RequestManagerRegistry.addMethod("one.vc.allocate", vc_allocate);
+    // RequestManagerRegistry.addMethod("one.vc.info", vc_info);
+    // RequestManagerRegistry.addMethod("one.vc.chown", vc_chown);
+    // RequestManagerRegistry.addMethod("one.vc.chmod", vc_chmod);
+    // RequestManagerRegistry.addMethod("one.vc.monitoring", vc_monitoring);
+    // RequestManagerRegistry.addMethod("one.vc.attach", vc_attach);
+    // RequestManagerRegistry.addMethod("one.vc.detach", vc_detach);
+    // RequestManagerRegistry.addMethod("one.vc.attachnic", vc_attachnic);
+    // RequestManagerRegistry.addMethod("one.vc.detachnic", vc_detachnic);
+    // RequestManagerRegistry.addMethod("one.vc.rename", vc_rename);
+    // RequestManagerRegistry.addMethod("one.vc.resize", vc_resize);
+    // RequestManagerRegistry.addMethod("one.vc.update", vc_update);
+    // RequestManagerRegistry.addMethod("one.vc.snapshotcreate", vc_snap_create);
+    // RequestManagerRegistry.addMethod("one.vc.snapshotrevert", vc_snap_revert);
+    // RequestManagerRegistry.addMethod("one.vc.snapshotdelete", vc_snap_delete);
+    // RequestManagerRegistry.addMethod("one.vc.recover", vc_recover);
+    // RequestManagerRegistry.addMethod("one.vc.updateconf", vc_updateconf);
+    // RequestManagerRegistry.addMethod("one.vc.lock", vc_lock);
+    // RequestManagerRegistry.addMethod("one.vc.unlock", vc_unlock);
+    // RequestManagerRegistry.addMethod("one.vc.diskresize", vc_disk_resize);
+
+    // RequestManagerRegistry.addMethod("one.vcpool.info", vc_pool_info);
+    // RequestManagerRegistry.addMethod("one.vcpool.accounting", vc_pool_acct);
+    // RequestManagerRegistry.addMethod("one.vcpool.monitoring", vc_pool_monitoring);
+    // RequestManagerRegistry.addMethod("one.vcpool.showback", vc_pool_showback);
+    // RequestManagerRegistry.addMethod("one.vcpool.calculateshowback", vc_pool_calculate_showback);
+
     /* VM Template related methods*/
     RequestManagerRegistry.addMethod("one.template.update", template_update);
     RequestManagerRegistry.addMethod("one.template.instantiate",template_instantiate);
+    RequestManagerRegistry.addMethod("one.template.instantiatevc",template_instantiate_vc);
     RequestManagerRegistry.addMethod("one.template.allocate",template_allocate);
     RequestManagerRegistry.addMethod("one.template.delete", template_delete);
     RequestManagerRegistry.addMethod("one.template.info", template_info);

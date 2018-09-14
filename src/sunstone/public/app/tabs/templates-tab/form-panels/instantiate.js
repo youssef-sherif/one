@@ -70,7 +70,7 @@ define(function(require) {
     this.template_objects = [];
 
     BaseFormPanel.call(this);
-  }
+  }  
 
   FormPanel.FORM_PANEL_ID = FORM_PANEL_ID;
   FormPanel.prototype = Object.create(BaseFormPanel.prototype);

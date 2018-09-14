@@ -48,6 +48,7 @@ module OpenNebulaJSON
                  when "chown"       then self.chown(action_hash['params'])
                  when "chmod"       then self.chmod_json(action_hash['params'])
                  when "instantiate" then self.instantiate(action_hash['params'])
+                 when "instantiatevc" then self.instantiate_vc(action_hash['params'])
                  when "clone"       then self.clone(action_hash['params'])
                  when "rename"      then self.rename(action_hash['params'])
                  when "delete_recursive" then self.delete_recursive(action_hash['params'])
@@ -119,6 +120,29 @@ module OpenNebulaJSON
                 super(params['vm_name'], params['hold'], template, persistent)
             else
                 super(params['vm_name'], params['hold'], "", persistent)
+            end
+        end
+
+        def instantiate_vc(params=Hash.new)
+            persistent = (params['persistent'] == true)
+
+            if params['template']
+                select_network = self['TEMPLATE/SUNSTONE/NETWORK_SELECT']
+                if (select_network && select_network.upcase == "NO")
+                    params['template'].delete("NIC")
+                end
+
+                template = template_to_str(params['template'])
+
+                ['NIC', 'SCHED_ACTION', 'SCHED_REQUIREMENTS', 'SCHED_DS_REQUIREMENTS'].each { |i|
+                    if params['template'][i] && params['template'][i].empty?
+                        template << "\n#{i} = []"
+                    end
+                }
+
+                super(params['vc_name'], params['hold'], template, persistent)
+            else
+                super(params['vc_name'], params['hold'], "", persistent)
             end
         end
 

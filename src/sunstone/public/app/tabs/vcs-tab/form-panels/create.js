@@ -19,10 +19,10 @@ define(function(require) {
     DEPENDENCIES
    */
 
-  var InstantiateTemplateFormPanel = require('tabs/vc-templates-tab/form-panels/instantiate');
+  var InstantiateVCFormPanel = require('tabs/templates-tab/form-panels/instantiate-vc');
   var Locale = require('utils/locale');
   var Tips = require('utils/tips');
-  var VCTemplatesTable = require('tabs/vc-templates-tab/datatable');
+  var TemplatesTable = require('tabs/templates-tab/datatable');
   /*
     CONSTANTS
    */
@@ -35,7 +35,7 @@ define(function(require) {
    */
 
   function FormPanel() {
-    InstantiateTemplateFormPanel.call(this);
+    InstantiateVCFormPanel.call(this);
 
     this.formPanelId = FORM_PANEL_ID;
     this.tabId = TAB_ID;
@@ -47,11 +47,11 @@ define(function(require) {
       }
     };
 
-    this.templatesTable = new VCTemplatesTable('vc_create', {'select': true});
+    this.templatesTable = new TemplatesTable('vc_create', {'select': true});
   }
 
   FormPanel.FORM_PANEL_ID = FORM_PANEL_ID;
-  FormPanel.prototype = Object.create(InstantiateTemplateFormPanel.prototype);
+  FormPanel.prototype = Object.create(InstantiateVCFormPanel.prototype);
   FormPanel.prototype.constructor = FormPanel;
   FormPanel.prototype.onShow = _onShow;
   FormPanel.prototype.setup = _setup;
@@ -63,7 +63,7 @@ define(function(require) {
    */
   function _setup(context) {
     var that = this;
-    InstantiateTemplateFormPanel.prototype.setup.call(this, context);
+    InstantiateVCFormPanel.prototype.setup.call(this, context);
 
     $(".selectTemplateTable", context).html(
           '<br/>' + this.templatesTable.dataTableHTML + '<br/>');
@@ -87,7 +87,7 @@ define(function(require) {
 
   function _onShow(context) {
     this.templatesTable.resetResourceTableSelect();
-    InstantiateTemplateFormPanel.prototype.onShow.call(this, context);
+    InstantiateVCFormPanel.prototype.onShow.call(this, context);
 
     $(".nameContainer", context).hide();
     $(".persistentContainer", context).hide();

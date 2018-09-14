@@ -100,4 +100,53 @@ protected:
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
+class VMTemplateInstantiateVC : public RequestManagerVMTemplate
+{
+public:
+    VMTemplateInstantiateVC():
+        RequestManagerVMTemplate("one.template.instantiatevc", "Instantiates a new "
+            "virtual cluster using a template", "A:sisbs")
+    {
+        auth_op = AuthRequest::USE;
+    };
+
+    ~VMTemplateInstantiateVC(){};
+
+    /**
+     * Instantiates the VM Template, checking permissions, quotas, etc
+     * @param id VM Template ID
+     * @param name Name for the new VM. Can be empty
+     * @param on_hold True to start the VM on HOLD state
+     * @param s_uattr Template supplied by user to merge with the original
+     * contents. Can be empty
+     * @param extra_attrs Template to be merged. It should contain internal
+     * configuration, and it won't be authenticated or checked for restricted
+     * attributes. Can be 0
+     * @param vmid on success of the new VM
+     * @param att the specific request attributes
+     *
+     * @return ErroCode for the request.
+     */
+    ErrorCode request_execute(int id, string name, bool on_hold,
+        const string& s_uattr, Template* extra_attrs, int& vid,
+        RequestAttributes& att);
+
+	/**
+     * Parse & merge user attributes (check if the request user is not oneadmin)
+     *  @param tmpl to merge the attributes to
+     *  @param s_uattr Template supplied by user to merge with the original
+     *  contents. Can be empty
+     *  @param att the specific request attributes
+     */
+    ErrorCode merge(Template * tmpl, const string &s_uattr, RequestAttributes& att);
+
+protected:
+
+    void request_execute(xmlrpc_c::paramList const& _paramList,
+                         RequestAttributes& att);
+};
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 #endif
