@@ -27,7 +27,9 @@ PoolObjectSQL * RequestManagerChown::get_and_quota(
     int                       oid,
     int                       new_uid,
     int                       new_gid,
-    RequestAttributes&        att)
+    RequestAttributes&        att,
+    PoolSQL *                 pool,
+    PoolObjectSQL::ObjectType auth_object)
 {
     std::map<Quotas::QuotaType, Template *> quota_map;
     std::map<Quotas::QuotaType, Template *> quota_to_rback;
@@ -295,6 +297,8 @@ void RequestManagerChown::request_execute(xmlrpc_c::paramList const& paramList,
 
     PoolObjectSQL * object;
 
+    set<int> vms;
+
     // ------------- Check new user and group id's ---------------------
 
     if ( noid > -1  )
@@ -375,6 +379,10 @@ void RequestManagerChown::request_execute(xmlrpc_c::paramList const& paramList,
             att.resp_id = oid;
             failure_response(NO_EXISTS, att);
         }
+        else if ( auth_object == PoolObjectSQL::VROUTER )
+        {
+            vms = static_cast<VirtualRouter *>(object)->get_vms();
+        }
     }
 
     if ( object == 0 )
@@ -396,7 +404,52 @@ void RequestManagerChown::request_execute(xmlrpc_c::paramList const& paramList,
 
     object->unlock();
 
-    success_response(oid, att);
+    if ( auth_object != PoolObjectSQL::VROUTER )
+    {
+        success_response(oid, att);
+        return;
+    }
+
+    // --------------- Recursive change associated VM objects ------------------
+    // IMPORTANT!: pool/auth_object members are redirected to the VM pool to 
+    // chown VMs
+    // -------------------------------------------------------------------------
+    bool error_vm_quotas = false;
+
+    PoolSQL * vm_pool = Nebula::instance().get_vmpool();
+
+    for (set<int>::const_iterator it = vms.begin(); it != vms.end(); it++)
+    {
+        int vm_id = *it;
+
+        PoolObjectSQL * vm = get_and_quota(vm_id, noid, ngid, att, vm_pool, PoolObjectSQL::VM);
+
+        if ( vm == 0 )
+        {
+            error_vm_quotas = true;
+
+            continue;
+        }
+
+        if ( noid != -1 )
+        {
+            vm->set_user(noid, nuname);
+        }
+
+        if ( ngid != -1 )
+        {
+            vm->set_group(ngid, ngname);
+        }
+
+        vm_pool->update(vm);
+
+        vm->unlock();
+    }
+
+    if (!error_vm_quotas)
+    {
+        success_response(oid, att);
+    }
 
     return;
 }
@@ -582,3 +635,7 @@ void UserChown::request_execute(xmlrpc_c::paramList const& paramList,
 
     return;
 }
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
