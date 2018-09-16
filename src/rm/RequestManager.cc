@@ -287,7 +287,7 @@ void RequestManager::register_xml_methods()
 
     // VMTemplate Methods
     xmlrpc_c::methodPtr template_instantiate(new VMTemplateInstantiate());
-    xmlrpc_c::methodPtr template_instantiate_vc(new VMTemplateInstantiate());
+    xmlrpc_c::methodPtr template_instantiate_vc(new VCTemplateInstantiate());
 
     // VirtualMachine Methods
     xmlrpc_c::methodPtr vm_deploy(new VirtualMachineDeploy());
@@ -368,7 +368,7 @@ void RequestManager::register_xml_methods()
 
     // Allocate Methods
     xmlrpc_c::methodPtr vm_allocate(new VirtualMachineAllocate());
-    // xmlrpc_c::methodPtr vc_allocate(new VirtualClusterAllocate());
+    xmlrpc_c::methodPtr vc_allocate(new VirtualClusterAllocate());
     xmlrpc_c::methodPtr image_allocate(new ImageAllocate());
     xmlrpc_c::methodPtr vn_allocate(new VirtualNetworkAllocate());
     xmlrpc_c::methodPtr template_allocate(new TemplateAllocate());
