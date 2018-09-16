@@ -347,6 +347,57 @@ Request::ErrorCode VirtualNetworkAllocate::pool_allocate(
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+Request::ErrorCode VirtualClusterAllocate::pool_allocate(
+        xmlrpc_c::paramList const&  paramList,
+        Template *                  tmpl,
+        int&                        id,
+        int                         vms_amount,
+        RequestAttributes&          att)
+{
+    bool on_hold = false;
+
+    if ( paramList.size() > 2 )
+    {
+        on_hold = xmlrpc_c::value_boolean(paramList.getBoolean(2));
+    }
+
+    VirtualMachineTemplate * ttmpl= static_cast<VirtualMachineTemplate *>(tmpl);
+    VirtualClusterPool * vcpool   = static_cast<VirtualClusterPool *>(pool);
+
+    Template tmpl_back(*tmpl);
+
+    int rc = vcpool->allocate(att.uid, att.gid, att.uname, att.gname, att.umask, vms_amount,
+            ttmpl, &id, att.resp_msg, on_hold);
+
+    if ( rc < 0 )
+    {
+        vector<Template *> ds_quotas;
+        vector<Template *>::iterator it;
+
+        quota_rollback(&tmpl_back, Quotas::VIRTUALMACHINE, att);
+
+        VirtualMachineDisks::extended_info(att.uid, &tmpl_back);
+
+        VirtualMachineDisks::image_ds_quotas(&tmpl_back, ds_quotas);
+
+        for ( it = ds_quotas.begin() ; it != ds_quotas.end() ; ++it )
+        {
+            quota_rollback(*it, Quotas::DATASTORE, att);
+            delete *it;
+        }
+
+        return Request::INTERNAL;
+    }
+
+    return Request::SUCCESS;   
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 void ImageAllocate::request_execute(xmlrpc_c::paramList const& params,
                                              RequestAttributes& att)
 {
