@@ -375,6 +375,7 @@ void Nebula::start(bool bootstrap_only)
                     "Bootstrapping OpenNebula database, stage 1.");
 
             rc += VirtualMachinePool::bootstrap(logdb);
+            rc += VirtualClusterPool::bootstrap(logdb);
             rc += HostPool::bootstrap(logdb);
             rc += VirtualNetworkPool::bootstrap(logdb);
             rc += ImagePool::bootstrap(logdb);
@@ -562,6 +563,9 @@ void Nebula::start(bool bootstrap_only)
         vmpool = new VirtualMachinePool(logdb, vm_hooks, hook_location,
             remotes_location, vm_restricted_attrs, vm_expiration,
             vm_submit_on_hold, cpu_cost, mem_cost, disk_cost);
+
+        /* ------------------------VirtualCluster Pool----------------------- */            
+        vcpool = new VirtualClusterPool(logdb);
 
         /* ---------------------------- Host Pool --------------------------- */
         vector<const VectorAttribute *> host_hooks;
