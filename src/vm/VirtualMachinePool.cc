@@ -280,7 +280,7 @@ int VirtualMachinePool::allocate (
     // Build a new Virtual Machine object
     // ------------------------------------------------------------------------
     vm = new VirtualMachine(-1, uid, gid, uname, gname, umask, vm_template);
-
+        
     if ( _submit_on_hold == true || on_hold )
     {
         vm->state = VirtualMachine::HOLD;
@@ -334,6 +334,84 @@ int VirtualMachinePool::allocate (
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------- */
+
+int VirtualMachinePool::allocate_in_vc (
+    int            uid,
+    int            gid,
+    const string&  uname,
+    const string&  gname,
+    int            umask,
+    VirtualMachineTemplate * vm_template,
+    VirtualCluster & vc,      
+    int *          oid,
+    string&        error_str,
+    bool           on_hold)
+{
+    VirtualMachine * vm;
+
+    string deploy_id;
+
+    // ------------------------------------------------------------------------
+    // Build a new Virtual Machine object
+    // ------------------------------------------------------------------------
+    vm = new VirtualMachine(-1, uid, gid, uname, gname, umask, vm_template);
+
+    vm->set_in_vc(true);
+
+    vc.add_vm(* vm);
+        
+    if ( _submit_on_hold == true || on_hold )
+    {
+        vm->state = VirtualMachine::HOLD;
+
+        vm->user_obj_template->replace("SUBMIT_ON_HOLD", true);
+    }
+    else
+    {
+        vm->state = VirtualMachine::PENDING;
+    }
+
+    vm->user_obj_template->get("IMPORT_VM_ID", deploy_id);
+
+    if (!deploy_id.empty())
+    {
+        vm->state = VirtualMachine::HOLD;
+
+        if (insert_index(deploy_id, -1, false) == -1) //Set import in progress
+        {
+            delete vm;
+
+            error_str = "Virtual Machine " + deploy_id + " already imported.";
+            return -1;
+        }
+    }
+
+    // ------------------------------------------------------------------------
+    // Insert the Object in the pool
+    // ------------------------------------------------------------------------
+
+    *oid = PoolSQL::allocate(vm, error_str);
+
+    // ------------------------------------------------------------------------
+    // Insert the deploy_id - vmid index for imported VMs
+    // ------------------------------------------------------------------------
+
+    if (!deploy_id.empty())
+    {
+        if (*oid >= 0)
+        {
+            insert_index(deploy_id, *oid, true);
+        }
+        else
+        {
+            drop_index(deploy_id);
+        }
+    }
+
+    return *oid;
+}
 
 int VirtualMachinePool::get_running(
     vector<int>&    oids,
