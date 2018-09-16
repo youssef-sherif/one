@@ -18,6 +18,7 @@
 #define VIRTUAL_CLUSTER_POOL_H_
 
 #include "PoolSQL.h"
+#include "VirtualMachinePool.h"
 #include "VirtualCluster.h"
 
 #include <time.h>
@@ -31,16 +32,7 @@ class VirtualClusterPool : public PoolSQL
 {
 public:
 
-    VirtualClusterPool(SqlDB *                      db,
-                       vector<const VectorAttribute *> hook_mads,
-                       const string&                hook_location,
-                       const string&                remotes_location,
-                       vector<const SingleAttribute *>& restricted_attrs,
-                       time_t                       expire_time,
-                       bool                         on_hold,
-                       float                        default_cpu_cost,
-                       float                        default_mem_cost,
-                       float                        default_disk_cost);
+    VirtualClusterPool(SqlDB *                      db);
 
     ~VirtualClusterPool(){};
 
@@ -65,7 +57,8 @@ public:
         const string&            uname,
         const string&            gname,
         int                      umask,
-        VirtualClusterTemplate * vc_template,
+        int                      vms_amount,
+        VirtualMachineTemplate * vm_template,
         int *                    oid,
         string&                  error_str,
         bool                     on_hold = false);
@@ -319,7 +312,7 @@ private:
      */
     PoolObjectSQL * create()
     {
-        return new VirtualCluster(-1,-1,"","","/nfs",2,0,0);
+        return new VirtualCluster(-1,-1,"","","/nfs",0,0);
     };
 
     /**

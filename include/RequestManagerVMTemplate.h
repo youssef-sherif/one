@@ -100,17 +100,17 @@ protected:
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-class VMTemplateInstantiateVC : public RequestManagerVMTemplate
+class VCTemplateInstantiate : public RequestManagerVMTemplate
 {
 public:
-    VMTemplateInstantiateVC():
+    VCTemplateInstantiate():
         RequestManagerVMTemplate("one.template.instantiatevc", "Instantiates a new "
             "virtual cluster using a template", "A:sisbs")
     {
         auth_op = AuthRequest::USE;
     };
 
-    ~VMTemplateInstantiateVC(){};
+    ~VCTemplateInstantiate(){};
 
     /**
      * Instantiates the VM Template, checking permissions, quotas, etc
@@ -145,8 +145,5 @@ protected:
     void request_execute(xmlrpc_c::paramList const& _paramList,
                          RequestAttributes& att);
 };
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
 
 #endif

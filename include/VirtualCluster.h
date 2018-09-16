@@ -18,15 +18,18 @@
 #define VIRTUAL_CLUSTER_H_
 
 
-#include "PoolSQL.h"
-#include "VirtualClusterTemplate.h"
 #include "VirtualMachine.h"
-
-#include <vector>
-#include <string>
-#include <map>
+#include "VirtualMachineTemplate.h"
+#include "PoolSQL.h"
+#include "History.h"
+#include "Image.h"
+#include "Log.h"
+#include "NebulaLog.h"
+#include "NebulaUtil.h"
+#include "Quotas.h"
 
 #include <time.h>
+#include <set>
 #include <sstream>
 
 using namespace std;
@@ -152,7 +155,7 @@ public:
      */
     Template * get_new_template() const
     {
-        return new VirtualClusterTemplate;
+        return new VirtualMachineTemplate;
     }
 
     /**
@@ -165,13 +168,34 @@ public:
 
 
     // *************************************************************************
-    // Virtual Machine management methods
-    // *************************************************************************
+    // Virtual Cluster management methods
+    // ************************************************************************
 
-    void add_virtual_machine(VirtualMachine& vm);
+    /*
+    *  return the number of Virtual Machines in Virtual Cluster
+    */
+    int get_vms_amount()
+    {
+        return vms_amount;
+    }  
 
+    /*
+    *  Getter that returns master Virtual Machine
+    */
+    VirtualMachine * get_master()
+    {
+        return master_vm;
+    }
 
-    void remove_virtual_machine(VirtualMachine& vm);
+    /*
+    *  Function to add a slave to Virtual Cluster
+    */
+    void add_vm(VirtualMachine & vm);
+
+    /*
+    *  Function to remove a slave from Virtual Cluster  
+    */
+    void remove_vm(VirtualMachine & vm);
     
     
     // *************************************************************************
@@ -184,6 +208,26 @@ public:
      *  @return a reference to the generated string
      */
     string& to_xml(string& xml) const;
+
+
+        /**
+     * Function to print the VirtualMachine object into a string in
+     * XML format, with extended information (full history records)
+     *  @param xml the resulting XML string
+     *  @return a reference to the generated string
+     */
+    string& to_xml_extended(string& xml) const
+    {
+        return to_xml_extended(xml, 2);
+    }
+
+    /**
+     *  Rebuilds the object from an xml formatted string
+     *    @param xml_str The xml-formatted string
+     *
+     *    @return 0 on success, -1 otherwise
+     */
+    int from_xml(const string &xml_str);
 
     /**
      *  Gets a string based attribute (single) from an address range. If the
@@ -211,10 +255,10 @@ public:
     /**
      *    @return A copy of the VNET Template
      */
-    VirtualClusterTemplate * clone_template() const
+    VirtualMachineTemplate * clone_template() const
     {
-        VirtualClusterTemplate * new_vc = new VirtualClusterTemplate(
-                *(static_cast<VirtualClusterTemplate *>(obj_template)));
+        VirtualMachineTemplate * new_vc = new VirtualMachineTemplate(
+                *(static_cast<VirtualMachineTemplate *>(obj_template)));
 
         return new_vc;
     };
@@ -230,31 +274,35 @@ private:
     // Virtual Cluster Private Attributes
     // *************************************************************************
 
-        /**
+    /**
      *  Location of shared file system
      */
     string nfs_location;
 
     /**
-     * Number of Virtual Machines in the VC
+     *  Number of Virtual Machines in the VC
      */
     int vms_amount;
 
     /**
-     *  Complete set of Virtual Machines records for the VC
+     *  Complete set of slave Virtual Machines records for the VC
      */
-    vector<VirtualMachine*> vms;
+    vector<VirtualMachine * > *  slave_vms;
 
     /**
-     * Name of the vc mad
+     *  master Virtual Machine
      */
-    string vc_mad;
-
+    VirtualMachine * master_vm;
 
     /**
      *  Security Groups
      */
     set<int> security_groups;
+
+    /**
+     *  User template to store custom metadata. This template can be updated
+     */
+    VirtualMachineTemplate * user_obj_template;
 
 
     // *************************************************************************
@@ -271,18 +319,39 @@ private:
     int insert_replace(SqlDB *db, bool replace, string& error_str);
 
     /**
+     *  Function that renders the VM in XML format optinally including
+     *  extended information (all history records)
+     *  @param xml the resulting XML string
+     *  @param n_history Number of history records to include:
+     *      0: none
+     *      1: the last one
+     *      2: all
+     *  @return a reference to the generated string
+     */
+    string& to_xml_extended(string& xml, int n_history) const;
+    /**
      *  Bootstraps the database table(s) associated to the Virtual Cluster
      *    @return 0 on success
      */
-    static int bootstrap(SqlDB * db);
 
     /**
-     *  Rebuilds the object from an xml formatted string
-     *    @param xml_str The xml-formatted string
+     * Inserts the last monitoring, and deletes old monitoring entries.
      *
-     *    @return 0 on success, -1 otherwise
+     * @param db pointer to the db
+     * @return 0 on success
      */
-    int from_xml(const string &xml_str);
+    int update_monitoring(SqlDB * db);
+
+
+    static int bootstrap(SqlDB * db);
+
+    // /**
+    //  *  Rebuilds the object from an xml formatted string
+    //  *    @param xml_str The xml-formatted string
+    //  *
+    //  *    @return 0 on success, -1 otherwise
+    //  */
+    // int from_xml(const string &xml_str);
 
     /**
      * Updates the BRIDGE, PHYDEV, and VLAN_ID attributes.
@@ -299,10 +368,9 @@ private:
                    int                      gid,
                    const string&            _uname,
                    const string&            _gname,
-                   const string&            _nfs_location,
-                   int                      _vms_amount,                
-                   int                      _umask,                   
-                   VirtualClusterTemplate * _vc_template = 0);
+                   const string&            _nfs_location,                   
+                   int                      umask,                   
+                   VirtualMachineTemplate * _vm_template = 0);
 
     ~VirtualCluster();
 

@@ -158,6 +158,43 @@ public:
 /* ------------------------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
+class VirtualClusterAllocate: public RequestManagerAllocate
+{
+public:
+    VirtualClusterAllocate():
+        RequestManagerAllocate("one.vc.allocate",
+                               "Allocates a new virtual cluster",
+                               "A:ssb",
+                               true)
+    {
+        Nebula& nd = Nebula::instance();
+        pool       = nd.get_vcpool();
+        auth_object = PoolObjectSQL::VC;
+    };
+
+    ~VirtualClusterAllocate(){};
+
+    /* ----------------------------------       ----------------------------------- */
+
+    Template * get_object_template()
+    {
+        return new VirtualMachineTemplate;
+    };
+
+    Request::ErrorCode pool_allocate(xmlrpc_c::paramList const&  paramList,
+                                     Template *                  tmpl,
+                                     int&                        id,
+                                     int                         vms_amount,
+                                     RequestAttributes&          att);
+
+    bool allocate_authorization(xmlrpc_c::paramList const&  paramList,
+            Template *obj_template, RequestAttributes&  att,
+            PoolObjectAuth *cluster_perms);
+};
+
+/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+
 class VirtualNetworkAllocate: public RequestManagerAllocate
 {
 public:

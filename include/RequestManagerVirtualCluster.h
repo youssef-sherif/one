@@ -555,7 +555,7 @@ public:
     void request_execute(xmlrpc_c::paramList const& _paramList,
             RequestAttributes& att);
 private:
-    ImagePool* ipool;
+ImagePool* ipool;
 };
 
 #endif

@@ -19,6 +19,7 @@
 
 #include "PoolSQL.h"
 #include "VirtualMachine.h"
+#include "VirtualCluster.h"
 
 #include <time.h>
 
@@ -66,6 +67,19 @@ public:
         const string&            gname,
         int                      umask,
         VirtualMachineTemplate * vm_template,
+        int *                    oid,
+        string&                  error_str,
+        bool                     on_hold = false);
+
+
+    int allocate_in_vc (
+        int                      uid,
+        int                      gid,
+        const string&            uname,
+        const string&            gname,
+        int                      umask,
+        VirtualMachineTemplate * vm_template,
+        VirtualCluster &         vc,
         int *                    oid,
         string&                  error_str,
         bool                     on_hold = false);

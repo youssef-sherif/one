@@ -160,6 +160,24 @@ public:
     string state_str();
 
     /**
+     *  return true if this is a member of a Virtual Cluster
+     */    
+    bool is_in_vc() 
+    {
+        return in_vc;
+    }
+
+        
+    /*
+    *  add this to a Virtual Cluster
+    */    
+    void set_in_vc(bool flag) 
+    {
+        in_vc = flag;
+    }
+
+
+    /**
      *  Returns the VM state (Dispatch Manager)
      *    @return the VM state
      */
@@ -1625,6 +1643,12 @@ private:
     // -------------------------------------------------------------------------
     // Virtual Machine Description
     // -------------------------------------------------------------------------
+
+    /**
+     *   if true then the Virtual Machine is part of a Virtual Cluster
+     */
+    bool        in_vc;
+
     /**
      *  The state of the virtual machine.
      */
@@ -2071,7 +2095,7 @@ protected:
                    int gid,
                    const string& uname,
                    const string& gname,
-                   int umask,
+                   int umask,                   
                    VirtualMachineTemplate * _vm_template);
 
     virtual ~VirtualMachine();
