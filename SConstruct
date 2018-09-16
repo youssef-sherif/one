@@ -67,6 +67,7 @@ main_env.Append(LIBPATH=[
     cwd+'/src/nebula',
     cwd+'/src/pool',
     cwd+'/src/template',
+    cwd+'/src/vc',
     cwd+'/src/vm',
     cwd+'/src/vm_group',
     cwd+'/src/vm_template',
@@ -238,6 +239,7 @@ build_scripts=[
     'src/mad/utils/SConstruct',
     'src/nebula/SConstruct',
     'src/pool/SConstruct',
+    'src/vc/SConstruct'
     'src/vm/SConstruct',
     'src/vm_group/SConstruct',
     'src/vm_template/SConstruct',
