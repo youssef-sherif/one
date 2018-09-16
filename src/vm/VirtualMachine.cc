@@ -50,6 +50,7 @@ VirtualMachine::VirtualMachine(int           id,
                                int           umask,
                                VirtualMachineTemplate * _vm_template):
         PoolObjectSQL(id,VM,"",_uid,_gid,_uname,_gname,table),
+        in_vc(false),       
         last_poll(0),
         state(INIT),
         prev_state(INIT),
