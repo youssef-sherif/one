@@ -347,7 +347,7 @@ Request::ErrorCode VMTemplateInstantiate::merge(
     return SUCCESS;
 }
 
-void VCTemplateInstantiate::request_execute(xmlrpc_c::paramList const& paramList,
+void VMTemplateInstantiateVC::request_execute(xmlrpc_c::paramList const& paramList,
                                             RequestAttributes& att)
 {
     int    id   = xmlrpc_c::value_int(paramList.getInt(1));
@@ -398,7 +398,7 @@ void VCTemplateInstantiate::request_execute(xmlrpc_c::paramList const& paramList
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Request::ErrorCode VCTemplateInstantiate::request_execute(int id, string name, int vms_amount,
+Request::ErrorCode VMTemplateInstantiateVC::request_execute(int id, string name, int vms_amount,
         string nfs_location, bool on_hold, const string &str_uattrs, Template* extra_attrs, int& vid,
         RequestAttributes& att)
 {
@@ -591,7 +591,7 @@ Request::ErrorCode VCTemplateInstantiate::request_execute(int id, string name, i
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Request::ErrorCode VCTemplateInstantiate::merge(
+Request::ErrorCode VMTemplateInstantiateVC::merge(
                 Template *      tmpl,
                 const string    &str_uattrs,
                 RequestAttributes& att)

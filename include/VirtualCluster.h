@@ -222,7 +222,7 @@ private:
     /**
      *  Complete set of slave Virtual Machines records for the VC
      */
-    vector<VirtualMachine * > *  slave_vms;
+    vector<VirtualMachine * > * slave_vms;
 
     /**
      *  master Virtual Machine

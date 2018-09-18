@@ -287,7 +287,7 @@ void RequestManager::register_xml_methods()
 
     // VMTemplate Methods
     xmlrpc_c::methodPtr template_instantiate(new VMTemplateInstantiate());
-    xmlrpc_c::methodPtr template_instantiate_vc(new VCTemplateInstantiate());
+    xmlrpc_c::methodPtr template_instantiate_vc(new VMTemplateInstantiateVC());
 
     // VirtualMachine Methods
     xmlrpc_c::methodPtr vm_deploy(new VirtualMachineDeploy());

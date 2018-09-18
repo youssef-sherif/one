@@ -69,7 +69,7 @@ VirtualCluster::VirtualCluster(int           _uid,
                         stime(time(0)),
                         etime(0),
                         deploy_id(""),
-                        _log(0)
+                        _log(0)                        
 {
 
     if (_vm_template != 0)
@@ -84,7 +84,9 @@ VirtualCluster::VirtualCluster(int           _uid,
         user_obj_template = new VirtualMachineTemplate(false,'=',"USER_TEMPLATE");
     }
 
-    obj_template = new VirtualMachineTemplate;
+    obj_template = new VirtualMachineTemplate;    
+
+    slave_vms = new vector<VirtualMachine *>();
 
     set_umask(umask);    
 }
@@ -193,11 +195,12 @@ int VirtualCluster::bootstrap(SqlDB * db)
 {
     int rc;
 
-    ostringstream oss_vc(VirtualCluster::db_bootstrap);
+    ostringstream oss_vm(VirtualCluster::db_bootstrap);
 
     ostringstream oss_index("CREATE INDEX state_idx on vc_pool (state);");
 
-    rc =  db->exec_local_wr(oss_vc);
+    rc =  db->exec_local_wr(oss_vm);
+    rc += db->exec_local_wr(oss_index);
 
     return rc;
 };

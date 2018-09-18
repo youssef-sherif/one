@@ -100,17 +100,17 @@ protected:
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-class VCTemplateInstantiate : public RequestManagerVMTemplate
+class VMTemplateInstantiateVC : public RequestManagerVMTemplate
 {
 public:
-    VCTemplateInstantiate():
+    VMTemplateInstantiateVC():
         RequestManagerVMTemplate("one.template.instantiatevc", "Instantiates a new "
             "virtual cluster using a template", "A:sisbs")
     {
         auth_op = AuthRequest::USE;
     };
 
-    ~VCTemplateInstantiate(){};
+    ~VMTemplateInstantiateVC(){};
 
     /**
      * Instantiates the VM Template, checking permissions, quotas, etc

@@ -71,10 +71,10 @@ int VirtualClusterPool::allocate (
     // ------------------------------------------------------------------------    
     vc = new VirtualCluster(-1,-1,"","",nfs_location,0,0);        
 
-    // vmpool = Nebula::instance().get_vmpool();
+    vmpool = Nebula::instance().get_vmpool();
 
-    // vmpool->allocate_in_vc(uid, gid, uname, gname, umask,
-    //         vm_template,* vc, oid, error_str, on_hold);                       
+    vmpool->allocate_in_vc(uid, gid, uname, gname, umask,
+            vm_template,* vc, oid, error_str, on_hold);                       
     // for(int i = 0; i < vms_amount; i++) 
     // {
 
