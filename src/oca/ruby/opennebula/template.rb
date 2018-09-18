@@ -151,16 +151,18 @@ module OpenNebula
         #
         # @return [Integer, OpenNebula::Error] The new VC id, Error
         #   otherwise
-        def instantiate_vc(name="", hold=false, template="", persistent=false)
+        def instantiate_vc(name="", vms_amount=2, nfs_location="/nfs", hold=false, template="", persistent=false)
             return Error.new('ID not defined') if !@pe_id
 
             name ||= ""
             hold = false if hold.nil?
             template ||= ""
             persistent = false if persistent.nil?
+            vms_amount ||= 2
+            nfs_location ||= "/nfs"
 
             rc = @client.call(TEMPLATE_METHODS[:instantiatevc], @pe_id,
-                name, hold, template, persistent)
+                name, vms_amount, nfs_location, hold, template, persistent)
 
             return rc
         end

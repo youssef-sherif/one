@@ -31,11 +31,11 @@ module OpenNebulaJSON
             else
                 template = template_to_str(vc_hash)
             end            
-
+            
             self.allocate(template)
         end
 
-        def perform_action(template_json)
+        def perform_action(template_json)            
             action_hash = parse_json(template_json,'action')
             if OpenNebula.is_error?(action_hash)
                 return action_hash

@@ -2006,7 +2006,7 @@ string& VirtualMachine::to_xml_extended(string& xml, int n_history) const
         << "<GID>"       << gid       << "</GID>"
         << "<UNAME>"     << uname     << "</UNAME>"
         << "<GNAME>"     << gname     << "</GNAME>"
-        << "<NAME>"      << name      << "</NAME>"
+        << "<NAME>"      << name      << "</NAME>"        
         << perms_to_xml(perm_xml)
         << "<LAST_POLL>" << last_poll << "</LAST_POLL>"
         << "<STATE>"     << state     << "</STATE>"

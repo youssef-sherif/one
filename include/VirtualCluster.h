@@ -17,8 +17,6 @@
 #ifndef VIRTUAL_CLUSTER_H_
 #define VIRTUAL_CLUSTER_H_
 
-
-#include "VirtualMachine.h"
 #include "VirtualMachineTemplate.h"
 #include "PoolSQL.h"
 #include "History.h"
@@ -56,11 +54,6 @@ public:
         STOPPED         = 4,
         SUSPENDED       = 5,
         DONE            = 6,
-        //FAILED        = 7,
-        POWEROFF        = 8,
-        UNDEPLOYED      = 9,
-        CLONING         = 10,
-        CLONING_FAILURE = 11
     };
 
     /**
@@ -72,67 +65,6 @@ public:
         PROLOG              = 1,
         BOOT                = 2,
         RUNNING             = 3,
-        MIGRATE             = 4,
-        SAVE_STOP           = 5,
-        SAVE_SUSPEND        = 6,
-        SAVE_MIGRATE        = 7,
-        PROLOG_MIGRATE      = 8,
-        PROLOG_RESUME       = 9,
-        EPILOG_STOP         = 10,
-        EPILOG              = 11,
-        SHUTDOWN            = 12,
-        //CANCEL            = 13,
-        //FAILURE           = 14,
-        CLEANUP_RESUBMIT    = 15,
-        UNKNOWN             = 16,
-        HOTPLUG             = 17,
-        SHUTDOWN_POWEROFF   = 18,
-        BOOT_UNKNOWN        = 19,
-        BOOT_POWEROFF       = 20,
-        BOOT_SUSPENDED      = 21,
-        BOOT_STOPPED        = 22,
-        CLEANUP_DELETE      = 23,
-        HOTPLUG_SNAPSHOT    = 24,
-        HOTPLUG_NIC         = 25,
-        HOTPLUG_SAVEAS           = 26,
-        HOTPLUG_SAVEAS_POWEROFF  = 27,
-        HOTPLUG_SAVEAS_SUSPENDED = 28,
-        SHUTDOWN_UNDEPLOY   = 29,
-        EPILOG_UNDEPLOY     = 30,
-        PROLOG_UNDEPLOY     = 31,
-        BOOT_UNDEPLOY       = 32,
-        HOTPLUG_PROLOG_POWEROFF = 33,
-        HOTPLUG_EPILOG_POWEROFF = 34,
-        BOOT_MIGRATE            = 35,
-        BOOT_FAILURE            = 36,
-        BOOT_MIGRATE_FAILURE    = 37,
-        PROLOG_MIGRATE_FAILURE  = 38,
-        PROLOG_FAILURE          = 39,
-        EPILOG_FAILURE          = 40,
-        EPILOG_STOP_FAILURE     = 41,
-        EPILOG_UNDEPLOY_FAILURE = 42,
-        PROLOG_MIGRATE_POWEROFF = 43,
-        PROLOG_MIGRATE_POWEROFF_FAILURE = 44,
-        PROLOG_MIGRATE_SUSPEND          = 45,
-        PROLOG_MIGRATE_SUSPEND_FAILURE  = 46,
-        BOOT_UNDEPLOY_FAILURE   = 47,
-        BOOT_STOPPED_FAILURE    = 48,
-        PROLOG_RESUME_FAILURE   = 49,
-        PROLOG_UNDEPLOY_FAILURE = 50,
-        DISK_SNAPSHOT_POWEROFF         = 51,
-        DISK_SNAPSHOT_REVERT_POWEROFF  = 52,
-        DISK_SNAPSHOT_DELETE_POWEROFF  = 53,
-        DISK_SNAPSHOT_SUSPENDED        = 54,
-        DISK_SNAPSHOT_REVERT_SUSPENDED = 55,
-        DISK_SNAPSHOT_DELETE_SUSPENDED = 56,
-        DISK_SNAPSHOT        = 57,
-        //DISK_SNAPSHOT_REVERT = 58,
-        DISK_SNAPSHOT_DELETE = 59,
-        PROLOG_MIGRATE_UNKNOWN = 60,
-        PROLOG_MIGRATE_UNKNOWN_FAILURE = 61,
-        DISK_RESIZE = 62,
-        DISK_RESIZE_POWEROFF = 63,
-        DISK_RESIZE_UNDEPLOYED = 64
     };
 
     /**
@@ -158,13 +90,13 @@ public:
         return new VirtualMachineTemplate;
     }
 
-    /**
-     *  Fills a auth class to perform an authZ/authN request based on the object
-     *  attributes. Disables the cluster and all NET rules (NET* and NET/%) for
-     *  reservations.
-     *    @param auths to be filled
-     */
-    void get_permissions(PoolObjectAuth& auths);
+    // /**
+    //  *  Fills a auth class to perform an authZ/authN request based on the object
+    //  *  attributes. Disables the cluster and all NET rules (NET* and NET/%) for
+    //  *  reservations.
+    //  *    @param auths to be filled
+    //  */
+    // void get_permissions(PoolObjectAuth& auths);
 
 
     // *************************************************************************
@@ -201,13 +133,16 @@ public:
     // *************************************************************************
 
 
-    /**
-     * Function to print the VirtualCluster object into a string in
-     * XML format
-     *  @param xml the resulting XML string
-     *  @return a reference to the generated string
-     */
-    string& to_xml(string& xml) const;
+    // /**
+    //  * Function to print the VirtualCluster object into a string in
+    //  * XML format
+    //  *  @param xml the resulting XML string
+    //  *  @return a reference to the generated string
+    //  */
+    string& to_xml(string& xml) const
+    {
+        return to_xml_extended(xml, 1);
+    }
 
 
         /**
@@ -229,28 +164,28 @@ public:
      */
     int from_xml(const string &xml_str);
 
-    /**
-     *  Gets a string based attribute (single) from an address range. If the
-     *  attribute is not found in the address range, the VNET template will be
-     *  used
-     *    @param name of the attribute
-     *    @param value of the attribute (a string), will be "" if not defined or
-     *    not a single attribute
-     *    @param ar_id of the address attribute.
-     */
-    void get_template_attribute(const char * name, string& value, int ar_id) const;
+    // /**
+    //  *  Gets a string based attribute (single) from an address range. If the
+    //  *  attribute is not found in the address range, the VNET template will be
+    //  *  used
+    //  *    @param name of the attribute
+    //  *    @param value of the attribute (a string), will be "" if not defined or
+    //  *    not a single attribute
+    //  *    @param ar_id of the address attribute.
+    //  */
+    // void get_template_attribute(const char * name, string& value, int ar_id) const;
 
-    /**
-     *  int version of get_template_attribute
-     *    @return 0 on success
-     */
-    int get_template_attribute(const char * name, int& value, int ar_id) const;
+    // /**
+    //  *  int version of get_template_attribute
+    //  *    @return 0 on success
+    //  */
+    // int get_template_attribute(const char * name, int& value, int ar_id) const;
 
-    /**
-     *  Adds the security group of the VNet and its ARs to the given set
-     *    @param sgs to put the sg ids in
-     */
-    void get_security_groups(set<int> & sgs);
+    // /**
+    //  *  Adds the security group of the VNet and its ARs to the given set
+    //  *    @param sgs to put the sg ids in
+    //  */
+    // void get_security_groups(set<int> & sgs);
 
     /**
      *    @return A copy of the VNET Template
@@ -304,6 +239,69 @@ private:
      */
     VirtualMachineTemplate * user_obj_template;
 
+    /**
+     *  Deployment specific identification string, as returned by the VC driver
+     */
+    string      deploy_id;
+
+    /**
+     *  The state of the virtual cluster.
+     */
+    VcState     state;
+
+    /**
+     *  Previous state og the virtual cluster, to trigger state hooks
+     */
+    VcState     prev_state;
+
+    /**
+     *  The state of the virtual cluster (in the Life-cycle Manager).
+     */
+    LcmState    lcm_state;
+
+    /**
+     *  Previous state og the virtual cluster, to trigger state hooks
+     */
+    LcmState    prev_lcm_state;
+
+    /**
+     *  Marks the VC as to be re-scheduled
+     */
+    int         resched;
+
+    /**
+     *  Start time, the VC enter the nebula system (in epoch)
+     */
+    time_t      stime;
+
+    /**
+     *  Exit time, the VC leave the nebula system (in epoch)
+     */
+    time_t      etime;
+
+    /**
+     *  Log class for the virtual cluster, it writes log messages in
+     *          $ONE_LOCATION/var/$VID/vm.log
+     *  or, in case that OpenNebula is installed in root
+     *          /var/log/one/$VM_ID.log
+     *  For the syslog it will use the predefined /var/log/ locations
+     */
+    Log *       _log;
+
+
+    //**************************************************************************
+    // Constructor
+    //**************************************************************************
+
+    VirtualCluster( int                     uid,
+                   int                      gid,
+                   const string&            _uname,
+                   const string&            _gname,
+                   const string             _nfs_location,                   
+                   int                      umask,                   
+                   VirtualMachineTemplate * _vm_template = 0);
+
+    ~VirtualCluster();
 
     // *************************************************************************
     // DataBase implementation (Private)
@@ -340,7 +338,7 @@ private:
      * @param db pointer to the db
      * @return 0 on success
      */
-    int update_monitoring(SqlDB * db);
+    // int update_monitoring(SqlDB * db);
 
 
     static int bootstrap(SqlDB * db);
@@ -358,21 +356,7 @@ private:
      *    @param error string describing the error if any
      *    @return 0 on success
      */
-    int post_update_template(string& error);
-
-    //**************************************************************************
-    // Constructor
-    //**************************************************************************
-
-    VirtualCluster( int                     uid,
-                   int                      gid,
-                   const string&            _uname,
-                   const string&            _gname,
-                   const string&            _nfs_location,                   
-                   int                      umask,                   
-                   VirtualMachineTemplate * _vm_template = 0);
-
-    ~VirtualCluster();
+    // int post_update_template(string& error);
 
     // *************************************************************************
     // DataBase implementation
@@ -387,7 +371,7 @@ private:
     /**
      *  Writes the Virtual Cluster and its associated template and leases in the database.
      *    @param db pointer to the db
-     *    @return 0 on success
+    //  *    @return 0 on success
      */
     int insert(SqlDB * db, string& error_str);
 

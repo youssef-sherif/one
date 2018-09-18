@@ -283,7 +283,7 @@ Request::ErrorCode VMTemplateInstantiate::request_execute(int id, string name,
     }
 
     rc = vmpool->allocate(att.uid, att.gid, att.uname, att.gname, att.umask,
-            tmpl, &vid, att.resp_msg, on_hold);
+             tmpl, &vid, att.resp_msg, on_hold);
 
     if ( rc < 0 )
     {
@@ -352,19 +352,15 @@ void VCTemplateInstantiate::request_execute(xmlrpc_c::paramList const& paramList
 {
     int    id   = xmlrpc_c::value_int(paramList.getInt(1));
     string name = xmlrpc_c::value_string(paramList.getString(2));
+    int vms_amount = xmlrpc_c::value_int(paramList.getInt(3));
+    string nfs_location = xmlrpc_c::value_string(paramList.getString(4));
     bool   on_hold = false;        //Optional XML-RPC argument
-    string str_uattrs;             //Optional XML-RPC argument
-    bool   clone_template = false; //Optional XML-RPC argument
-
-    if ( paramList.size() > 3 )
-    {
-        on_hold    = xmlrpc_c::value_boolean(paramList.getBoolean(3));
-        str_uattrs = xmlrpc_c::value_string(paramList.getString(4));
-    }
+    string str_uattrs;             //Optional XML-RPC argument    
 
     if ( paramList.size() > 5 )
-    {
-        clone_template = xmlrpc_c::value_boolean(paramList.getBoolean(5));
+    {    
+        on_hold    = xmlrpc_c::value_boolean(paramList.getBoolean(5));
+        str_uattrs = xmlrpc_c::value_string(paramList.getString(6));
     }
 
     VMTemplate * tmpl = static_cast<VMTemplatePool* > (pool)->get(id);
@@ -374,57 +370,20 @@ void VCTemplateInstantiate::request_execute(xmlrpc_c::paramList const& paramList
         att.resp_id = id;
         failure_response(NO_EXISTS, att);
         return;
-    }
-
-    bool is_vrouter = tmpl->is_vrouter();
+    }    
 
     string original_tmpl_name = tmpl->get_name();
 
     tmpl->unlock();
 
-    if (is_vrouter)
-    {
-        att.resp_msg = "Virtual router templates cannot be instantiated";
-        failure_response(ACTION, att);
-        return;
-    }
 
     int instantiate_id = id;
-
-    if (clone_template)
-    {
-        int new_id;
-
-        VMTemplateClone tmpl_clone;
-        string          tmpl_name = name;
-
-        ostringstream   oss;
-
-        if (tmpl_name.empty())
-        {
-            tmpl_name = original_tmpl_name + "-copy";
-        }
-
-        ErrorCode ec = tmpl_clone.request_execute(id, tmpl_name, new_id, true,
-			str_uattrs, att);
-
-        if (ec != SUCCESS)
-        {
-            failure_response(ec, att);
-            return;
-        }
-
-        instantiate_id = new_id;
-
-        oss << "CLONING_TEMPLATE_ID=" << id << "\n";
-
-        str_uattrs = oss.str();
-    }
 
     int       vid;
     ErrorCode ec;
 
-    ec = request_execute(instantiate_id, name, on_hold, str_uattrs, 0, vid, att);
+    ec = request_execute(instantiate_id, name, vms_amount, nfs_location, on_hold,
+         str_uattrs, 0, vid, att);
 
     if ( ec == SUCCESS )
     {
@@ -439,8 +398,8 @@ void VCTemplateInstantiate::request_execute(xmlrpc_c::paramList const& paramList
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-Request::ErrorCode VCTemplateInstantiate::request_execute(int id, string name,
-        bool on_hold, const string &str_uattrs, Template* extra_attrs, int& vid,
+Request::ErrorCode VCTemplateInstantiate::request_execute(int id, string name, int vms_amount,
+        string nfs_location, bool on_hold, const string &str_uattrs, Template* extra_attrs, int& vid,
         RequestAttributes& att)
 {
     int rc;
@@ -452,12 +411,11 @@ Request::ErrorCode VCTemplateInstantiate::request_execute(int id, string name,
 
     Nebula& nd = Nebula::instance();
 
-    VirtualMachinePool* vmpool  = nd.get_vmpool();
+    VirtualClusterPool* vcpool  = nd.get_vcpool();    
     VMTemplatePool *    tpool   = nd.get_tpool();
 
     VirtualMachineTemplate * tmpl;
-    VirtualMachineTemplate extended_tmpl;
-    VirtualMachineTemplate uattrs;
+    VirtualMachineTemplate extended_tmpl;    
     VMTemplate *           rtmpl;
 
     vector<Template *> ds_quotas;
@@ -560,7 +518,7 @@ Request::ErrorCode VCTemplateInstantiate::request_execute(int id, string name,
     extended_tmpl.add("RUNNING_MEMORY", memory);
     extended_tmpl.add("RUNNING_CPU", cpu);
     extended_tmpl.add("RUNNING_VMS", 1);
-    extended_tmpl.add("VMS", 1);
+    extended_tmpl.add("VMS", 1);    
 
     if (quota_authorization(&extended_tmpl, Quotas::VIRTUALMACHINE, att,
                 att.resp_msg) == false)
@@ -606,8 +564,8 @@ Request::ErrorCode VCTemplateInstantiate::request_execute(int id, string name,
         return AUTHORIZATION;
     }
 
-    rc = vmpool->allocate(att.uid, att.gid, att.uname, att.gname, att.umask,
-            tmpl, &vid, att.resp_msg, on_hold);
+    rc = vcpool->allocate(att.uid, att.gid, att.uname, att.gname, att.umask,
+            vms_amount, nfs_location, tmpl, &vid, att.resp_msg, on_hold);
 
     if ( rc < 0 )
     {

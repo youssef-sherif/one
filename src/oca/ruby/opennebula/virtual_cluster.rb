@@ -254,8 +254,8 @@ module OpenNebula
         #
         # @return [nil, OpenNebula::Error] nil in case of success, Error
         #   otherwise
-        def allocate(description, hold=false)
-            super(VC_METHODS[:allocate], description, hold)
+        def allocate(description, vms_amount=2, nfs_location="/nfs", hold=false)            
+            super(VC_METHODS[:allocate], description, vms_amount, nfs_location, hold)
         end
 
         # Replaces the template contents

@@ -26,13 +26,13 @@
 using namespace std;
 
 /**
- *  The Virtual Machine Pool class. ...
+ *  The Virtual Cluster Pool class. ...
  */
 class VirtualClusterPool : public PoolSQL
 {
 public:
 
-    VirtualClusterPool(SqlDB *                      db);
+    VirtualClusterPool(SqlDB * db);
 
     ~VirtualClusterPool(){};
 
@@ -58,7 +58,8 @@ public:
         const string&            gname,
         int                      umask,
         int                      vms_amount,
-        VirtualMachineTemplate * vm_template,
+        string                   nfs_location,
+        VirtualMachineTemplate * vm_template,    
         int *                    oid,
         string&                  error_str,
         bool                     on_hold = false);
@@ -324,13 +325,6 @@ private:
      * True or false whether to submit new VC on HOLD or not
      */
     bool _submit_on_hold;
-
-    /**
-     * Default values for cpu and memory cost
-     */
-    float _default_cpu_cost;
-    float _default_mem_cost;
-    float _default_disk_cost;
 
     /**
      * Callback used to get an int in the DB it is used by VC Pool in:

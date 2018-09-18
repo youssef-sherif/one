@@ -127,8 +127,8 @@ public:
      *
      * @return ErroCode for the request.
      */
-    ErrorCode request_execute(int id, string name, bool on_hold,
-        const string& s_uattr, Template* extra_attrs, int& vid,
+    ErrorCode request_execute(int id, string name, int vms_amount, string nfs_location, 
+        bool on_hold, const string& s_uattr, Template* extra_attrs, int& vid,
         RequestAttributes& att);
 
 	/**

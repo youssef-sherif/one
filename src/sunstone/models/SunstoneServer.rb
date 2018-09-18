@@ -38,9 +38,7 @@ class SunstoneServer < CloudServer
     #
     ############################################################################
     def get_pool(kind,user_flag, client=nil)
-        client = @client if !client
-
-        puts "#{kind}"
+        client = @client if !client        
 
         user_flag = Integer(user_flag)
 

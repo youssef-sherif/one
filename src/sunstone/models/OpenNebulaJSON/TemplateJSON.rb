@@ -140,9 +140,9 @@ module OpenNebulaJSON
                     end
                 }
 
-                super(params['vc_name'], params['hold'], template, persistent)
+                super(params['vc_name'], params['vms_amount'].to_i, params['nfs_location'], params['hold'], template, persistent)
             else
-                super(params['vc_name'], params['hold'], "", persistent)
+                super(params['vc_name'], params['vms_amount'].to_i, params['nfs_location'], params['hold'], "", persistent)
             end
         end
 

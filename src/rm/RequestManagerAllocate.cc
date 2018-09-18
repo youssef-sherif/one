@@ -347,52 +347,136 @@ Request::ErrorCode VirtualNetworkAllocate::pool_allocate(
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
 Request::ErrorCode VirtualClusterAllocate::pool_allocate(
         xmlrpc_c::paramList const&  paramList,
         Template *                  tmpl,
-        int&                        id,
-        int                         vms_amount,
+        int&                        id,        
         RequestAttributes&          att)
 {
+    int vms_amount = xmlrpc_c::value_int(paramList.getInt(2));
+    string nfs_location = xmlrpc_c::value_string(paramList.getString(3));        
     bool on_hold = false;
 
-    if ( paramList.size() > 2 )
+    if ( paramList.size() > 4 )
     {
-        on_hold = xmlrpc_c::value_boolean(paramList.getBoolean(2));
+        on_hold = xmlrpc_c::value_boolean(paramList.getBoolean(4));
     }
 
-    VirtualMachineTemplate * ttmpl= static_cast<VirtualMachineTemplate *>(tmpl);
+    VirtualMachineTemplate * ttmpl= static_cast<VirtualMachineTemplate *>(tmpl);    
     VirtualClusterPool * vcpool   = static_cast<VirtualClusterPool *>(pool);
 
     Template tmpl_back(*tmpl);
 
-    int rc = vcpool->allocate(att.uid, att.gid, att.uname, att.gname, att.umask, vms_amount,
-            ttmpl, &id, att.resp_msg, on_hold);
+    int rc = vcpool->allocate(att.uid, att.gid, att.uname, att.gname, att.umask,
+            vms_amount, nfs_location, ttmpl, &id, att.resp_msg, on_hold);
 
-    if ( rc < 0 )
+    if (rc < 0)
     {
-        vector<Template *> ds_quotas;
-        vector<Template *>::iterator it;
-
-        quota_rollback(&tmpl_back, Quotas::VIRTUALMACHINE, att);
-
-        VirtualMachineDisks::extended_info(att.uid, &tmpl_back);
-
-        VirtualMachineDisks::image_ds_quotas(&tmpl_back, ds_quotas);
-
-        for ( it = ds_quotas.begin() ; it != ds_quotas.end() ; ++it )
-        {
-            quota_rollback(*it, Quotas::DATASTORE, att);
-            delete *it;
-        }
-
         return Request::INTERNAL;
     }
 
     return Request::SUCCESS;   
+}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+bool VirtualClusterAllocate::allocate_authorization(
+		xmlrpc_c::paramList const&  paramList,
+        Template *          tmpl,
+        RequestAttributes&  att,
+        PoolObjectAuth *    cluster_perms)
+{
+    AuthRequest ar(att.uid, att.group_ids);
+    string      t64;
+    string      aname;
+
+    std::string memory, cpu;
+
+    VirtualMachineTemplate * ttmpl = static_cast<VirtualMachineTemplate *>(tmpl);
+
+    // ------------ Check template for restricted attributes -------------------
+
+    if (!att.is_admin())
+    {
+        if (ttmpl->check_restricted(aname))
+        {
+            att.resp_msg = "VM Template includes a restricted attribute "+aname;
+            failure_response(AUTHORIZATION, att);
+
+            return false;
+        }
+    }
+
+    // ------------------ Authorize VM create operation ------------------------
+
+    ar.add_create_auth(att.uid, att.gid, auth_object, tmpl->to_xml(t64));
+
+    VirtualMachine::set_auth_request(att.uid, ar, ttmpl, true);
+
+    if (UserPool::authorize(ar) == -1)
+    {
+        att.resp_msg = ar.message;
+        failure_response(AUTHORIZATION, att);
+
+        return false;
+    }
+
+    // -------------------------- Check Quotas  ----------------------------
+
+    VirtualMachineTemplate aux_tmpl(*ttmpl);
+
+    VirtualMachineDisks::extended_info(att.uid, &aux_tmpl);
+
+    aux_tmpl.get("MEMORY", memory);
+    aux_tmpl.get("CPU", cpu);
+
+    aux_tmpl.add("RUNNING_MEMORY", memory);
+    aux_tmpl.add("RUNNING_CPU", cpu);
+    aux_tmpl.add("RUNNING_VMS", 1);
+    aux_tmpl.add("VMS", 1);
+
+    if ( quota_authorization(&aux_tmpl, Quotas::VIRTUALMACHINE, att) == false )
+    {
+        return false;
+    }
+
+    vector<Template *> ds_quotas;
+    vector<Template *> applied;
+    vector<Template *>::iterator it;
+
+    bool ds_quota_auth = true;
+
+    VirtualMachineDisks::image_ds_quotas(&aux_tmpl, ds_quotas);
+
+    for ( it = ds_quotas.begin() ; it != ds_quotas.end() ; ++it )
+    {
+        if ( quota_authorization(*it, Quotas::DATASTORE, att) == false )
+        {
+            ds_quota_auth = false;
+        }
+        else
+        {
+            applied.push_back(*it);
+        }
+    }
+
+    if ( ds_quota_auth == false )
+    {
+        quota_rollback(&aux_tmpl, Quotas::VIRTUALMACHINE, att);
+
+        for ( it = applied.begin() ; it != applied.end() ; ++it )
+        {
+            quota_rollback(*it, Quotas::DATASTORE, att);
+        }
+    }
+
+    for ( it = ds_quotas.begin() ; it != ds_quotas.end() ; ++it )
+    {
+        delete *it;
+    }
+
+    return ds_quota_auth;
 }
 
 /* -------------------------------------------------------------------------- */

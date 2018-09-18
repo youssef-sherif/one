@@ -174,22 +174,21 @@ public:
 
     ~VirtualClusterAllocate(){};
 
-    /* ----------------------------------       ----------------------------------- */
+    /* --------------------------------------------------------------------- */
 
     Template * get_object_template()
     {
         return new VirtualMachineTemplate;
-    };
+    };    
 
     Request::ErrorCode pool_allocate(xmlrpc_c::paramList const&  paramList,
                                      Template *                  tmpl,
-                                     int&                        id,
-                                     int                         vms_amount,
+                                     int&                        id,                                     
                                      RequestAttributes&          att);
 
     bool allocate_authorization(xmlrpc_c::paramList const&  paramList,
             Template *obj_template, RequestAttributes&  att,
-            PoolObjectAuth *cluster_perms);
+            PoolObjectAuth *cluster_perms);                                     
 };
 
 /* ------------------------------------------------------------------------- */

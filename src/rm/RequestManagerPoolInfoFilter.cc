@@ -36,7 +36,14 @@ const int VirtualMachinePoolInfo::ALL_VM   = -2;
 const int VirtualMachinePoolInfo::NOT_DONE = -1;
 
 /* ------------------------------------------------------------------------- */
+
+const int VirtualClusterPoolInfo::ALL_VC   = -2;
+
+const int VirtualClusterPoolInfo::NOT_DONE = -1;
+
 /* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+
 
 void RequestManagerPoolInfoFilter::request_execute(
         xmlrpc_c::paramList const& paramList,
@@ -241,6 +248,24 @@ void VirtualMachinePoolMonitoring::request_execute(
     success_response(oss.str(), att);
 
     return;
+}
+
+/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+
+/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
+
+void VirtualClusterPoolInfo::request_execute(
+        xmlrpc_c::paramList const& paramList,
+        RequestAttributes& att)
+{
+    int filter_flag = xmlrpc_c::value_int(paramList.getInt(1));
+    int start_id    = xmlrpc_c::value_int(paramList.getInt(2));
+    int end_id      = xmlrpc_c::value_int(paramList.getInt(3));    
+
+
+    dump(att, filter_flag, start_id, end_id, "", "");
 }
 
 /* ------------------------------------------------------------------------- */

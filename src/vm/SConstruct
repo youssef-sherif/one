@@ -33,6 +33,8 @@ source_files=[
     'VirtualMachineSystemSnapshot.cc',
     'VirtualMachineParser.cc',
     'VirtualMachineContext.cc',
+    'VirtualCluster.cc',
+    'VirtualClusterPool.cc',
     'Snapshots.cc'
 ]
 

@@ -433,7 +433,7 @@ void RequestManager::register_xml_methods()
     xmlrpc_c::methodPtr hostpool_info(new HostPoolInfo());
     xmlrpc_c::methodPtr datastorepool_info(new DatastorePoolInfo());
     xmlrpc_c::methodPtr vm_pool_info(new VirtualMachinePoolInfo());
-    // xmlrpc_c::methodPtr vc_pool_info(new VirtualClusterPoolInfo());
+    xmlrpc_c::methodPtr vc_pool_info(new VirtualClusterPoolInfo());
     xmlrpc_c::methodPtr template_pool_info(new TemplatePoolInfo());
     xmlrpc_c::methodPtr vnpool_info(new VirtualNetworkPoolInfo());
     xmlrpc_c::methodPtr imagepool_info(new ImagePoolInfo());
@@ -559,7 +559,7 @@ void RequestManager::register_xml_methods()
     // RequestManagerRegistry.addMethod("one.vc.deploy", vc_deploy);
     // RequestManagerRegistry.addMethod("one.vc.action", vc_action);
     // RequestManagerRegistry.addMethod("one.vc.migrate", vc_migrate);
-    // RequestManagerRegistry.addMethod("one.vc.allocate", vc_allocate);
+    RequestManagerRegistry.addMethod("one.vc.allocate", vc_allocate);
     // RequestManagerRegistry.addMethod("one.vc.info", vc_info);
     // RequestManagerRegistry.addMethod("one.vc.chown", vc_chown);
     // RequestManagerRegistry.addMethod("one.vc.chmod", vc_chmod);
@@ -580,7 +580,7 @@ void RequestManager::register_xml_methods()
     // RequestManagerRegistry.addMethod("one.vc.unlock", vc_unlock);
     // RequestManagerRegistry.addMethod("one.vc.diskresize", vc_disk_resize);
 
-    // RequestManagerRegistry.addMethod("one.vcpool.info", vc_pool_info);
+    RequestManagerRegistry.addMethod("one.vcpool.info", vc_pool_info);
     // RequestManagerRegistry.addMethod("one.vcpool.accounting", vc_pool_acct);
     // RequestManagerRegistry.addMethod("one.vcpool.monitoring", vc_pool_monitoring);
     // RequestManagerRegistry.addMethod("one.vcpool.showback", vc_pool_showback);
