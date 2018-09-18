@@ -194,10 +194,10 @@ define(function(require) {
 
     var VC = {
         "resource": RESOURCE,
-        "create": function(params) {
+        "create": function(params) {          
           OpenNebulaAction.create(params, RESOURCE);
         },
-        "list": function(params) {
+        "list": function(params) {          
           OpenNebulaAction.list(params, RESOURCE);
         },
         "show": function(params) {

@@ -185,11 +185,13 @@ define(function(require) {
       }
   
       var vc_name = $("#vc_name", context).val();
-      var n_times = $("#vm_n_times", context).val();
+      var vms_amount = $("#vm_n_times", context).val();
+      var nfs_location = $("#nfs_location", context).val();
+      console.log(vms_amount);
       var n_times_int = 1;
   
-      if (n_times.length) {
-        n_times_int = parseInt(n_times, 10);
+      if (vms_amount.length) {
+        n_times_int = parseInt(vms_amount, 10);
       }
   
       var hold = $("#hold", context).prop("checked");
@@ -296,13 +298,14 @@ define(function(require) {
   
         capacityContext = $(".capacityContext"  + template_id, context);
         $.extend(tmp_json, CapacityInputs.retrieveChanges(capacityContext));
+        
+        extra_info["template"] = tmp_json;          
+        // replace wildcard
+        extra_info["vc_name"] = vc_name.replace(/%i/gi, i); 
+        extra_info["vms_amount"] = vms_amount.replace(/%i/gi, i); 
+        extra_info["nfs_location"] = nfs_location.replace(/%i/gi, i); 
   
-        extra_info["template"] = tmp_json;
-          for (var i = 0; i < n_times_int; i++) {
-            extra_info["vc_name"] = vc_name.replace(/%i/gi, i); // replace wildcard
-  
-            Sunstone.runAction("Template."+action, [template_id], extra_info);
-          }
+        Sunstone.runAction("Template."+action, [template_id], extra_info);          
       });
   
       return false;

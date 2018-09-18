@@ -23,21 +23,21 @@ define(function(require) {
     var TAB_ID = require('./vcs-tab/tabId');
     var DATATABLE_ID = "dataTableVcs";
   
-    // var _dialogs = [
-    //   require('./vcs-tab/dialogs/deploy'),
-    //   require('./vcs-tab/dialogs/migrate'),
-    //   require('./vcs-tab/dialogs/resize'),
-    //   require('./vcs-tab/dialogs/attach-disk'),
-    //   require('./vcs-tab/dialogs/disk-snapshot'),
-    //   require('./vcs-tab/dialogs/disk-saveas'),
-    //   require('./vcs-tab/dialogs/disk-resize'),
-    //   require('./vcs-tab/dialogs/attach-nic'),
-    //   require('./vcs-tab/dialogs/snapshot'),
-    //   require('./vcs-tab/dialogs/revert'),
-    //   require('./vcs-tab/dialogs/vnc'),
-    //   require('./vcs-tab/dialogs/spice'),
-    //   require('./vcs-tab/dialogs/saveas-template')
-    // ];
+    var _dialogs = [
+      require('./vcs-tab/dialogs/deploy'),
+      require('./vcs-tab/dialogs/migrate'),
+      require('./vcs-tab/dialogs/resize'),
+      require('./vcs-tab/dialogs/attach-disk'),
+      require('./vcs-tab/dialogs/disk-snapshot'),
+      require('./vcs-tab/dialogs/disk-saveas'),
+      require('./vcs-tab/dialogs/disk-resize'),
+      require('./vcs-tab/dialogs/attach-nic'),
+      require('./vcs-tab/dialogs/snapshot'),
+      require('./vcs-tab/dialogs/revert'),
+      require('./vcs-tab/dialogs/vnc'),
+      require('./vcs-tab/dialogs/spice'),
+      require('./vcs-tab/dialogs/saveas-template')
+    ];
   
     var _panelsHooks = [
       require('./vcs-tab/hooks/header'),
@@ -83,7 +83,7 @@ define(function(require) {
       panels: _panels,
       panelsHooks: _panelsHooks,
       formPanels: _formPanels,
-    //   dialogs: _dialogs
+      dialogs: _dialogs
     };
   
     return Tab;
